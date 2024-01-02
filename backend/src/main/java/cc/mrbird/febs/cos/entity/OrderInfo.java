@@ -3,6 +3,10 @@ package cc.mrbird.febs.cos.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -18,6 +22,12 @@ import lombok.experimental.Accessors;
 public class OrderInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
 
     /**
      * 订单编号
@@ -37,7 +47,7 @@ public class OrderInfo implements Serializable {
     /**
      * 购买时间
      */
-    private LocalDateTime createDate;
+    private String createDate;
 
     /**
      * 订单状态（1.已下单 2.配送中 3.已收货）
@@ -49,5 +59,15 @@ public class OrderInfo implements Serializable {
      */
     private String orderItem;
 
+    /**
+     * 所属药店
+     */
+    private Integer pharmacyId;
+
+    @TableField(exist = false)
+    private String userName;
+
+    @TableField(exist = false)
+    private String pharmacyName;
 
 }

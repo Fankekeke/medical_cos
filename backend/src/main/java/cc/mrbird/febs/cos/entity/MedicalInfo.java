@@ -2,6 +2,9 @@ package cc.mrbird.febs.cos.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,6 +22,12 @@ public class MedicalInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    /**
      * 标题
      */
     private String title;
@@ -31,7 +40,7 @@ public class MedicalInfo implements Serializable {
     /**
      * 公告时间
      */
-    private LocalDateTime date;
+    private String date;
 
     /**
      * 图册

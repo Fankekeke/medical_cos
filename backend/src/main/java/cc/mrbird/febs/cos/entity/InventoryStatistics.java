@@ -1,7 +1,12 @@
 package cc.mrbird.febs.cos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,6 +24,12 @@ public class InventoryStatistics implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    /**
      * 药品ID
      */
     private Integer drugId;
@@ -34,14 +45,27 @@ public class InventoryStatistics implements Serializable {
     private Integer storageType;
 
     /**
+     * 药房ID
+     */
+    private Integer pharmacyId;
+
+    /**
      * 创建时间
      */
-    private LocalDateTime createDate;
+    private String createDate;
 
     /**
      * 保管人
      */
     private String custodian;
 
+    @TableField(exist = false)
+    private String drugName;
+
+    @TableField(exist = false)
+    private String pharmacyName;
+
+    @TableField(exist = false)
+    private BigDecimal unitPrice;
 
 }

@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,6 +25,12 @@ public class RegisterInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    /**
      * 所属用户
      */
     private Integer userId;
@@ -34,7 +43,7 @@ public class RegisterInfo implements Serializable {
     /**
      * 预约时间
      */
-    private LocalDate registerDate;
+    private String registerDate;
 
     /**
      * 所属科室
@@ -49,12 +58,12 @@ public class RegisterInfo implements Serializable {
     /**
      * 开始时间
      */
-    private LocalTime startDate;
+    private String startDate;
 
     /**
      * 结束时间
      */
-    private LocalTime endDate;
+    private String endDate;
 
     /**
      * 状态（0.未支付 1.进行中 2.填写处方 3.待支付 4.已完成 5.已退号）
@@ -64,7 +73,7 @@ public class RegisterInfo implements Serializable {
     /**
      * 支付时间
      */
-    private LocalDateTime payDate;
+    private String payDate;
 
     /**
      * 病例附件
@@ -94,7 +103,7 @@ public class RegisterInfo implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createDate;
+    private String createDate;
 
 
 }
