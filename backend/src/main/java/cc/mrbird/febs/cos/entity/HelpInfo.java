@@ -31,8 +31,14 @@ public class HelpInfo implements Serializable {
      */
     private String questionType;
 
+    /**
+     * 问题详情
+     */
     private String question;
 
+    /**
+     * 回答
+     */
     private String answer;
 
 
