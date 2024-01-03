@@ -31,7 +31,7 @@ public class MedicalInfoController {
      */
     @GetMapping("/page")
     public R page(Page<MedicalInfo> page, MedicalInfo medicalInfo) {
-        return R.ok();
+        return R.ok(medicalInfoService.selectMedicalPage(page, medicalInfo));
     }
 
     /**

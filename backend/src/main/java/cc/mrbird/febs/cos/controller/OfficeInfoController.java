@@ -30,7 +30,7 @@ public class OfficeInfoController {
      */
     @GetMapping("/page")
     public R page(Page<OfficeInfo> page, OfficeInfo officeInfo) {
-        return R.ok();
+        return R.ok(officeInfoService.selectOfficePage(page, officeInfo));
     }
 
     /**

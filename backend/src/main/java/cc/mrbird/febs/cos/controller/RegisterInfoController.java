@@ -30,7 +30,7 @@ public class RegisterInfoController {
      */
     @GetMapping("/page")
     public R page(Page<RegisterInfo> page, RegisterInfo registerInfo) {
-        return R.ok();
+        return R.ok(registerInfoService.selectRegisterPage(page, registerInfo));
     }
 
     /**

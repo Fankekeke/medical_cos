@@ -30,7 +30,7 @@ public class HospitalInfoController {
      */
     @GetMapping("/page")
     public R page(Page<HospitalInfo> page, HospitalInfo hospitalInfo) {
-        return R.ok();
+        return R.ok(hospitalInfoService.selectHospitalPage(page, hospitalInfo));
     }
 
     /**

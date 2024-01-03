@@ -30,7 +30,7 @@ public class ReplyInfoController {
      */
     @GetMapping("/page")
     public R page(Page<ReplyInfo> page, ReplyInfo replyInfo) {
-        return R.ok();
+        return R.ok(replyInfoService.selectReplyPage(page, replyInfo));
     }
 
     /**

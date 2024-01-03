@@ -30,7 +30,7 @@ public class HelpInfoController {
      */
     @GetMapping("/page")
     public R page(Page<HelpInfo> page, HelpInfo helpInfo) {
-        return R.ok();
+        return R.ok(helpInfoService.selectHelpPage(page, helpInfo));
     }
 
     /**
