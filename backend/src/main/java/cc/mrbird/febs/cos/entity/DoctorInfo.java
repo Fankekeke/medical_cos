@@ -39,7 +39,7 @@ public class DoctorInfo implements Serializable {
     /**
      * 所属医院
      */
-    private String hospitalId;
+    private Integer hospitalId;
 
     /**
      * 所属医院

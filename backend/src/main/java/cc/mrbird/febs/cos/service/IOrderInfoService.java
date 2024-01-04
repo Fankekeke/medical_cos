@@ -90,4 +90,6 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @return 结果
      */
     boolean orderSubmit(OrderDetailVo orderDetailVo) throws FebsException;
+
+    void setData(String type);
 }
