@@ -2,4 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.HelpInfoMapper">
 
+    <!-- 分页获取问题求助信息 -->
+    <select id="selectHelpPage" resultType="java.util.LinkedHashMap">
+        select
+        hi.id,
+        hi.question_type,
+        hi.question,
+        hi.answer,
+        hi.user_id,
+        hi.create_date,
+        hi.status,
+        hi.reply_date,
+        ui.name as userName,
+        ui.images
+        from
+        help_info hi
+        left join user_info ui on
+        (ui.id = hi.user_id)
+        where
+        1 = 1
+        <if test="helpInfo.questionType != null and helpInfo.questionType != ''">
+            AND hi.question_type LIKE CONCAT('%',#{helpInfo.questionType},'%')
+        </if>
+        <if test="helpInfo.status != null and helpInfo.status != ''">
+            AND hi.status = #{helpInfo.status}
+        </if>
+        <if test="helpInfo.userName != null and helpInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{helpInfo.userName},'%')
+        </if>
+        order by
+        hi.create_date desc
+    </select>
 </mapper>

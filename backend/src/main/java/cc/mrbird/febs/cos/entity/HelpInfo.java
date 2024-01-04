@@ -3,6 +3,7 @@ package cc.mrbird.febs.cos.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,5 +42,26 @@ public class HelpInfo implements Serializable {
      */
     private String answer;
 
+    /**
+     * 所属用户
+     */
+    private Integer userId;
 
+    /**
+     * 状态（0.未处理 1.已处理）
+     */
+    private String status;
+
+    /**
+     * 创建时间
+     */
+    private String createDate;
+
+    /**
+     * 处理时间
+     */
+    private String replyDate;
+
+    @TableField(exist = false)
+    private String userName;
 }
