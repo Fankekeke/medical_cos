@@ -2,4 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.HospitalInfoMapper">
 
+    <!-- 分页获取医院信息 -->
+    <select id="selectHospitalPage" resultType="java.util.LinkedHashMap">
+        select id,
+        hospital_name,
+        hospital_area,
+        hospital_img,
+        hospital_dean_name,
+        hospital_year,
+        hospital_nature,
+        hospital_grade,
+        hospital_offices_num,
+        medical_insurance_num,
+        hospital_bed_num,
+        outpatient_num,
+        is_medical_insurance,
+        hospital_equipment,
+        hospital_about,
+        hospital_honor,
+        hospital_url,
+        hospital_phone,
+        hospital_address,
+        hospital_post_code,
+        hospital_bus_route,
+        is_open,
+        images
+        from hospital_info
+        where 1 = 1
+        <if test="hospitalInfo.hospitalName != null and hospitalInfo.hospitalName != ''">
+            AND hospital_name LIKE CONCAT('%',#{hospitalInfo.hospitalName},'%')
+        </if>
+        <if test="hospitalInfo.hospitalArea != null and hospitalInfo.hospitalArea != ''">
+            AND hospital_area LIKE CONCAT('%',#{hospitalInfo.hospitalArea},'%')
+        </if>
+        <if test="hospitalInfo.hospitalNature != null and hospitalInfo.hospitalNature != ''">
+            AND hospital_nature LIKE CONCAT('%',#{hospitalInfo.hospitalNature},'%')
+        </if>
+        <if test="hospitalInfo.hospitalGrade != null and hospitalInfo.hospitalGrade != ''">
+            AND hospital_grade LIKE CONCAT('%',#{hospitalInfo.hospitalGrade},'%')
+        </if>
+        order by hospital_name desc
+    </select>
 </mapper>

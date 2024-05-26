@@ -131,5 +131,10 @@ public class HospitalInfo implements Serializable {
      */
     private Integer isOpen;
 
+    /**
+     * 图片
+     */
+    private Integer images;
+
 
 }

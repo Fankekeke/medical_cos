@@ -2,4 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.ReplyInfoMapper">
 
+    <!-- 分页获取评论信息 -->
+    <select id="selectReplyPage" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.user_id,
+        ri.content,
+        ri.create_date,
+        ri.medical_id,
+        mi.title,
+        mi.publisher,
+        ui.name,
+        ui.images
+        from
+        reply_info ri
+        left join medical_info mi on
+        (mi.id = ri.medical_id)
+        left join user_info ui on
+        (ui.id = ri.user_id)
+        where
+        1 = 1
+        <if test="replyInfo.title != null and replyInfo.title != ''">
+            AND mi.title LIKE CONCAT('%',#{replyInfo.title},'%')
+        </if>
+        <if test="replyInfo.name != null and replyInfo.name != ''">
+            AND ui.title LIKE CONCAT('%',#{replyInfo.name},'%')
+        </if>
+        order by
+        ri.create_date desc
+    </select>
 </mapper>

@@ -321,12 +321,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         UserInfo userInfo = userInfoMapper.selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getId, orderInfo.getUserId()));
         orderInfo.setUserName(userInfo.getName());
         // 订单详情
-        List<LinkedHashMap<String, Object>> detailList = orderDetailService.selectDetailByOrder(orderId);
+//        List<LinkedHashMap<String, Object>> detailList = orderDetailService.selectDetailByOrder(orderId);
         // 返回数据
         return new LinkedHashMap<String, Object>() {
             {
                 put("order", orderInfo);
-                put("detail", detailList);
+//                put("detail", detailList);
             }
         };
     }

@@ -2,4 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.MedicationInfoMapper">
 
+    <!-- 分页获取电子处方信息 -->
+    <select id="selectMedicationPage" resultType="java.util.LinkedHashMap">
+        select
+        mi.id,
+        mi.code,
+        mi.cause,
+        mi.user_id,
+        mi.check_issuer,
+        mi.check_agency,
+        mi.status,
+        mi.create_date,
+        mi.order_code,
+        mi.symptom,
+        di.doctor_name,
+        di.doctor_img,
+        di.images as doctorImages,
+        hi.hospital_name,
+        hi.hospital_img,
+        hi.images as hospitalImages,
+        ui.name as userName,
+        ui.images as userImages
+        from
+        medication_info mi
+        left join user_info ui on
+        (ui.id = mi.user_id)
+        left join doctor_info di on
+        (di.id = mi.check_issuer)
+        left join hospital_info hi on
+        (hi.id = mi.check_agency)
+        where
+        1 = 1
+        <if test="medicationInfo.code != null and medicationInfo.code != ''">
+            AND mi.code LIKE CONCAT('%',#{medicationInfo.code},'%')
+        </if>
+        <if test="medicationInfo.userName != null and medicationInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{medicationInfo.userName},'%')
+        </if>
+        <if test="medicationInfo.doctorName != null and medicationInfo.doctorName != ''">
+            AND di.doctor_name LIKE CONCAT('%',#{medicationInfo.doctorName},'%')
+        </if>
+        <if test="medicationInfo.hospitalName != null and medicationInfo.hospitalName != ''">
+            AND hi.hospital_name LIKE CONCAT('%',#{medicationInfo.hospitalName},'%')
+        </if>
+        order by
+        create_date desc
+    </select>
 </mapper>

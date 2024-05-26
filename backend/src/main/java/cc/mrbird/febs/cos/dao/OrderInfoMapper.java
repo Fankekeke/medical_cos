@@ -25,16 +25,6 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
     IPage<LinkedHashMap<String, Object>> selectOrderPage(Page<OrderInfo> page, @Param("orderInfo") OrderInfo orderInfo);
 
     /**
-     * 根据用户月份获取绩效
-     *
-     * @param staffCode 员工编号
-     * @param year      年份
-     * @param month     月份
-     * @return 结果
-     */
-    List<InventoryStatistics> selectPerformanceByStaffCodeMonth(@Param("staffCode") String staffCode, @Param("year") String year, @Param("month") String month);
-
-    /**
      * 查询总收益
      *
      * @return 结果

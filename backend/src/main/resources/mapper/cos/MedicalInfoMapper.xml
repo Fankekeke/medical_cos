@@ -2,4 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.MedicalInfoMapper">
 
+    <!-- 分页获取医疗资讯信息 -->
+    <select id="selectMedicalPage" resultType="java.util.LinkedHashMap">
+        select
+        mi.id,
+        mi.title,
+        mi.content,
+        mi.`date`,
+        mi.images,
+        mi.rack_up,
+        mi.`type`,
+        mi.publisher
+        from
+        medical_info mi
+        where
+        1 = 1
+        <if test="medicalInfo.title != null and medicalInfo.title != ''">
+            AND mi.title LIKE CONCAT('%',#{medicalInfo.title},'%')
+        </if>
+        <if test="medicalInfo.publisher != null and medicalInfo.publisher != ''">
+            AND mi.publisher LIKE CONCAT('%',#{medicalInfo.publisher},'%')
+        </if>
+        order by
+        `date` desc
+    </select>
 </mapper>

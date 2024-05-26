@@ -36,11 +36,22 @@ public class BulletinInfoController {
         return R.ok(bulletinInfoService.getBulletinByPage(page, bulletinInfo));
     }
 
+    /**
+     * 查询公告信息详情
+     *
+     * @param id 主键ID
+     * @return 结果
+     */
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(bulletinInfoService.getById(id));
     }
 
+    /**
+     * 查询公告信息列表
+     *
+     * @return 结果
+     */
     @GetMapping("/list")
     public R list() {
         return R.ok(bulletinInfoService.list());

@@ -1,0 +1,4 @@
+/frontend/node_modules/
+/backend/target
+/backend/log
+/backend/src/main/resources/mapper

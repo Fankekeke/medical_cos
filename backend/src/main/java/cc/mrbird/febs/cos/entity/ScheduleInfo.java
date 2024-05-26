@@ -1,0 +1,56 @@
+package cc.mrbird.febs.cos.entity;
+
+import java.time.LocalTime;
+import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+/**
+ * 排班信息
+ *
+ * @author FanK
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class ScheduleInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    /**
+     * 编号
+     */
+    private String code;
+
+    /**
+     * 排版名称
+     */
+    private String name;
+
+    /**
+     * 开始时间
+     */
+    private String startDate;
+
+    /**
+     * 结束时间
+     */
+    private String endDate;
+
+    /**
+     * 所属员工
+     */
+    private String staffIds;
+
+
+}

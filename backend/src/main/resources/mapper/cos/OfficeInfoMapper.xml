@@ -2,4 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.OfficeInfoMapper">
 
+    <!-- 分页获取科室信息 -->
+    <select id="selectOffocePage" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.offices_name,
+        oi.hospital_name,
+        oi.doctor_num,
+        oi.offices_honor,
+        oi.offices_equipment,
+        oi.offices_about,
+        oi.offices_diagnosis_scope,
+        oi.hospital_id,
+        hi.hospital_name,
+        hi.hospital_img,
+        hi.images as hospitalImages
+        from
+        office_info oi
+        left join hospital_info hi on
+        (hi.id = oi.hospital_id)
+        where
+        1 = 1
+        <if test="officeInfo.officesName != null and officeInfo.officesName != ''">
+            AND oi.offices_name LIKE CONCAT('%',#{officeInfo.officesName},'%')
+        </if>
+        <if test="officeInfo.hospitalName != null and officeInfo.hospitalName != ''">
+            AND hi.hospital_name LIKE CONCAT('%',#{officeInfo.hospitalName},'%')
+        </if>
+        <if test="officeInfo.officesDiagnosisScope != null and officeInfo.officesDiagnosisScope != ''">
+            AND oi.offices_diagnosis_scope LIKE CONCAT('%',#{officeInfo.officesDiagnosisScope},'%')
+        </if>
+        order by
+        oi.offices_name desc
+    </select>
 </mapper>

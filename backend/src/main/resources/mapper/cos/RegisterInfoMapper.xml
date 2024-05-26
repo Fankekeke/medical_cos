@@ -2,4 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.RegisterInfoMapper">
 
+    <!-- 分页获取挂号记录信息 -->
+    <select id="selectRegisterPage" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.user_id,
+        ri.price,
+        ri.register_date,
+        ri.dept_id,
+        ri.staff_id,
+        ri.start_date,
+        ri.end_date,
+        ri.status,
+        ri.pay_date,
+        ri.file,
+        ri.remark,
+        ri.code,
+        ri.drug_price,
+        ri.reference,
+        ri.create_date,
+        oi.offices_name,
+        hi.hospital_name,
+        hi.hospital_img,
+        hi.images as hospitalImages,
+        ui.name,
+        ui.phone,
+        ui.address as userAddress
+        from
+        register_info ri
+        left join office_info oi on
+        (oi.id = ri.dept_id)
+        left join hospital_info hi on
+        (hi.id = oi.hospital_id)
+        left join user_info ui on
+        (ui.id = ri.user_id)
+        where
+        1 = 1
+        <if test="registerInfo.userName != null and registerInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{registerInfo.userName},'%')
+        </if>
+        <if test="registerInfo.hospitalName != null and registerInfo.hospitalName != ''">
+            AND hi.hospital_name LIKE CONCAT('%',#{registerInfo.hospitalName},'%')
+        </if>
+        <if test="registerInfo.officesName != null and registerInfo.officesName != ''">
+            AND oi.offices_name LIKE CONCAT('%',#{registerInfo.officesName},'%')
+        </if>
+        <if test="registerInfo.status != null and registerInfo.status != ''">
+            AND ri.status = #{registerInfo.status}
+        </if>
+        order by
+        ri.create_date desc
+    </select>
 </mapper>

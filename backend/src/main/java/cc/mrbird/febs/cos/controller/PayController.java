@@ -18,10 +18,13 @@ public class PayController {
 
     /**
      * 阿里支付
-     * @param subject
-     * @param body
-     * @return
-     * @throws AlipayApiException
+     *
+     * @param outTradeNo  订单编号
+     * @param subject     备注
+     * @param totalAmount 付款金额
+     * @param body        主体
+     * @return 结果
+     * @throws AlipayApiException 异常信息
      */
     @PostMapping(value = "/alipay")
     public R alipay(String outTradeNo, String subject, String totalAmount, String body) throws AlipayApiException {

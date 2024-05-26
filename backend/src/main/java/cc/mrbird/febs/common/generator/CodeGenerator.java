@@ -29,7 +29,7 @@ public class CodeGenerator {
     // 数据库用户名
     private static final String USERNAME = "root";
     // 数据库密码
-    private static final String PASSWORD = "Avic202206!";
+    private static final String PASSWORD = "123456";
     // @author 值
     private static final String AUTHOR = "FanK";
     // 包的基础路径
