@@ -26,9 +26,20 @@ public class DoctorInfo implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 医生姓名
+     */
     private String doctorName;
 
+    /**
+     * 性别
+     */
     private String doctorSex;
+
+    /**
+     * 所属医院
+     */
+    private Integer hospitalId;
 
     /**
      * 所属医院
@@ -39,6 +50,11 @@ public class DoctorInfo implements Serializable {
      * 所属科室
      */
     private String officesName;
+
+    /**
+     * 所属科室
+     */
+    private Integer officesId;
 
     /**
      * 医生照片
@@ -70,7 +86,13 @@ public class DoctorInfo implements Serializable {
      */
     private String doctorForte;
 
+    /**
+     * 信息
+     */
     private String doctorAbout;
 
-
+    /**
+     * 照片
+     */
+    private String images;
 }

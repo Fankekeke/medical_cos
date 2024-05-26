@@ -26,10 +26,24 @@ public class OfficeInfo implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 科室名称
+     */
     private String officesName;
 
+    /**
+     * 医院名称
+     */
     private String hospitalName;
 
+    /**
+     * 所属医院
+     */
+    private Integer hospitalId;
+
+    /**
+     * 医生人数
+     */
     private String doctorNum;
 
     private String officesHonor;

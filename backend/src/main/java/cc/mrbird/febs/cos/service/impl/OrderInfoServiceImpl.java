@@ -42,6 +42,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     private final ILogisticsInfoService logisticsInfoService;
 
+    private final IDoctorInfoService doctorInfoService;
+
+    private final IHospitalInfoService hospitalInfoService;
+
+    private final IOfficeInfoService officeInfoService;
+
+
+
     /**
      * 分页获取订单信息
      *
@@ -96,6 +104,46 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         // 重新更新订单信息
 
         return result;
+    }
+
+    @Override
+    public void setData(String type) {
+        List<DoctorInfo> doctorList = doctorInfoService.list();
+        List<HospitalInfo> hospitalInfoList = hospitalInfoService.list();
+        List<OfficeInfo> officeList = officeInfoService.list();
+
+        Map<String, HospitalInfo> hospitalInfoMap = hospitalInfoList.stream().collect(Collectors.toMap(HospitalInfo::getHospitalName, e -> e, (k1, k2) -> k2));
+        Map<String, OfficeInfo> officeInfoMap = officeList.stream().collect(Collectors.toMap(OfficeInfo::getOfficesName, e -> e, (k1, k2) -> k2));
+
+        // 更新医生信息
+        for (DoctorInfo doctorInfo : doctorList) {
+            if (StrUtil.isNotEmpty(doctorInfo.getHospitalName())) {
+                HospitalInfo hospitalInfo = hospitalInfoMap.get(doctorInfo.getHospitalName());
+                if (hospitalInfo != null) {
+                    doctorInfo.setHospitalId(hospitalInfo.getId());
+                }
+
+            }
+            if (StrUtil.isNotEmpty(doctorInfo.getOfficesName())) {
+                OfficeInfo officeInfo = officeInfoMap.get(doctorInfo.getOfficesName());
+                if (officeInfo != null) {
+                    doctorInfo.setOfficesId(officeInfo.getId());
+                }
+            }
+        }
+        doctorInfoService.updateBatchById(doctorList);
+
+        // 更新科室信息
+        for (OfficeInfo officeInfo : officeList) {
+            if (StrUtil.isNotEmpty(officeInfo.getHospitalName())) {
+                HospitalInfo hospitalInfo = hospitalInfoMap.get(officeInfo.getHospitalName());
+                if (hospitalInfo != null) {
+                    officeInfo.setHospitalId(hospitalInfo.getId());
+                }
+            }
+        }
+        officeInfoService.updateBatchById(officeList);
+
     }
 
     /**
