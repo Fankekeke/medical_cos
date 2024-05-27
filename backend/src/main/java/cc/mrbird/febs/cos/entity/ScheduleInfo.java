@@ -52,5 +52,10 @@ public class ScheduleInfo implements Serializable {
      */
     private String staffIds;
 
+    /**
+     * 所属科室
+     */
+    private Integer officeId;
+
 
 }

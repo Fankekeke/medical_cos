@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="修改学生" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="修改医生" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -10,101 +10,140 @@
     </template>
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
-        <a-col :span="12">
-          <a-form-item label='学生姓名' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='医生名称' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'studentName',
-            { rules: [{ required: true, message: '请输入学生姓名!' }] }
+            'name',
+            { rules: [{ required: true, message: '请输入名称!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='学号' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='品牌' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'code',
-            { rules: [{ required: true, message: '请输入学号!' }] }
+            'brand',
+            { rules: [{ required: true, message: '请输入品牌!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='所属班级' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='所属分类' v-bind="formItemLayout">
             <a-select v-decorator="[
-              'classId',
-              { rules: [{ required: true, message: '请输入所属班级!' }] }
+              'category',
+              { rules: [{ required: true, message: '请输入所属分类!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in classList" :key="index">{{ item.className }}</a-select-option>
+              <a-select-option value="1">可卡因</a-select-option>
+              <a-select-option value="2">维生素制剂</a-select-option>
+              <a-select-option value="3">鱼肝油</a-select-option>
+              <a-select-option value="4">药物饮料</a-select-option>
+              <a-select-option value="5">膳食纤维</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='性别' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='医生类别' v-bind="formItemLayout">
             <a-select v-decorator="[
-              'sex',
-              { rules: [{ required: true, message: '请输入性别!' }] }
+              'classification',
+              { rules: [{ required: true, message: '请输入医生类别!' }] }
               ]">
-              <a-select-option value="1">男</a-select-option>
-              <a-select-option value="2">女</a-select-option>
+              <a-select-option value="1">中药材</a-select-option>
+              <a-select-option value="2">中药饮片</a-select-option>
+              <a-select-option value="3">中西成药</a-select-option>
+              <a-select-option value="4">化学原料药</a-select-option>
+              <a-select-option value="5">抗生素</a-select-option>
+              <a-select-option value="6">生化医生</a-select-option>
+              <a-select-option value="7">放射性医生</a-select-option>
+              <a-select-option value="8">血清</a-select-option>
+              <a-select-option value="9">诊断医生</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='省份' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='通用名' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'province',
-            { rules: [{ required: true, message: '请输入省份!' }] }
+            'commonName'
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='剂型' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'dosageForm'
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='用法' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'usages'
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='市区' v-bind="formItemLayout">
+          <a-form-item label='适用症状' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'city',
-            { rules: [{ required: true, message: '请输入市区!' }] }
+            'applicableSymptoms'
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='区' v-bind="formItemLayout">
+          <a-form-item label='适用疾病' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'area',
-            { rules: [{ required: true, message: '请输入区!' }] }
+            'applicableDisease'
             ]"/>
-          </a-form-item>
+          </a-form-item
+          >
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='出生日期' v-bind="formItemLayout">
-            <a-date-picker style="width: 100%;" v-decorator="[
-            'birthday',
-            { rules: [{ required: true, message: '请输入出生日期!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='联系方式' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='包装清单' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'phone',
-            { rules: [{ required: true, message: '请输入联系方式!' }] }
+            'packingList'
             ]"/>
-          </a-form-item>
+          </a-form-item
+          >
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='所属专业' v-bind="formItemLayout">
+        <a-col :span="6">
+          <a-form-item label='使用剂量' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'major',
-            { rules: [{ required: true, message: '请输入所属专业!' }] }
+            'dosageUse'
             ]"/>
-          </a-form-item>
+          </a-form-item
+          >
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='有效期' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" :min="1" :step="1" v-decorator="[
+            'validityPeriod'
+            ]"/>
+          </a-form-item
+          >
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='批准文号' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'approvalNumber'
+            ]"/>
+          </a-form-item
+          >
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='生产企业' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'manufacturer'
+            ]"/>
+          </a-form-item
+          >
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='单价' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" :min="1" :step="0.1" v-decorator="[
+            'unitPrice'
+            ]"/>
+          </a-form-item
+          >
         </a-col>
         <a-col :span="24">
-          <a-form-item label='详细地址' v-bind="formItemLayout">
-            <a-textarea :rows="4" v-decorator="[
-            'address',
-             { rules: [{ required: true, message: '请输入详细地址!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='图册' v-bind="formItemLayout">
+          <a-form-item label='医生图片' v-bind="formItemLayout">
             <a-upload
               name="avatar"
               action="http://127.0.0.1:9527/file/fileUpload/"
@@ -132,8 +171,6 @@
 
 <script>
 import {mapState} from 'vuex'
-import moment from 'moment'
-moment.locale('zh-cn')
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -147,9 +184,9 @@ const formItemLayout = {
   wrapperCol: { span: 24 }
 }
 export default {
-  name: 'userEdit',
+  name: 'doctorEdit',
   props: {
-    userEditVisiable: {
+    doctorEditVisiable: {
       default: false
     }
   },
@@ -159,7 +196,7 @@ export default {
     }),
     show: {
       get: function () {
-        return this.userEditVisiable
+        return this.doctorEditVisiable
       },
       set: function () {
       }
@@ -173,20 +210,10 @@ export default {
       loading: false,
       fileList: [],
       previewVisible: false,
-      previewImage: '',
-      classList: []
+      previewImage: ''
     }
   },
-  mounted () {
-    this.selectClassList()
-  },
   methods: {
-    moment,
-    selectClassList () {
-      this.$get('/cos/class-info/list').then((r) => {
-        this.classList = r.data.data
-      })
-    },
     handleCancel () {
       this.previewVisible = false
     },
@@ -209,23 +236,21 @@ export default {
         this.fileList = imageList
       }
     },
-    setFormValues ({...user}) {
-      this.rowId = user.id
-      let fields = ['studentName', 'code', 'phone', 'province', 'city', 'area', 'address', 'classId', 'sex', 'birthday', 'major']
+    setFormValues ({...doctor}) {
+      this.rowId = doctor.id
+      let fields = ['name', 'brand', 'category', 'classification', 'commonName', 'dosageForm', 'usages', 'applicableSymptoms', 'applicableDisease', 'packingList', 'dosageUse', 'validityPeriod', 'approvalNumber', 'manufacturer', 'unitPrice', 'images']
       let obj = {}
-      Object.keys(user).forEach((key) => {
+      Object.keys(doctor).forEach((key) => {
         if (key === 'images') {
           this.fileList = []
-          this.imagesInit(user['images'])
+          this.imagesInit(doctor['images'])
         }
-        if (key === 'birthday') {
-          if (key === 'birthday' && user[key] != null) {
-            user[key] = moment(user[key])
-          }
+        if (key === 'category' || key === 'classification') {
+          doctor[key] = doctor[key].toString()
         }
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
-          obj[key] = user[key]
+          obj[key] = doctor[key]
         }
       })
       this.form.setFieldsValue(obj)
@@ -251,10 +276,9 @@ export default {
       this.form.validateFields((err, values) => {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
-        values.birthday = moment(values.birthday).format('YYYY-MM-DD')
         if (!err) {
           this.loading = true
-          this.$put('/cos/student-info', {
+          this.$put('/cos/doctor-info', {
             ...values
           }).then((r) => {
             this.reset()

@@ -173,13 +173,13 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             return result;
         }
 
-        List<InventoryStatistics> inventoryList = baseMapper.selectPerformanceByStaffCodeMonth(staffCode, year, month);
-        if (CollectionUtil.isEmpty(inventoryList)) {
-            return result;
-        }
-        BigDecimal totalPrice = inventoryList.stream().map(e -> NumberUtil.mul(e.getUnitPrice(), e.getQuantity())).reduce(BigDecimal.ZERO, BigDecimal::add);
-        result.put("before", NumberUtil.round(totalPrice, 2));
-        result.put("after", NumberUtil.mul(totalPrice, new BigDecimal("0.2")));
+//        List<InventoryStatistics> inventoryList = baseMapper.selectPerformanceByStaffCodeMonth(staffCode, year, month);
+//        if (CollectionUtil.isEmpty(inventoryList)) {
+//            return result;
+//        }
+//        BigDecimal totalPrice = inventoryList.stream().map(e -> NumberUtil.mul(e.getUnitPrice(), e.getQuantity())).reduce(BigDecimal.ZERO, BigDecimal::add);
+//        result.put("before", NumberUtil.round(totalPrice, 2));
+//        result.put("after", NumberUtil.mul(totalPrice, new BigDecimal("0.2")));
         return result;
     }
 

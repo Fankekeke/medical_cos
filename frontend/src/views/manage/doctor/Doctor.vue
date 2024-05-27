@@ -4,7 +4,46 @@
       <!-- 搜索区域 -->
       <a-form layout="horizontal">
         <a-row :gutter="15">
-          <div :class="advanced ? null: 'fold'"></div>
+          <div :class="advanced ? null: 'fold'">
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="医生名称"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.name"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="医生编号"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.code"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="品牌"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.brand"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="所属分类"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.category" allowClear>
+                  <a-select-option value="1">可卡因</a-select-option>
+                  <a-select-option value="2">维生素制剂</a-select-option>
+                  <a-select-option value="3">鱼肝油</a-select-option>
+                  <a-select-option value="4">药物饮料</a-select-option>
+                  <a-select-option value="5">膳食纤维</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
@@ -14,7 +53,8 @@
     </div>
     <div>
       <div class="operator">
-<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
+        <a-button type="primary" ghost @click="add">新增</a-button>
+        <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -36,50 +76,54 @@
             </a-tooltip>
           </template>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
-        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="cloud" @click="handlemessageViewOpen(record)" title="详 情" style="margin-right: 10px"></a-icon>
-          <a-icon v-if="record.status == 0" type="tag" theme="twoTone" twoToneColor="#4a9ff5" @click="editStatus(record)" title="修 改" style="margin-right: 10px"></a-icon>
+          <a-icon type="cloud" @click="handledoctorViewOpen(record)" title="详 情"></a-icon>
+          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
-    <message-view
-      @close="handlemessageViewClose"
-      :messageShow="messageView.visiable"
-      :messageData="messageView.data">
-    </message-view>
+    <doctor-add
+      v-if="doctorAdd.visiable"
+      @close="handledoctorAddClose"
+      @success="handledoctorAddSuccess"
+      :doctorAddVisiable="doctorAdd.visiable">
+    </doctor-add>
+    <doctor-edit
+      ref="doctorEdit"
+      @close="handledoctorEditClose"
+      @success="handledoctorEditSuccess"
+      :doctorEditVisiable="doctorEdit.visiable">
+    </doctor-edit>
+    <doctor-view
+      @close="handledoctorViewClose"
+      :doctorShow="doctorView.visiable"
+      :doctorData="doctorView.data">
+    </doctor-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
+import doctorAdd from './DoctorAdd.vue'
+import doctorEdit from './DoctorEdit.vue'
+import doctorView from './DoctorView.vue'
 import {mapState} from 'vuex'
-import messageView from './MessageView.vue'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'message',
-  components: {RangeDate, messageView},
+  name: 'doctor',
+  components: {doctorAdd, doctorEdit, doctorView, RangeDate},
   data () {
     return {
       advanced: false,
-      messageAdd: {
+      doctorAdd: {
         visiable: false
       },
-      messageEdit: {
+      doctorEdit: {
         visiable: false
       },
-      messageView: {
+      doctorView: {
         visiable: false,
         data: null
       },
@@ -98,7 +142,7 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      messageList: []
+      userList: []
     }
   },
   computed: {
@@ -107,43 +151,95 @@ export default {
     }),
     columns () {
       return [{
-        title: '学生姓名',
-        dataIndex: 'studentName'
-      }, {
-        title: '学号',
+        title: '医生编号',
         dataIndex: 'code'
       }, {
-        title: '学生照片',
-        dataIndex: 'images',
-        customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="message" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="message" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="message" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-          </a-popover>
-        }
+        title: '医生名称',
+        dataIndex: 'name'
       }, {
-        title: '状态',
-        dataIndex: 'status',
+        title: '所属品牌',
+        dataIndex: 'brand'
+      }, {
+        title: '医生类别',
+        dataIndex: 'classification',
         customRender: (text, row, index) => {
           switch (text) {
-            case '0':
-              return <a-tag>未读</a-tag>
-            case '1':
-              return <a-tag>已读</a-tag>
+            case 1:
+              return <a-tag>中药材</a-tag>
+            case 2:
+              return <a-tag>中药饮片</a-tag>
+            case 3:
+              return <a-tag>中西成药</a-tag>
+            case 4:
+              return <a-tag>化学原料药</a-tag>
+            case 5:
+              return <a-tag>抗生素</a-tag>
+            case 6:
+              return <a-tag>生化医生</a-tag>
+            case 7:
+              return <a-tag>放射性医生</a-tag>
+            case 8:
+              return <a-tag>血清</a-tag>
+            case 9:
+              return <a-tag>诊断医生</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' }
+        title: '医生图片',
+        dataIndex: 'images',
+        customRender: (text, record, index) => {
+          if (!record.images) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+          </a-popover>
+        }
       }, {
-        title: '发送时间',
-        dataIndex: 'createDate',
+        title: '所属分类',
+        dataIndex: 'category',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 1:
+              return <a-tag>可卡因</a-tag>
+            case 2:
+              return <a-tag>维生素制剂</a-tag>
+            case 3:
+              return <a-tag>鱼肝油</a-tag>
+            case 4:
+              return <a-tag>药物饮料</a-tag>
+            case 5:
+              return <a-tag>膳食纤维</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '通用名',
+        dataIndex: 'commonName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '剂型',
+        dataIndex: 'dosageForm',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '用法',
+        dataIndex: 'usages',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -162,19 +258,12 @@ export default {
     this.fetch()
   },
   methods: {
-    editStatus (record) {
-      record.status = '1'
-      this.$put('/cos/message-info', record).then((r) => {
-        this.$message.success('更新状态成功')
-        this.fetch()
-      })
+    handledoctorViewOpen (row) {
+      this.doctorView.data = row
+      this.doctorView.visiable = true
     },
-    handlemessageViewOpen (row) {
-      this.messageView.data = row
-      this.messageView.visiable = true
-    },
-    handlemessageViewClose () {
-      this.messageView.visiable = false
+    handledoctorViewClose () {
+      this.doctorView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -183,26 +272,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.messageAdd.visiable = true
+      this.doctorAdd.visiable = true
     },
-    handlemessageAddClose () {
-      this.messageAdd.visiable = false
+    handledoctorAddClose () {
+      this.doctorAdd.visiable = false
     },
-    handlemessageAddSuccess () {
-      this.messageAdd.visiable = false
-      this.$message.success('新增消息成功')
+    handledoctorAddSuccess () {
+      this.doctorAdd.visiable = false
+      this.$message.success('新增医生成功')
       this.search()
     },
     edit (record) {
-      this.$refs.messageEdit.setFormValues(record)
-      this.messageEdit.visiable = true
+      this.$refs.doctorEdit.setFormValues(record)
+      this.doctorEdit.visiable = true
     },
-    handlemessageEditClose () {
-      this.messageEdit.visiable = false
+    handledoctorEditClose () {
+      this.doctorEdit.visiable = false
     },
-    handlemessageEditSuccess () {
-      this.messageEdit.visiable = false
-      this.$message.success('修改消息成功')
+    handledoctorEditSuccess () {
+      this.doctorEdit.visiable = false
+      this.$message.success('修改医生成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -220,7 +309,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/message-info/' + ids).then(() => {
+          that.$delete('/cos/doctor-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -293,8 +382,7 @@ export default {
       if (params.type === undefined) {
         delete params.type
       }
-      params.studentId = this.currentUser.userId
-      this.$get('/cos/message-info/page', {
+      this.$get('/cos/doctor-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

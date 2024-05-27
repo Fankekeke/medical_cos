@@ -26,7 +26,7 @@
             AND mi.title LIKE CONCAT('%',#{replyInfo.title},'%')
         </if>
         <if test="replyInfo.name != null and replyInfo.name != ''">
-            AND ui.title LIKE CONCAT('%',#{replyInfo.name},'%')
+            AND ui.name LIKE CONCAT('%',#{replyInfo.name},'%')
         </if>
         order by
         ri.create_date desc

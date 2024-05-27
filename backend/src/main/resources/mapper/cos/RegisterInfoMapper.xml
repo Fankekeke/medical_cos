@@ -21,6 +21,7 @@
         ri.drug_price,
         ri.reference,
         ri.create_date,
+        ri.schedule_id,
         oi.offices_name,
         hi.hospital_name,
         hi.hospital_img,

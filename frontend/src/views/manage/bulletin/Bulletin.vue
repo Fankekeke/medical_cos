@@ -62,7 +62,7 @@
               <template slot="title">
                 {{ record.content }}
               </template>
-              {{ record.content.slice(0, 30) }} ...
+              {{ record.content.slice(0, 40) }} ...
             </a-tooltip>
           </template>
         </template>

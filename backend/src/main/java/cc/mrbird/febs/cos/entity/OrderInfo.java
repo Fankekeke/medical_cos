@@ -50,7 +50,7 @@ public class OrderInfo implements Serializable {
     private String createDate;
 
     /**
-     * 订单状态（1.已下单 2.配送中 3.已收货）
+     * 订单状态（0.未付款 1.已下单 2.配送中 3.已收货）
      */
     private Integer orderStatus;
 

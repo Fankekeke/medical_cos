@@ -57,5 +57,4 @@ public class OfficeInfo implements Serializable {
      */
     private String officesDiagnosisScope;
 
-
 }

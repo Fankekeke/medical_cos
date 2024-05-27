@@ -3,7 +3,7 @@
     <div class="content" style="margin: 0 auto">
       <div class="top">
         <div class="header">
-          <span class="title" style="color: #333333">学生书费缴纳系统</span>
+          <span class="title" style="color: #333333">智能医疗系统</span>
         </div>
         <div class="desc"></div>
       </div>
