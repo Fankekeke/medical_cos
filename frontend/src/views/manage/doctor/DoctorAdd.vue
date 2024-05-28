@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="新增医生" @cancel="onClose" :width="1000">
+  <a-modal v-model="show" title="新增医生信息" @cancel="onClose" :width="1000">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -10,137 +10,103 @@
     </template>
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
-        <a-col :span="6">
-          <a-form-item label='医生名称' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='医生姓名' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'name',
-            { rules: [{ required: true, message: '请输入名称!' }] }
+            'doctorName',
+            { rules: [{ required: true, message: '请输入医生姓名!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='品牌' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'brand',
-            { rules: [{ required: true, message: '请输入品牌!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label='所属分类' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='性别' v-bind="formItemLayout">
             <a-select v-decorator="[
-              'category',
-              { rules: [{ required: true, message: '请输入所属分类!' }] }
+              'doctorSex',
+              { rules: [{ required: true, message: '请输入性别!' }] }
               ]">
-              <a-select-option value="1">可卡因</a-select-option>
-              <a-select-option value="2">维生素制剂</a-select-option>
-              <a-select-option value="3">鱼肝油</a-select-option>
-              <a-select-option value="4">药物饮料</a-select-option>
-              <a-select-option value="5">膳食纤维</a-select-option>
+              <a-select-option value="1">男</a-select-option>
+              <a-select-option value="2">女</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='医生类别' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'classification',
-              { rules: [{ required: true, message: '请输入医生类别!' }] }
+        <a-col :span="8">
+          <a-form-item label='所属医院' v-bind="formItemLayout">
+            <a-select
+              show-search
+              option-filter-prop="children"
+              :filter-option="filterOption"
+              @change="hospitalCheck" v-decorator="[
+              'hospitalId',
+              { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option value="1">中药材</a-select-option>
-              <a-select-option value="2">中药饮片</a-select-option>
-              <a-select-option value="3">中西成药</a-select-option>
-              <a-select-option value="4">化学原料药</a-select-option>
-              <a-select-option value="5">抗生素</a-select-option>
-              <a-select-option value="6">生化医生</a-select-option>
-              <a-select-option value="7">放射性医生</a-select-option>
-              <a-select-option value="8">血清</a-select-option>
-              <a-select-option value="9">诊断医生</a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='通用名' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='所属科室' v-bind="formItemLayout">
+            <a-select @change="hospitalCheck" v-decorator="[
+              'officesId',
+              { rules: [{ required: true, message: '请输入所属科室!' }] }
+              ]">
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.officesName }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-item label='医生照片' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'commonName'
+            'doctorImg'
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='剂型' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='医生职称' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'dosageForm'
+            'doctorTitle',
+            { rules: [{ required: true, message: '请输入医生职称!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-         <a-col :span="6">
-          <a-form-item label='用法' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='教学支职称' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'usages'
+            'teachTitle',
+            { rules: [{ required: true, message: '请输入教学支职称!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='适用症状' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='行政职位' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'applicableSymptoms'
+            'doctorAdministrative',
+            { rules: [{ required: true, message: '请输入行政职位!' }] }
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='适用疾病' v-bind="formItemLayout">
+        <a-col :span="8">
+          <a-form-item label='学位' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'applicableDisease'
+            'doctorDegree',
+            { rules: [{ required: true, message: '请输入学位!' }] }
             ]"/>
-          </a-form-item
-          >
+          </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='包装清单' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'packingList'
+        <a-col :span="24">
+          <a-form-item label='医生特长' v-bind="formItemLayout">
+            <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
+            'doctorForte',
+            { rules: [{ required: true, message: '请输入医生特长!' }] }
             ]"/>
-          </a-form-item
-          >
+          </a-form-item>
         </a-col>
-        <a-col :span="6">
-          <a-form-item label='使用剂量' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'dosageUse'
+        <a-col :span="24">
+          <a-form-item label='信息' v-bind="formItemLayout">
+            <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
+            'doctorAbout',
+            { rules: [{ required: true, message: '请输入信息!' }] }
             ]"/>
-          </a-form-item
-          >
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label='有效期' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="1" :step="1" v-decorator="[
-            'validityPeriod'
-            ]"/>
-          </a-form-item
-          >
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label='批准文号' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'approvalNumber'
-            ]"/>
-          </a-form-item
-          >
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label='生产企业' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'manufacturer'
-            ]"/>
-          </a-form-item
-          >
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label='单价' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="1" :step="0.1" v-decorator="[
-            'unitPrice'
-            ]"/>
-          </a-form-item
-          >
+          </a-form-item>
         </a-col>
         <a-col :span="24">
           <a-form-item label='医生图片' v-bind="formItemLayout">
@@ -207,12 +173,43 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
+      hospitalInfo: null,
+      hospitalList: [],
+      officeList: [],
       fileList: [],
       previewVisible: false,
       previewImage: ''
     }
   },
+  mounted () {
+    this.selectHospitalList()
+  },
   methods: {
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    selectHospitalList () {
+      this.$get('/cos/hospital-info/list').then((r) => {
+        this.hospitalList = r.data.data
+      })
+    },
+    selectOfficeList (hospitalId) {
+      this.$get(`/cos/office-info/list/byhospital/${hospitalId}`).then((r) => {
+        this.officeList = r.data.data
+      })
+    },
+    hospitalCheck (value) {
+      if (value) {
+        this.hospitalList.forEach(e => {
+          if (e.id === value) {
+            this.hospitalInfo = e
+            this.selectOfficeList(e.id)
+          }
+        })
+      }
+    },
     handleCancel () {
       this.previewVisible = false
     },

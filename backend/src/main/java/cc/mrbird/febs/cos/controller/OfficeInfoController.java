@@ -4,6 +4,7 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.OfficeInfo;
 import cc.mrbird.febs.cos.service.IOfficeInfoService;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,17 @@ public class OfficeInfoController {
     @GetMapping("/page")
     public R page(Page<OfficeInfo> page, OfficeInfo officeInfo) {
         return R.ok(officeInfoService.selectOffocePage(page, officeInfo));
+    }
+
+    /**
+     * 根据医院ID获取科室信息
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/byhospital/{hospitalId}")
+    public R selectListByHospital(@PathVariable("hospitalId") Integer hospitalId) {
+        return R.ok(officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalId)));
     }
 
     /**

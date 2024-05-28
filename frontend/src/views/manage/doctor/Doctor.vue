@@ -7,40 +7,26 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医生名称"
+                label="医生姓名"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.name"/>
+                <a-input v-model="queryParams.doctorName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医生编号"
+                label="所属医院"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
+                <a-input v-model="queryParams.hospitalName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="品牌"
+                label="科室名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.brand"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="所属分类"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-select v-model="queryParams.category" allowClear>
-                  <a-select-option value="1">可卡因</a-select-option>
-                  <a-select-option value="2">维生素制剂</a-select-option>
-                  <a-select-option value="3">鱼肝油</a-select-option>
-                  <a-select-option value="4">药物饮料</a-select-option>
-                  <a-select-option value="5">膳食纤维</a-select-option>
-                </a-select>
+                <a-input v-model="queryParams.officesName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -151,47 +137,32 @@ export default {
     }),
     columns () {
       return [{
-        title: '医生编号',
-        dataIndex: 'code'
+        title: '医生姓名',
+        dataIndex: 'doctorName'
       }, {
-        title: '医生名称',
-        dataIndex: 'name'
+        title: '性别',
+        dataIndex: 'doctorSex'
       }, {
-        title: '所属品牌',
-        dataIndex: 'brand'
+        title: '所属医院',
+        dataIndex: 'hospitalName'
+      }, {
+        title: '所属科室',
+        dataIndex: 'officesName'
       }, {
         title: '医生类别',
-        dataIndex: 'classification',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>中药材</a-tag>
-            case 2:
-              return <a-tag>中药饮片</a-tag>
-            case 3:
-              return <a-tag>中西成药</a-tag>
-            case 4:
-              return <a-tag>化学原料药</a-tag>
-            case 5:
-              return <a-tag>抗生素</a-tag>
-            case 6:
-              return <a-tag>生化医生</a-tag>
-            case 7:
-              return <a-tag>放射性医生</a-tag>
-            case 8:
-              return <a-tag>血清</a-tag>
-            case 9:
-              return <a-tag>诊断医生</a-tag>
-            default:
-              return '- -'
-          }
-        }
+        dataIndex: 'doctorTitle'
       }, {
         title: '医生图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
+          if (!record.doctorImg && !record.images) return <a-avatar shape="square" icon="user" />
+          if (record.doctorImg) return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ record.doctorImg } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ record.doctorImg } />
+          </a-popover>
+          if (record.images) <a-popover>
             <template slot="content">
               <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
             </template>
@@ -199,27 +170,11 @@ export default {
           </a-popover>
         }
       }, {
-        title: '所属分类',
-        dataIndex: 'category',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>可卡因</a-tag>
-            case 2:
-              return <a-tag>维生素制剂</a-tag>
-            case 3:
-              return <a-tag>鱼肝油</a-tag>
-            case 4:
-              return <a-tag>药物饮料</a-tag>
-            case 5:
-              return <a-tag>膳食纤维</a-tag>
-            default:
-              return '- -'
-          }
-        }
+        title: '教学支职称',
+        dataIndex: 'teachTitle'
       }, {
-        title: '通用名',
-        dataIndex: 'commonName',
+        title: '行政职位',
+        dataIndex: 'doctorAdministrative',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -228,18 +183,8 @@ export default {
           }
         }
       }, {
-        title: '剂型',
-        dataIndex: 'dosageForm',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '用法',
-        dataIndex: 'usages',
+        title: '学位',
+        dataIndex: 'doctorDegree',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
