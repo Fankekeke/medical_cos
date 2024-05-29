@@ -60,7 +60,7 @@ public class OrderInfo implements Serializable {
     private String orderItem;
 
     /**
-     * 所属药店
+     * 所属医院
      */
     private Integer pharmacyId;
 

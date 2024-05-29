@@ -229,4 +229,23 @@
             DATE_FORMAT( oi.create_date, '%Y' ) = #{year}
           and DATE_FORMAT( oi.create_date, '%m' ) = #{month}
     </select>
+
+    <!-- 获取医院订单信息 -->
+    <select id="selectOrderHospitalByDate" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+            oi.id,
+            oi.code,
+            oi.pharmacy_id,
+            oi.total_cost,
+            oi.user_id,
+            oi.create_date,
+            oi.logistics_id,
+            oi.order_status
+        from
+            order_info oi
+        where
+            DATE_FORMAT( oi.create_date, '%Y' ) = #{year}
+            and DATE_FORMAT( oi.create_date, '%m' ) = #{month}
+            and oi.order_status > 0
+    </select>
 </mapper>

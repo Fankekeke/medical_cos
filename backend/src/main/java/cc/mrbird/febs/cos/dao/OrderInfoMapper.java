@@ -82,4 +82,13 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @return 结果
      */
     List<OrderInfo> selectOrderByCheckMonth(@Param("year") Integer year, @Param("month") Integer month);
+
+    /**
+     * 获取医院订单信息
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    List<OrderInfo> selectOrderHospitalByDate(@Param("year") String year, @Param("month") String month);
 }

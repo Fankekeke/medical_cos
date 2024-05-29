@@ -3,15 +3,25 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DoctorInfo;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
+import cc.mrbird.febs.cos.entity.OfficeInfo;
 import cc.mrbird.febs.cos.service.IDoctorInfoService;
+import cc.mrbird.febs.cos.service.IHospitalInfoService;
+import cc.mrbird.febs.cos.service.IOfficeInfoService;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -23,6 +33,10 @@ public class DoctorInfoController {
 
     private final IDoctorInfoService doctorInfoService;
 
+    private final IOfficeInfoService officeInfoService;
+
+    private final IHospitalInfoService hospitalInfoService;
+
     /**
      * 分页获取医生信息
      *
@@ -33,6 +47,64 @@ public class DoctorInfoController {
     @GetMapping("/page")
     public R page(Page<DoctorInfo> page, DoctorInfo doctorInfo) {
         return R.ok(doctorInfoService.selectDoctorPage(page, doctorInfo));
+    }
+
+    /**
+     * 设置医生科室及医院信息
+     *
+     * @return 结果
+     */
+    @GetMapping("/setDoctorInfo")
+    @Transactional(rollbackFor = Exception.class)
+    public R setDoctorInfo() {
+        // 医生信息
+        List<DoctorInfo> doctorInfoList = doctorInfoService.list();
+
+        // 科室信息
+        List<OfficeInfo> officeInfoList = officeInfoService.list();
+
+        // 医院信息
+        List<HospitalInfo> hospitalInfoList = hospitalInfoService.list();
+
+        // 科室信息转MAP
+        Map<String, Integer> officeInfoMap = officeInfoList.stream().collect(Collectors.toMap(OfficeInfo::getOfficesName, OfficeInfo::getId));
+        // 各医院下的科室
+        Map<Integer, List<OfficeInfo>> officeByHospitalMap = officeInfoList.stream().collect(Collectors.groupingBy(OfficeInfo::getHospitalId));
+        // 医院信息转MAP
+        Map<String, Integer> hospitalInfoMap = hospitalInfoList.stream().collect(Collectors.toMap(HospitalInfo::getHospitalName, HospitalInfo::getId));
+
+        // 待更新的医生信息
+        List<DoctorInfo> toUpdateList = new LinkedList<>();
+        // 循环设置科室医院ID
+        for (DoctorInfo doctorInfo : doctorInfoList) {
+            if (StrUtil.isEmpty(doctorInfo.getHospitalName())) {
+                continue;
+            }
+            // 获取医院ID
+            Integer hospitalId = hospitalInfoMap.get(doctorInfo.getHospitalName());
+            if (hospitalId == null) {
+                continue;
+            }
+            // 绑定所属医院
+            doctorInfo.setHospitalId(hospitalId);
+            // 获取医院科室信息
+            List<OfficeInfo> officeInfoListByHospital = officeByHospitalMap.get(hospitalId);
+            if (StrUtil.isEmpty(doctorInfo.getOfficesName()) || CollectionUtil.isEmpty(officeInfoListByHospital)) {
+                toUpdateList.add(doctorInfo);
+                continue;
+            }
+            Map<String, List<OfficeInfo>> officesMap = officeInfoListByHospital.stream().collect(Collectors.groupingBy(OfficeInfo::getOfficesName));
+
+            // 获取科室ID
+            List<OfficeInfo> checkOffices = officesMap.get(doctorInfo.getOfficesName());
+            if (CollectionUtil.isEmpty(checkOffices)) {
+                toUpdateList.add(doctorInfo);
+                continue;
+            }
+            doctorInfo.setOfficesId(checkOffices.get(0).getId());
+            toUpdateList.add(doctorInfo);
+        }
+        return R.ok(doctorInfoService.updateBatchById(toUpdateList));
     }
 
     /**

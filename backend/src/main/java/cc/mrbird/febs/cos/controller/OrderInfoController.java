@@ -38,6 +38,18 @@ public class OrderInfoController {
     }
 
     /**
+     * 医院销售排行
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    @GetMapping("/selectSaleRank")
+    public R selectSaleRank(@RequestParam("year") String year, @RequestParam("month") String month) {
+        return R.ok();
+    }
+
+    /**
      * 用户提交订单
      *
      * @param orderDetailVo 订单信息

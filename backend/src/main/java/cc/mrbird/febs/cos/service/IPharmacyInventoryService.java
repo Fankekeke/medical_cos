@@ -14,10 +14,10 @@ import java.util.List;
 public interface IPharmacyInventoryService extends IService<PharmacyInventory> {
 
     /**
-     * 分页获取药店库存信息
+     * 分页获取医院库存信息
      *
      * @param page     分页对象
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectPharmacyInventoryPage(Page<PharmacyInventory> page, PharmacyInventory pharmacyInventory);
@@ -50,7 +50,7 @@ public interface IPharmacyInventoryService extends IService<PharmacyInventory> {
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     boolean putInventory(PharmacyInventory pharmacyInventory);
@@ -58,7 +58,7 @@ public interface IPharmacyInventoryService extends IService<PharmacyInventory> {
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     boolean outInventory(PharmacyInventory pharmacyInventory);

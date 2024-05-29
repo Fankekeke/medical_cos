@@ -2,15 +2,22 @@ package cc.mrbird.febs.cos.controller;
 
 
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.OfficeInfo;
+import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IOfficeInfoService;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -21,6 +28,8 @@ import java.util.List;
 public class OfficeInfoController {
 
     private final IOfficeInfoService officeInfoService;
+
+    private final IHospitalInfoService hospitalInfoService;
 
     /**
      * 分页获取科室信息
@@ -43,6 +52,38 @@ public class OfficeInfoController {
     @GetMapping("/byhospital/{hospitalId}")
     public R selectListByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalId)));
+    }
+
+    /**
+     * 设置科室所属医院
+     *
+     * @return 结果
+     */
+    @GetMapping("/setOfficeHospital")
+    @Transactional(rollbackFor = Exception.class)
+    public R setOfficeHospital() {
+        // 获取所有科室信息
+        List<OfficeInfo> officeInfoList = officeInfoService.list();
+        // 所有医院信息
+        List<HospitalInfo> hospitalInfoList = hospitalInfoService.list();
+
+        // 医院信息转MAP
+        Map<String, Integer> hospitalIdMap = hospitalInfoList.stream().collect(Collectors.toMap(HospitalInfo::getHospitalName, HospitalInfo::getId));
+
+        // 待更新的科室信息
+        List<OfficeInfo> toUpdateOfficeInfoList = new LinkedList<>();
+        for (OfficeInfo officeInfo : officeInfoList) {
+            if (StrUtil.isNotEmpty(officeInfo.getHospitalName())) {
+                continue;
+            }
+            Integer hospitalId = hospitalIdMap.get(officeInfo.getHospitalName());
+            if (hospitalId == null) {
+                continue;
+            }
+            officeInfo.setHospitalId(hospitalId);
+            toUpdateOfficeInfoList.add(officeInfo);
+        }
+        return R.ok(officeInfoService.updateBatchById(toUpdateOfficeInfoList));
     }
 
     /**

@@ -51,10 +51,10 @@ public class PharmacyInventoryController {
     }
 
     /**
-     * 分页获取药店库存信息
+     * 分页获取医院库存信息
      *
      * @param page              分页对象
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @GetMapping("/page")
@@ -89,7 +89,7 @@ public class PharmacyInventoryController {
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @PostMapping("/put/reserve")
@@ -100,7 +100,7 @@ public class PharmacyInventoryController {
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @PostMapping("/out/reserve")
@@ -130,9 +130,9 @@ public class PharmacyInventoryController {
     }
 
     /**
-     * 新增药店库存信息
+     * 新增医院库存信息
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @PostMapping
@@ -154,9 +154,9 @@ public class PharmacyInventoryController {
     }
 
     /**
-     * 修改药店库存信息
+     * 修改医院库存信息
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @PutMapping
@@ -165,10 +165,10 @@ public class PharmacyInventoryController {
     }
 
     /**
-     * 删除药店库存信息
+     * 删除医院库存信息
      *
      * @param ids ids
-     * @return 药店库存信息
+     * @return 医院库存信息
      */
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {

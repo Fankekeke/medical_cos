@@ -31,10 +31,10 @@ public class PharmacyInventoryServiceImpl extends ServiceImpl<PharmacyInventoryM
     private final IInventoryStatisticsService inventoryStatisticsService;
 
     /**
-     * 分页获取药店库存信息
+     * 分页获取医院库存信息
      *
      * @param page              分页对象
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @Override
@@ -64,7 +64,7 @@ public class PharmacyInventoryServiceImpl extends ServiceImpl<PharmacyInventoryM
     public boolean batchPutInventory(Integer pharmacyId, String pharmacyInventorys) throws Exception {
         List<PharmacyInventory> inventoryList = JSONUtil.toList(pharmacyInventorys, PharmacyInventory.class);
         if (pharmacyId == null || CollectionUtil.isEmpty(inventoryList)) {
-            throw new FebsException("所属药店和药品信息不能为空！");
+            throw new FebsException("所属医院和药品信息不能为空！");
         }
         List<Integer> drugIds = inventoryList.stream().map(PharmacyInventory::getDrugId).filter(Objects::nonNull).collect(Collectors.toList());
         if (CollectionUtil.isEmpty(drugIds)) {
@@ -115,7 +115,7 @@ public class PharmacyInventoryServiceImpl extends ServiceImpl<PharmacyInventoryM
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @Override
@@ -142,7 +142,7 @@ public class PharmacyInventoryServiceImpl extends ServiceImpl<PharmacyInventoryM
     /**
      * 设置库存
      *
-     * @param pharmacyInventory 药店库存信息
+     * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
     @Override

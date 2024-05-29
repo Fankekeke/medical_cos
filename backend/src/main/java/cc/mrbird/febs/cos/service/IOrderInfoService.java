@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.service;
 
 import cc.mrbird.febs.common.exception.FebsException;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.OrderInfo;
 import cc.mrbird.febs.cos.entity.vo.OrderDetailVo;
 import cc.mrbird.febs.cos.entity.vo.OrderInfoVo;
@@ -10,6 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -23,6 +25,15 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectOrderPage(Page<OrderInfo> page, OrderInfo orderInfo);
+
+    /**
+     * 获取医院销售排名
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    List<HospitalInfo> selectSaleRank(String year, String month);
 
     /**
      * 添加订单信息

@@ -39,7 +39,7 @@ public class OrderEvaluate implements Serializable {
     private Integer userId;
 
     /**
-     * 所属药店
+     * 所属医院
      */
     private Integer pharmacyId;
 

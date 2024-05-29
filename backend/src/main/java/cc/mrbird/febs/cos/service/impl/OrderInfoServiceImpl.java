@@ -63,6 +63,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     /**
+     * 获取医院销售排名
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    @Override
+    public List<HospitalInfo> selectSaleRank(String year, String month) {
+        // 获取所有医院信息
+        List<HospitalInfo> hospitalInfoList = hospitalInfoService.list();
+        if (CollectionUtil.isEmpty(hospitalInfoList)) {
+            return hospitalInfoList;
+        }
+
+        // 获取本月已支付订单
+        List<OrderInfo> orderInfoList = baseMapper.selectOrderHospitalByDate(year, month);
+
+        return null;
+    }
+
+    /**
      * 添加订单信息
      *
      * @param orderInfoVo 订单信息
@@ -271,7 +292,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         // 获取订单信息
         List<OrderSubVo> orderSubVos = JSONUtil.toList(orderDetailVo.getDrugString(), OrderSubVo.class);
-        // 根据药店分组
+        // 根据医院分组
         Map<Integer, List<OrderSubVo>> orderSubMap = orderSubVos.stream().collect(Collectors.groupingBy(OrderSubVo::getPharmacyId));
         // 设置要添加订单
         List<OrderInfo> orderList = new ArrayList<>();

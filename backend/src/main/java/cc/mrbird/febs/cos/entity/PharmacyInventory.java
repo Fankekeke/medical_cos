@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 药店库存
+ * 医院库存
  *
  * @author FanK
  */
@@ -29,7 +29,7 @@ public class PharmacyInventory implements Serializable {
     private Integer id;
 
     /**
-     * 药店ID
+     * 医院ID
      */
     private Integer pharmacyId;
 

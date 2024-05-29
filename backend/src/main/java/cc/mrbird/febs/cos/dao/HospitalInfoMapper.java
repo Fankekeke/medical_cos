@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -21,4 +22,12 @@ public interface HospitalInfoMapper extends BaseMapper<HospitalInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectHospitalPage(Page<HospitalInfo> page, @Param("hospitalInfo") HospitalInfo hospitalInfo);
+
+    /**
+     * 查询医院地图
+     *
+     * @param key 关键字
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectHospitalByMap(String key);
 }

@@ -34,6 +34,31 @@ public class HospitalInfoController {
     }
 
     /**
+     * 医院统计
+     *
+     * @param type 1.按区域统计 2.按医院等级统计 3.按医院类型统计
+     * @return 结果
+     */
+    @GetMapping("/selectStatisticsByType/{type}")
+    public R selectStatisticsByType(@PathVariable(value = "type", required = false) Integer type) {
+        if (type == null) {
+            type = 1;
+        }
+        return R.ok(hospitalInfoService.selectStatisticsByType(type));
+    }
+
+    /**
+     * 查询医院地图
+     *
+     * @param key 关键字
+     * @return 结果
+     */
+    @GetMapping("/selectHospitalByMap/{key}")
+    public R selectHospitalByMap(@PathVariable(value = "key", required = false) String key) {
+        return R.ok(hospitalInfoService.selectHospitalByMap(key));
+    }
+
+    /**
      * 查询医院信息详情
      *
      * @param id 主键ID
