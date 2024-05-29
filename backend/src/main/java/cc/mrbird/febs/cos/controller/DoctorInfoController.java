@@ -14,6 +14,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,7 @@ public class DoctorInfoController {
      *
      * @return 结果
      */
+    @Async
     @GetMapping("/setDoctorInfo")
     @Transactional(rollbackFor = Exception.class)
     public R setDoctorInfo() {
@@ -66,12 +68,10 @@ public class DoctorInfoController {
         // 医院信息
         List<HospitalInfo> hospitalInfoList = hospitalInfoService.list();
 
-        // 科室信息转MAP
-        Map<String, Integer> officeInfoMap = officeInfoList.stream().collect(Collectors.toMap(OfficeInfo::getOfficesName, OfficeInfo::getId));
         // 各医院下的科室
-        Map<Integer, List<OfficeInfo>> officeByHospitalMap = officeInfoList.stream().collect(Collectors.groupingBy(OfficeInfo::getHospitalId));
+        Map<Integer, List<OfficeInfo>> officeByHospitalMap = officeInfoList.stream().filter(e -> e.getHospitalId() != null).collect(Collectors.groupingBy(OfficeInfo::getHospitalId));
         // 医院信息转MAP
-        Map<String, Integer> hospitalInfoMap = hospitalInfoList.stream().collect(Collectors.toMap(HospitalInfo::getHospitalName, HospitalInfo::getId));
+        Map<String, List<HospitalInfo>> hospitalInfoMap = hospitalInfoList.stream().collect(Collectors.groupingBy(HospitalInfo::getHospitalName));
 
         // 待更新的医生信息
         List<DoctorInfo> toUpdateList = new LinkedList<>();
@@ -81,14 +81,14 @@ public class DoctorInfoController {
                 continue;
             }
             // 获取医院ID
-            Integer hospitalId = hospitalInfoMap.get(doctorInfo.getHospitalName());
-            if (hospitalId == null) {
+            List<HospitalInfo> thisHospitalInfoList = hospitalInfoMap.get(doctorInfo.getHospitalName());
+            if (CollectionUtil.isEmpty(thisHospitalInfoList)) {
                 continue;
             }
             // 绑定所属医院
-            doctorInfo.setHospitalId(hospitalId);
+            doctorInfo.setHospitalId(thisHospitalInfoList.get(0).getId());
             // 获取医院科室信息
-            List<OfficeInfo> officeInfoListByHospital = officeByHospitalMap.get(hospitalId);
+            List<OfficeInfo> officeInfoListByHospital = officeByHospitalMap.get(thisHospitalInfoList.get(0).getId());
             if (StrUtil.isEmpty(doctorInfo.getOfficesName()) || CollectionUtil.isEmpty(officeInfoListByHospital)) {
                 toUpdateList.add(doctorInfo);
                 continue;

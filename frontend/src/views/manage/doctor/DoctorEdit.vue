@@ -9,124 +9,132 @@
       </a-button>
     </template>
     <a-form :form="form" layout="vertical">
-      <a-row :gutter="20">
-        <a-col :span="8">
-          <a-form-item label='医生姓名' v-bind="formItemLayout">
-            <a-input v-decorator="[
+      <a-spin :spinning="dataLoading">
+        <a-row :gutter="20">
+          <a-col :span="8">
+            <a-form-item label='医生姓名' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'doctorName',
             { rules: [{ required: true, message: '请输入医生姓名!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='性别' v-bind="formItemLayout">
-            <a-select v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='性别' v-bind="formItemLayout">
+              <a-select v-decorator="[
               'doctorSex',
               { rules: [{ required: true, message: '请输入性别!' }] }
               ]">
-              <a-select-option value="1">男</a-select-option>
-              <a-select-option value="2">女</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='所属医院' v-bind="formItemLayout">
-            <a-select @change="hospitalCheck" v-decorator="[
+                <a-select-option value="1">男</a-select-option>
+                <a-select-option value="2">女</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='所属医院' v-bind="formItemLayout">
+              <a-select
+                show-search
+                option-filter-prop="children"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                @search="fetchUser"
+                @change="hospitalCheck" v-decorator="[
               'hospitalId',
               { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='所属科室' v-bind="formItemLayout">
-            <a-select @change="hospitalCheck" v-decorator="[
+                <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='所属科室' v-bind="formItemLayout">
+              <a-select @change="hospitalCheck" v-decorator="[
               'officesId',
               { rules: [{ required: true, message: '请输入所属科室!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.officesName }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='医生照片' v-bind="formItemLayout">
-            <a-input v-decorator="[
+                <a-select-option :value="item.id" v-for="(item, index) in officeList" :key="index">{{ item.officesName }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='医生照片' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'doctorImg'
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='医生职称' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='医生职称' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'doctorTitle',
             { rules: [{ required: true, message: '请输入医生职称!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='教学支职称' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='教学支职称' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'teachTitle',
             { rules: [{ required: true, message: '请输入教学支职称!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='行政职位' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='行政职位' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'doctorAdministrative',
             { rules: [{ required: true, message: '请输入行政职位!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='学位' v-bind="formItemLayout">
-            <a-input v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label='学位' v-bind="formItemLayout">
+              <a-input v-decorator="[
             'doctorDegree',
             { rules: [{ required: true, message: '请输入学位!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='医生特长' v-bind="formItemLayout">
-            <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item label='医生特长' v-bind="formItemLayout">
+              <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
             'doctorForte',
             { rules: [{ required: true, message: '请输入医生特长!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='信息' v-bind="formItemLayout">
-            <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item label='信息' v-bind="formItemLayout">
+              <a-textarea placeholder="Basic usage" :rows="4" v-decorator="[
             'doctorAbout',
             { rules: [{ required: true, message: '请输入信息!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='医生图片' v-bind="formItemLayout">
-            <a-upload
-              name="avatar"
-              action="http://127.0.0.1:9527/file/fileUpload/"
-              list-type="picture-card"
-              :file-list="fileList"
-              @preview="handlePreview"
-              @change="picHandleChange"
-            >
-              <div v-if="fileList.length < 8">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item label='医生图片' v-bind="formItemLayout">
+              <a-upload
+                name="avatar"
+                action="http://127.0.0.1:9527/file/fileUpload/"
+                list-type="picture-card"
+                :file-list="fileList"
+                @preview="handlePreview"
+                @change="picHandleChange"
+              >
+                <div v-if="fileList.length < 8">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">
+                    Upload
+                  </div>
                 </div>
-              </div>
-            </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
-          </a-form-item>
-        </a-col>
-      </a-row>
+              </a-upload>
+              <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+                <img alt="example" style="width: 100%" :src="previewImage" />
+              </a-modal>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-spin>
     </a-form>
   </a-modal>
 </template>
@@ -170,6 +178,8 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
+      dataLoading: false,
+      fetching: false,
       hospitalInfo: null,
       hospitalList: [],
       officeList: [],
@@ -179,9 +189,28 @@ export default {
     }
   },
   mounted () {
-    this.selectHospitalList()
   },
   methods: {
+    fetchUser (value) {
+      this.lastFetchId += 1;
+      const fetchId = this.lastFetchId;
+      this.data = [];
+      this.fetching = true;
+      this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+        this.hospitalList = r.data.data
+
+        if (fetchId !== this.lastFetchId) {
+          // for fetch callback order
+          return;
+        }
+        const data = body.results.map(item => ({
+          text: `${item.hospitalName} ${item.hospitalNature}`,
+          value: item.id,
+        }));
+        this.hospitalList = data;
+        this.fetching = false;
+      })
+    },
     selectHospitalList () {
       this.$get('/cos/hospital-info/list').then((r) => {
         this.hospitalList = r.data.data
@@ -225,23 +254,31 @@ export default {
       }
     },
     setFormValues ({...doctor}) {
+      this.dataLoading = true
       this.rowId = doctor.id
-      let fields = ['doctorName', 'doctorSex', 'doctorImg', 'doctorTitle', 'teachTitle', 'doctorAdministrative', 'doctorDegree', 'doctorForte', 'doctorAbout']
+      let fields = ['doctorName', 'doctorSex', 'doctorImg', 'doctorTitle', 'teachTitle', 'doctorAdministrative', 'doctorDegree', 'doctorForte', 'doctorAbout', 'hospitalId', 'officesId']
       let obj = {}
       Object.keys(doctor).forEach((key) => {
         if (key === 'images') {
           this.fileList = []
           this.imagesInit(doctor['images'])
         }
-        if ((key === 'hospitalId' || key === 'officesId') && doctor[key] != null) {
-          doctor[key] = doctor[key].toString()
-        }
+        // if ((key === 'hospitalId' || key === 'officesId') && doctor[key] != null) {
+        //   doctor[key] = doctor[key].toString()
+        // }
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
           obj[key] = doctor[key]
         }
+        if (key === 'hospitalId' && doctor['hospitalId'] != null && doctor['hospitalName'] != null) {
+          this.fetchUser(doctor['hospitalName'])
+          this.selectOfficeList(doctor['hospitalId'])
+        }
       })
-      this.form.setFieldsValue(obj)
+      setTimeout(() => {
+        this.form.setFieldsValue(obj)
+        this.dataLoading = false
+      }, 500)
     },
     reset () {
       this.loading = false

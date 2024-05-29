@@ -4,6 +4,8 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,16 @@ public class HospitalInfoController {
     @GetMapping("/list")
     public R list() {
         return R.ok(hospitalInfoService.list());
+    }
+
+    /**
+     * 查询医院信息列表
+     *
+     * @return 结果
+     */
+    @GetMapping("/list/key/{key}")
+    public R remoteList(@PathVariable(value = "key", required = false) String key) {
+        return R.ok(hospitalInfoService.list(Wrappers.<HospitalInfo>lambdaQuery().like(StrUtil.isNotEmpty(key), HospitalInfo::getHospitalName, key).last("limit 20")));
     }
 
     /**
