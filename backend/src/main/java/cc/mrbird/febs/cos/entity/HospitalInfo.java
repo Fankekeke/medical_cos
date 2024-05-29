@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -146,4 +147,16 @@ public class HospitalInfo implements Serializable {
      * 纬度
      */
     private BigDecimal latitude;
+
+    /**
+     * 营业额
+     */
+    @TableField(exist = false)
+    private BigDecimal salesTotal;
+
+    /**
+     * 单数
+     */
+    @TableField(exist = false)
+    private Integer salesNum;
 }

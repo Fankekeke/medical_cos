@@ -46,7 +46,7 @@ public class OrderInfoController {
      */
     @GetMapping("/selectSaleRank")
     public R selectSaleRank(@RequestParam("year") String year, @RequestParam("month") String month) {
-        return R.ok();
+        return R.ok(orderInfoService.selectSaleRank(year, month));
     }
 
     /**

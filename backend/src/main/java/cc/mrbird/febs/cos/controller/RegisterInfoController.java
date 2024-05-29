@@ -34,6 +34,18 @@ public class RegisterInfoController {
     }
 
     /**
+     * 按月统计医生挂号记录
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    @GetMapping("/selectRegisterByDoctorRank")
+    public R selectRegisterByDoctorRank(@RequestParam("year") String year, @RequestParam("month") String month) {
+        return R.ok();
+    }
+
+    /**
      * 查询挂号记录信息详情
      *
      * @param id 主键ID

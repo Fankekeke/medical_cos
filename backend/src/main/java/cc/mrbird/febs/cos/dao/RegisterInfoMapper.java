@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -21,4 +22,13 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectRegisterPage(Page<RegisterInfo> page, @Param("registerInfo") RegisterInfo registerInfo);
+
+    /**
+     * 根据时间获取挂号信息
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    List<RegisterInfo> selectRegisterByDate(@Param("year") String year, @Param("month") String month);
 }

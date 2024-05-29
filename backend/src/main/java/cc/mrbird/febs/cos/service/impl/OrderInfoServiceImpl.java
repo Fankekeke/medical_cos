@@ -79,8 +79,22 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         // 获取本月已支付订单
         List<OrderInfo> orderInfoList = baseMapper.selectOrderHospitalByDate(year, month);
+        Map<Integer, List<OrderInfo>> orderInfoMap = orderInfoList.stream().collect(Collectors.groupingBy(OrderInfo::getPharmacyId));
+        for (HospitalInfo hospitalInfo : hospitalInfoList) {
 
-        return null;
+            if (CollectionUtil.isEmpty(orderInfoMap) || CollectionUtil.isEmpty(orderInfoMap.get(hospitalInfo.getId()))) {
+                hospitalInfo.setSalesNum(0);
+                hospitalInfo.setSalesTotal(BigDecimal.ZERO);
+                continue;
+            }
+
+            List<OrderInfo> thisOrderInfos = orderInfoMap.get(hospitalInfo.getId());
+            BigDecimal salesTotal = thisOrderInfos.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+            hospitalInfo.setSalesNum(thisOrderInfos.size());
+            hospitalInfo.setSalesTotal(salesTotal);
+        }
+
+        return hospitalInfoList.stream().sorted(Comparator.comparing(HospitalInfo::getSalesTotal).reversed()).collect(Collectors.toList());
     }
 
     /**

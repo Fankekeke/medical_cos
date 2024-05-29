@@ -54,4 +54,9 @@
         order by
         ri.create_date desc
     </select>
+
+    <!-- 根据时间获取挂号信息 -->
+    <select id="selectRegisterByDate" resultType="java.util.LinkedHashMap">
+
+    </select>
 </mapper>

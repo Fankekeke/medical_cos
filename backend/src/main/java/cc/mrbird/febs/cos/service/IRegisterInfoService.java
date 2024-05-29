@@ -1,11 +1,14 @@
 package cc.mrbird.febs.cos.service;
 
+import cc.mrbird.febs.cos.entity.DoctorInfo;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.RegisterInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -20,4 +23,13 @@ public interface IRegisterInfoService extends IService<RegisterInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectRegisterPage(Page<RegisterInfo> page, RegisterInfo registerInfo);
+
+    /**
+     * 获取挂号排名
+     *
+     * @param year  年份
+     * @param month 月份
+     * @return 结果
+     */
+    List<DoctorInfo> selectRegisterByDoctorRank(String year, String month);
 }
