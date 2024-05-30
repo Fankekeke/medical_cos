@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="客户名称"
+                label="用户姓名"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="客户编号"
+                label="用户编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -27,6 +27,14 @@
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.phone"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="地址"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.address"/>
               </a-form-item>
             </a-col>
           </div>
@@ -64,8 +72,8 @@
         <template slot="operation" slot-scope="text, record">
           <a-icon type="cloud" @click="handleUserViewOpen(record)" title="详 情" style="margin-right: 10px"></a-icon>
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-right: 10px"></a-icon>
-          <a-icon v-if="record.isMember == 1" type="caret-down" @click="audit(record.id, 0)" title="取 消" style="margin-right: 10px"></a-icon>
-          <a-icon v-if="record.isMember == null || record.isMember == 0" type="caret-up" @click="audit(record.id, 1)" title="设 置" style="margin-right: 10px"></a-icon>
+          <a-icon v-if="record.status == 0" type="caret-up" @click="audit(record.id, 1)" title="up" style="margin-right: 10px"></a-icon>
+          <a-icon v-if="record.status == 1" type="caret-down" @click="audit(record.id, 0)" title="down" style="margin-right: 10px"></a-icon>
         </template>
       </a-table>
     </div>
@@ -138,26 +146,41 @@ export default {
     }),
     columns () {
       return [{
-        title: '客户名称',
+        title: '用户编号',
+        dataIndex: 'code'
+      }, {
+        title: '用户姓名',
         dataIndex: 'name'
       }, {
-        title: '会员',
-        dataIndex: 'isMember',
+        title: '性别',
+        dataIndex: 'sex',
         customRender: (text, row, index) => {
           switch (text) {
-            case 1:
-              return <a-tag color="green">是</a-tag>
-            case 0:
-              return <a-tag color="red">否</a-tag>
+            case '1':
+              return <a-tag color="blue">男</a-tag>
+            case '2':
+              return <a-tag color="pink">女</a-tag>
             default:
               return '- -'
           }
         }
       }, {
+        title: '用户头像',
+        dataIndex: 'images',
+        customRender: (text, record, index) => {
+          if (!record.images) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
         title: '联系方式',
         dataIndex: 'phone'
       }, {
-        title: '收获地址',
+        title: '地址',
         dataIndex: 'address'
       }, {
         title: '省份',
@@ -189,18 +212,18 @@ export default {
     this.fetch()
   },
   methods: {
+    audit (userId, flag) {
+      this.$post('/cos/user-info/user/audit', {userId, flag}).then((r) => {
+        this.$message.success('修改成功！')
+        this.fetch()
+      })
+    },
     handleUserViewOpen (row) {
       this.userView.data = row
       this.userView.visiable = true
     },
     handleUserViewClose () {
       this.userView.visiable = false
-    },
-    audit (id, status) {
-      this.$get('/cos/user-info/audit', {id, status}).then((r) => {
-        this.$message.success('修改成功')
-        this.search()
-      })
     },
     editStatus (row, status) {
       this.$post('/cos/user-info/account/status', { staffId: row.id, status }).then((r) => {

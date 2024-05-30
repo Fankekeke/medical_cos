@@ -109,5 +109,10 @@ public class UserInfo implements Serializable {
      */
     private String images;
 
+    /**
+     * 状态（0.锁定 1.正常）
+     */
+    private String status;
+
 
 }

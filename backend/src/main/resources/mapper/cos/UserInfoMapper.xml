@@ -21,7 +21,8 @@
         ui.sex,
         ui.birthday,
         ui.id_card,
-        ui.images
+        ui.images,
+        ui.status
         from
         user_info ui
         where 1 = 1
@@ -33,6 +34,9 @@
         </if>
         <if test="userInfo.address != null and userInfo.address != ''">
             AND ui.address LIKE CONCAT('%',#{userInfo.address},'%')
+        </if>
+        <if test="userInfo.phone != null and userInfo.phone != ''">
+            AND ui.phone LIKE CONCAT('%',#{userInfo.phone},'%')
         </if>
         order by ui.create_date DESC
     </select>
