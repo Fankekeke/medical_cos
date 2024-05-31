@@ -56,7 +56,35 @@
     </select>
 
     <!-- 根据时间获取挂号信息 -->
-    <select id="selectRegisterByDate" resultType="java.util.LinkedHashMap">
-
+    <select id="selectRegisterByDate" resultType="cc.mrbird.febs.cos.entity.RegisterInfo">
+        select
+            ri.id,
+            ri.user_id,
+            ri.price,
+            ri.register_date,
+            ri.dept_id,
+            ri.staff_id,
+            ri.start_date,
+            ri.end_date,
+            ri.status,
+            ri.pay_date,
+            ri.file,
+            ri.remark,
+            ri.code,
+            ri.drug_price,
+            ri.reference,
+            ri.create_date,
+            ri.schedule_id
+        from
+            register_info ri
+        where 1 = 1
+        AND ri.status != '0'
+        AND ri.status != '5'
+        <if test="year != null and year != ''">
+            AND YEAR(ri.register_date) = #{year}
+        </if>
+        <if test="month != null and month != ''">
+            AND MONTH(ri.register_date) = #{month}
+        </if>
     </select>
 </mapper>

@@ -56,6 +56,9 @@ public class RegisterInfoServiceImpl extends ServiceImpl<RegisterInfoMapper, Reg
         }
         // 获取本月挂号信息
         List<RegisterInfo> registerList = baseMapper.selectRegisterByDate(year, month);
+        if (CollectionUtil.isNotEmpty(registerList)) {
+
+        }
         return null;
     }
 }
