@@ -1,70 +1,45 @@
 <template>
-  <a-modal v-model="show" title="修改问题求助" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="回答问题求助" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
       </a-button>
       <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
-        修改
+        提交
       </a-button>
     </template>
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='问题求助标题' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'title',
-            { rules: [{ required: true, message: '请输入名称!' }] }
+          <a-form-item label='问题类型' v-bind="formItemLayout">
+            <a-input disabled v-decorator="[
+            'questionType',
+            { rules: [{ required: true, message: '请输入问题类型!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='上传人' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'publisher',
-            { rules: [{ required: true, message: '请输入上传人!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='问题求助状态' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'rackUp',
-              { rules: [{ required: true, message: '请输入问题求助状态!' }] }
-              ]">
-              <a-select-option value="0">下架</a-select-option>
-              <a-select-option value="1">已发布</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='问题求助内容' v-bind="formItemLayout">
-            <a-textarea :rows="6" v-decorator="[
-            'content',
-             { rules: [{ required: true, message: '请输入名称!' }] }
+          <a-form-item label='创建时间' v-bind="formItemLayout">
+            <a-input disabled v-decorator="[
+            'createDate',
+            { rules: [{ required: true, message: '请输入创建时间!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
-          <a-form-item label='图册' v-bind="formItemLayout">
-            <a-upload
-              name="avatar"
-              action="http://127.0.0.1:9527/file/fileUpload/"
-              list-type="picture-card"
-              :file-list="fileList"
-              @preview="handlePreview"
-              @change="picHandleChange"
-            >
-              <div v-if="fileList.length < 8">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
+          <a-form-item label='问题内容' v-bind="formItemLayout">
+            <a-textarea disabled :rows="4" v-decorator="[
+            'question',
+             { rules: [{ required: true, message: '请输入问题内容!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label='问题回答' v-bind="formItemLayout">
+            <a-textarea :rows="4" v-decorator="[
+            'answer',
+             { rules: [{ required: true, message: '请输入问题回答!' }] }
+            ]"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -141,7 +116,7 @@ export default {
     },
     setFormValues ({...help}) {
       this.rowId = help.id
-      let fields = ['title', 'content', 'publisher', 'rackUp']
+      let fields = ['questionType', 'question', 'answer', 'createDate']
       let obj = {}
       Object.keys(help).forEach((key) => {
         if (key === 'images') {

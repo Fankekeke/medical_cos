@@ -1,60 +1,60 @@
 <template>
-  <a-modal v-model="show" title="医生详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="医院详情" @cancel="onClose" :width="900">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="doctorData !== null">
+    <div style="font-size: 13px;font-family: SimHei" v-if="hospitalData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医生信息</span></a-col>
-        <a-col :span="8"><b>医生姓名：</b>
-          {{ doctorData.doctorName }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院信息</span></a-col>
+        <a-col :span="8"><b>医院姓名：</b>
+          {{ hospitalData.hospitalName }}
         </a-col>
         <a-col :span="8"><b>性别：</b>
-          {{ doctorData.doctorSex }}
+          {{ hospitalData.hospitalSex }}
         </a-col>
         <a-col :span="8"><b>所属医院：</b>
-          {{ doctorData.hospitalName }}
+          {{ hospitalData.hospitalName }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="8"><b>所属科室：</b>
-          {{ doctorData.officesName }}
+          {{ hospitalData.officesName }}
         </a-col>
-        <a-col :span="8"><b>医生职称：</b>
-          {{ doctorData.doctorTitle }}
+        <a-col :span="8"><b>医院职称：</b>
+          {{ hospitalData.hospitalTitle }}
         </a-col>
         <a-col :span="8"><b>教学支职称：</b>
-          {{ doctorData.teachTitle }}
+          {{ hospitalData.teachTitle }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="8"><b>行政职位：</b>
-          {{ doctorData.doctorAdministrative }}
+          {{ hospitalData.hospitalAdministrative }}
         </a-col>
         <a-col :span="8"><b>学位：</b>
-          {{ doctorData.doctorDegree }}
+          {{ hospitalData.hospitalDegree }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="24"><b>行政职位：</b>
-          {{ doctorData.doctorAbout }}
+          {{ hospitalData.hospitalAbout }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>医生特长：</b>
-          {{ doctorData.doctorForte }}
+        <a-col :span="24"><b>医院特长：</b>
+          {{ hospitalData.hospitalForte }}
         </a-col>
       </a-row>
       <br/>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医生图片</span></a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院图片</span></a-col>
         <a-col :span="24">
           <a-upload
             name="avatar"
@@ -88,20 +88,20 @@ function getBase64 (file) {
   })
 }
 export default {
-  name: 'doctorView',
+  name: 'hospitalView',
   props: {
-    doctorShow: {
+    hospitalShow: {
       type: Boolean,
       default: false
     },
-    doctorData: {
+    hospitalData: {
       type: Object
     }
   },
   computed: {
     show: {
       get: function () {
-        return this.doctorShow
+        return this.hospitalShow
       },
       set: function () {
       }
@@ -116,12 +116,12 @@ export default {
     }
   },
   watch: {
-    doctorShow: function (value) {
+    hospitalShow: function (value) {
       if (value) {
-        if (this.doctorData.images !== null && this.doctorData.images !== '') {
-          this.imagesInit(this.doctorData.images, 0)
+        if (this.hospitalData.images !== null && this.hospitalData.images !== '') {
+          this.imagesInit(this.hospitalData.images, 0)
         } else {
-          this.imagesInit(this.doctorData.doctorImg, 1)
+          this.imagesInit(this.hospitalData.hospitalImg, 1)
         }
       }
     }

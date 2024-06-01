@@ -253,7 +253,7 @@ baiduMap.localInfoWindow = (marker, content) => {
     title: content.title, // 信息窗口标题
     enableMessage: true// 设置允许信息窗发送短息
   }
-  var infoWindow = new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province != undefined ? content.province : '无') + '</span><span>市区：' + (content.city != undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags != undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="font-size: 12px" href="#" id="detail_btn">就决定是你了</a></div>', opts) // 创建信息窗口对象
+  var infoWindow = new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province != undefined ? content.province : '无') + '</span><span>市区：' + (content.city != undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags != undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="font-size: 12px" href="#" id="detail_btn">选择点位</a></div>', opts) // 创建信息窗口对象
   marker.addEventListener('click', function (rs) {
     map.openInfoWindow(infoWindow, content.point) // 开启信息窗口
     var btn = document.getElementById('detail_btn')
@@ -271,7 +271,7 @@ baiduMap.rlocalInfoWindow = (content) => {
     title: content.title, // 信息窗口标题
     enableMessage: true// 设置允许信息窗发送短息
   }
-  var infoWindow = new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province != undefined ? content.province : '无') + '</span><span>市区：' + (content.city != undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags != undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="float: right;font-size: 12px" href="#" id="detail_btn">就决定是你了</a></div>', opts) // 创建信息窗口对象
+  var infoWindow = new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province != undefined ? content.province : '无') + '</span><span>市区：' + (content.city != undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags != undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="float: right;font-size: 12px" href="#" id="detail_btn">选择点位</a></div>', opts) // 创建信息窗口对象
   return infoWindow
 }
 

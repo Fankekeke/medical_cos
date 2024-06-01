@@ -128,7 +128,7 @@ export default {
       }
       // @click="'+this.handlerClosed("sss")+'"
       // eslint-disable-next-line no-undef
-      return new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province !== undefined ? content.province : '无') + '</span><span>市区：' + (content.city !== undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags !== undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="float: right;font-size: 12px" href="#" id="detail_btn">就决定是你了</a></div>', opts)
+      return new BMap.InfoWindow('<div style="margin-top: 3px"><p style="font-size: 12px;margin-top: 2px"><span>省份：' + (content.province !== undefined ? content.province : '无') + '</span><span>市区：' + (content.city !== undefined ? content.city : '无') + '</span></p><p style="font-size: 12px;margin-top: 2px">地区类型：' + (content.tags !== undefined ? content.tags : '无') + '</p><p style="font-size: 12px;margin-top: 2px">地址：' + content.address + '</p><a style="float: right;font-size: 12px" href="#" id="detail_btn">选择点位</a></div>', opts)
     },
     searchLocal (localName) {
       let localData = []

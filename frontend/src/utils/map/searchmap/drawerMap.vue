@@ -11,7 +11,7 @@
     <a-input-search v-model="local" placeholder="选择区域" style="width: 200px;position: absolute;z-index: 10" @search="onSearch" size="small"/>
     <div class="map-area" id="areass"></div>
     <div v-show="cardShow">
-      <a-card hoverable style="width: 100%" v-for="local in localData" :key="local.uid">
+      <a-card hoverable style="width: 100%;margin-top: 15px" v-for="local in localData" :key="local.uid">
         <template class="ant-card-actions" slot="actions">
         </template>
         <a-card-meta :title="local.title" :description="local.address"></a-card-meta>
@@ -100,5 +100,23 @@ export default {
   height: 400px;
   padding: 0;
   margin: 0;
+}
+
+>>> .ant-card-meta-title {
+  font-size: 13px;
+  font-family: SimHei;
+}
+>>> .ant-card-meta-description {
+  font-size: 12px;
+  font-family: SimHei;
+}
+
+>>> .ant-card-head-title {
+  font-size: 13px;
+  font-family: SimHei;
+}
+>>> .ant-card-extra {
+  font-size: 13px;
+  font-family: SimHei;
 }
 </style>

@@ -7,29 +7,34 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="问题类型"
+                label="医院名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.questionType"/>
+                <a-input v-model="queryParams.hospitalName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="问题内容"
+                label="医院地区"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.question"/>
+                <a-input v-model="queryParams.hospitalArea"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="问题类型"
+                label="医院类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-select v-model="queryParams.status">
-                  <a-select-option value="0">未处理</a-select-option>
-                  <a-select-option value="1">已处理</a-select-option>
-                </a-select>
+                <a-input v-model="queryParams.hospitalNature"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="医院等级"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.hospitalGrade"/>
               </a-form-item>
             </a-col>
           </div>
@@ -57,8 +62,6 @@
                @change="handleTableChange">
         <template slot="titleShow" slot-scope="text, record">
           <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
             <a-tooltip>
               <template slot="title">
                 {{ record.title }}
@@ -67,64 +70,54 @@
             </a-tooltip>
           </template>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.question }}
-              </template>
-              {{ record.question.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
-        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="cloud" @click="handlehelpViewOpen(record)" title="详 情"></a-icon>
-          <a-icon type="bulb" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px" v-if="record.status === '0'"></a-icon>
+          <a-icon type="cloud" @click="handlehospitalViewOpen(record)" title="详 情"></a-icon>
+          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
-    <help-add
-      v-if="helpAdd.visiable"
-      @close="handlehelpAddClose"
-      @success="handlehelpAddSuccess"
-      :helpAddVisiable="helpAdd.visiable">
-    </help-add>
-    <help-edit
-      ref="helpEdit"
-      @close="handlehelpEditClose"
-      @success="handlehelpEditSuccess"
-      :helpEditVisiable="helpEdit.visiable">
-    </help-edit>
-    <help-view
-      @close="handlehelpViewClose"
-      :helpShow="helpView.visiable"
-      :helpData="helpView.data">
-    </help-view>
+    <hospital-add
+      v-if="hospitalAdd.visiable"
+      @close="handlehospitalAddClose"
+      @success="handlehospitalAddSuccess"
+      :hospitalAddVisiable="hospitalAdd.visiable">
+    </hospital-add>
+    <hospital-edit
+      ref="hospitalEdit"
+      @close="handlehospitalEditClose"
+      @success="handlehospitalEditSuccess"
+      :hospitalEditVisiable="hospitalEdit.visiable">
+    </hospital-edit>
+    <hospital-view
+      @close="handlehospitalViewClose"
+      :hospitalShow="hospitalView.visiable"
+      :hospitalData="hospitalView.data">
+    </hospital-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import helpAdd from './HelpAdd.vue'
-import helpEdit from './HelpEdit.vue'
-import helpView from './HelpView.vue'
+import hospitalAdd from './HospitalAdd.vue'
+import hospitalEdit from './HospitalEdit.vue'
+import hospitalView from './HospitalView.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'help',
-  components: {helpAdd, helpEdit, helpView, RangeDate},
+  name: 'hospital',
+  components: {hospitalAdd, hospitalEdit, hospitalView, RangeDate},
   data () {
     return {
       advanced: false,
-      helpAdd: {
+      hospitalAdd: {
         visiable: false
       },
-      helpEdit: {
+      hospitalEdit: {
         visiable: false
       },
-      helpView: {
+      hospitalView: {
         visiable: false,
         data: null
       },
@@ -152,44 +145,44 @@ export default {
     }),
     columns () {
       return [{
-        title: '用户姓名',
-        dataIndex: 'userName'
+        title: '医院名称',
+        dataIndex: 'hospitalName'
       }, {
-        title: '用户头像',
-        dataIndex: 'userImages',
+        title: '医院地区',
+        dataIndex: 'hospitalArea'
+      }, {
+        title: '所属医院',
+        dataIndex: 'hospitalDeanName'
+      }, {
+        title: '所属科室',
+        dataIndex: 'hospitalYear'
+      }, {
+        title: '医院类别',
+        dataIndex: 'hospitalNature'
+      }, {
+        title: '医院图片',
+        dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.userImages) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
+          if (!record.hospitalUrl && !record.images) return <a-avatar shape="square" icon="user" />
+          if (record.hospitalUrl) return <a-popover>
             <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+              <a-avatar shape="square" size={132} icon="user" src={ record.hospitalUrl } />
             </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            <a-avatar shape="square" icon="user" src={ record.hospitalUrl } />
+          </a-popover>
+          if (record.images) <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
           </a-popover>
         }
       }, {
-        title: '问题类型',
-        dataIndex: 'questionType'
+        title: '教学支职称',
+        dataIndex: 'hospitalGrade'
       }, {
-        title: '问题内容',
-        dataIndex: 'question',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 500
-      }, {
-        title: '问题状态',
-        dataIndex: 'status',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return <a-tag>未处理</a-tag>
-            case '1':
-              return <a-tag color="green">已处理</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
+        title: '医院电话',
+        dataIndex: 'hospitalPhone',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -198,8 +191,8 @@ export default {
           }
         }
       }, {
-        title: '处理时间',
-        dataIndex: 'replyDate',
+        title: '医院地址',
+        dataIndex: 'hospitalAddress',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -218,12 +211,12 @@ export default {
     this.fetch()
   },
   methods: {
-    handlehelpViewOpen (row) {
-      this.helpView.data = row
-      this.helpView.visiable = true
+    handlehospitalViewOpen (row) {
+      this.hospitalView.data = row
+      this.hospitalView.visiable = true
     },
-    handlehelpViewClose () {
-      this.helpView.visiable = false
+    handlehospitalViewClose () {
+      this.hospitalView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -232,26 +225,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.helpAdd.visiable = true
+      this.hospitalAdd.visiable = true
     },
-    handlehelpAddClose () {
-      this.helpAdd.visiable = false
+    handlehospitalAddClose () {
+      this.hospitalAdd.visiable = false
     },
-    handlehelpAddSuccess () {
-      this.helpAdd.visiable = false
-      this.$message.success('新增问题求助成功')
+    handlehospitalAddSuccess () {
+      this.hospitalAdd.visiable = false
+      this.$message.success('新增医院成功')
       this.search()
     },
     edit (record) {
-      this.$refs.helpEdit.setFormValues(record)
-      this.helpEdit.visiable = true
+      this.$refs.hospitalEdit.setFormValues(record)
+      this.hospitalEdit.visiable = true
     },
-    handlehelpEditClose () {
-      this.helpEdit.visiable = false
+    handlehospitalEditClose () {
+      this.hospitalEdit.visiable = false
     },
-    handlehelpEditSuccess () {
-      this.helpEdit.visiable = false
-      this.$message.success('修改问题求助成功')
+    handlehospitalEditSuccess () {
+      this.hospitalEdit.visiable = false
+      this.$message.success('修改医院成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -269,7 +262,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/help-info/' + ids).then(() => {
+          that.$delete('/cos/hospital-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -339,10 +332,10 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      if (params.status === undefined) {
-        delete params.status
+      if (params.type === undefined) {
+        delete params.type
       }
-      this.$get('/cos/help-info/page', {
+      this.$get('/cos/hospital-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

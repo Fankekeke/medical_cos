@@ -1,60 +1,49 @@
 <template>
-  <a-modal v-model="show" title="医生详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="问题详情" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="doctorData !== null">
+    <div style="font-size: 13px;font-family: SimHei" v-if="helpData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医生信息</span></a-col>
-        <a-col :span="8"><b>医生姓名：</b>
-          {{ doctorData.doctorName }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">问题信息</span></a-col>
+        <a-col :span="8"><b>问题类型：</b>
+          {{ helpData.questionType }}
         </a-col>
-        <a-col :span="8"><b>性别：</b>
-          {{ doctorData.doctorSex }}
+        <a-col :span="8"><b>处理状态：</b>
+          <span v-if="helpData.status == '0'" style="color: red">未处理</span>
+          <span v-if="helpData.status == '1'" style="color: green">已处理</span>
         </a-col>
-        <a-col :span="8"><b>所属医院：</b>
-          {{ doctorData.hospitalName }}
+        <a-col :span="8"><b>创建时间：</b>
+          {{ helpData.createDate }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>所属科室：</b>
-          {{ doctorData.officesName }}
+        <a-col :span="8"><b>处理时间：</b>
+          {{ helpData.replyDate == null ? '- -' : helpData.replyDate }}
         </a-col>
-        <a-col :span="8"><b>医生职称：</b>
-          {{ doctorData.doctorTitle }}
+        <a-col :span="8"><b>用户姓名：</b>
+          {{ helpData.userName }}
         </a-col>
-        <a-col :span="8"><b>教学支职称：</b>
-          {{ doctorData.teachTitle }}
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>行政职位：</b>
-          {{ doctorData.doctorAdministrative }}
-        </a-col>
-        <a-col :span="8"><b>学位：</b>
-          {{ doctorData.doctorDegree }}
+        <a-col :span="8"><b>联系方式：</b>
+          {{ helpData.phone }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>行政职位：</b>
-          {{ doctorData.doctorAbout }}
-        </a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">问题详情</span></a-col>
+        {{ helpData.question == null ? '- -' : helpData.question }}
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>医生特长：</b>
-          {{ doctorData.doctorForte }}
-        </a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">回答信息</span></a-col>
+        {{ helpData.answer == null ? '- -' : helpData.answer }}
       </a-row>
       <br/>
-      <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医生图片</span></a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">用户头像</span></a-col>
         <a-col :span="24">
           <a-upload
             name="avatar"
@@ -70,7 +59,6 @@
           </a-modal>
         </a-col>
       </a-row>
-      <br/>
       <br/>
     </div>
   </a-modal>
@@ -88,20 +76,20 @@ function getBase64 (file) {
   })
 }
 export default {
-  name: 'doctorView',
+  name: 'helpView',
   props: {
-    doctorShow: {
+    helpShow: {
       type: Boolean,
       default: false
     },
-    doctorData: {
+    helpData: {
       type: Object
     }
   },
   computed: {
     show: {
       get: function () {
-        return this.doctorShow
+        return this.helpShow
       },
       set: function () {
       }
@@ -116,29 +104,21 @@ export default {
     }
   },
   watch: {
-    doctorShow: function (value) {
+    helpShow: function (value) {
       if (value) {
-        if (this.doctorData.images !== null && this.doctorData.images !== '') {
-          this.imagesInit(this.doctorData.images, 0)
-        } else {
-          this.imagesInit(this.doctorData.doctorImg, 1)
+        if (this.helpData.userImages !== null && this.helpData.userImages !== '') {
+          this.imagesInit(this.helpData.userImages)
         }
       }
     }
   },
   methods: {
-    imagesInit (images, type) {
+    imagesInit (images) {
       if (images !== null && images !== '') {
         let imageList = []
-        if (type === 0) {
-          images.split(',').forEach((image, index) => {
-            imageList.push({uid: index, name: image, status: 'done', url: 'http://127.0.0.1:9527/imagesWeb/' + image})
-          })
-        } else {
-          images.split(',').forEach((image, index) => {
-            imageList.push({uid: index, name: image, status: 'done', url: image})
-          })
-        }
+        images.split(',').forEach((image, index) => {
+          imageList.push({uid: index, name: image, status: 'done', url: 'http://127.0.0.1:9527/imagesWeb/' + image})
+        })
         this.fileList = imageList
       }
     },

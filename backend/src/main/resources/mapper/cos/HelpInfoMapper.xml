@@ -13,6 +13,7 @@
         hi.status,
         hi.reply_date,
         ui.name as userName,
+        ui.phone as phone,
         ui.images as userImages
         from help_info hi
         left join user_info ui on (ui.id = hi.user_id)
