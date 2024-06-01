@@ -71,12 +71,21 @@
         </a-col>
       </a-row>
       <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店位置</span></a-col>
+      </a-row>
+      <div>
+        <a-card :bordered="false" style="height: 400px">
+          <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
+        </a-card>
+      </div>
       <br/>
     </div>
   </a-modal>
 </template>
 
 <script>
+import baiduMap from '@/utils/map/baiduMap'
 import moment from 'moment'
 moment.locale('zh-cn')
 function getBase64 (file) {
@@ -123,10 +132,26 @@ export default {
         } else {
           this.imagesInit(this.hospitalData.hospitalImg, 1)
         }
+        setTimeout(() => {
+          baiduMap.initMap('areas')
+          setTimeout(() => {
+            this.local(this.pharmacyData)
+          }, 500)
+        }, 200)
       }
     }
   },
   methods: {
+    local (pharmacy) {
+      baiduMap.clearOverlays()
+      baiduMap.rMap().enableScrollWheelZoom(true)
+      // eslint-disable-next-line no-undef
+      let point = new BMap.Point(pharmacy.longitude, pharmacy.latitude)
+      baiduMap.pointAdd(point)
+      baiduMap.findPoint(point, 16)
+      // let driving = new BMap.DrivingRoute(baiduMap.rMap(), {renderOptions:{map: baiduMap.rMap(), autoViewport: true}});
+      // driving.search(new BMap.Point(this.nowPoint.lng,this.nowPoint.lat), new BMap.Point(scenic.point.split(",")[0],scenic.point.split(",")[1]));
+    },
     imagesInit (images, type) {
       if (images !== null && images !== '') {
         let imageList = []

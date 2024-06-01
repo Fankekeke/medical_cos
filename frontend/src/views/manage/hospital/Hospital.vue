@@ -151,10 +151,10 @@ export default {
         title: '医院地区',
         dataIndex: 'hospitalArea'
       }, {
-        title: '所属医院',
+        title: '医院院长姓名',
         dataIndex: 'hospitalDeanName'
       }, {
-        title: '所属科室',
+        title: '建院年份',
         dataIndex: 'hospitalYear'
       }, {
         title: '医院类别',
