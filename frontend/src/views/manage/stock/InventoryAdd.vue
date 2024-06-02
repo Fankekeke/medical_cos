@@ -11,15 +11,21 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="10">
         <a-divider orientation="left">
-          <span style="font-size: 13px">选择药房</span>
+          <span style="font-size: 13px">选择医院</span>
         </a-divider>
         <a-col :span="12">
-          <a-form-item label='药店'>
-            <a-select @change="pharmacyCheck" v-decorator="[
+          <a-form-item label='医院'>
+            <a-select
+              show-search
+              option-filter-prop="children"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              @search="fetchUser"
+              @change="pharmacyCheck" v-decorator="[
               'pharmacyId',
-              { rules: [{ required: true, message: '请输入所属药店!' }] }
+              { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in pharmacyList" :key="index">{{ item.name }}</a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -28,7 +34,7 @@
         <a-col :span="8"><b>营业时间：</b>
           {{ pharmacyInfo.businessHours }}
         </a-col>
-        <a-col :span="8"><b>药店编号：</b>
+        <a-col :span="8"><b>医院编号：</b>
           {{ pharmacyInfo.code }}
         </a-col>
         <a-col :span="8"><b>地址：</b>
@@ -163,9 +169,11 @@ export default {
       stayAddress: '',
       childrenDrawer: false,
       pharmacyList: [],
+      hospitalList: [],
       pharmacyInfo: null,
       dataList: [],
-      drugList: []
+      drugList: [],
+      fetching: false
     }
   },
   mounted () {
@@ -173,6 +181,31 @@ export default {
     this.getDrug()
   },
   methods: {
+    fetchUser (value) {
+      this.lastFetchId += 1;
+      const fetchId = this.lastFetchId;
+      this.data = [];
+      this.fetching = true;
+      this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+        this.hospitalList = r.data.data
+
+        if (fetchId !== this.lastFetchId) {
+          // for fetch callback order
+          return;
+        }
+        const data = body.results.map(item => ({
+          text: `${item.hospitalName} ${item.hospitalNature}`,
+          value: item.id,
+        }));
+        this.hospitalList = data;
+        this.fetching = false;
+      })
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
     handleChange (value, record) {
       if (value) {
         this.drugList.forEach(e => {
@@ -189,7 +222,7 @@ export default {
     },
     pharmacyCheck (value) {
       if (value) {
-        this.pharmacyList.forEach(e => {
+        this.hospitalList.forEach(e => {
           if (e.id === value) {
             this.pharmacyInfo = e
           }
@@ -202,11 +235,6 @@ export default {
     getDrug () {
       this.$get('/cos/drug-info/list').then((r) => {
         this.drugList = r.data.data
-      })
-    },
-    getPharmacy () {
-      this.$get('/cos/pharmacy-info/list').then((r) => {
-        this.pharmacyList = r.data.data
       })
     },
     handlerClosed (localPoint) {

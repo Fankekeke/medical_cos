@@ -24,12 +24,18 @@
           </a-form-item>
         </a-col>
         <a-col :span="8">
-          <a-form-item label='选择药店'>
-            <a-select @change="pharmacyCheck" v-decorator="[
+          <a-form-item label='选择医院'>
+            <a-select
+              show-search
+              option-filter-prop="children"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              @search="fetchUser"
+              @change="pharmacyCheck" v-decorator="[
               'pharmacyId',
-              { rules: [{ required: true, message: '请输入采购药店!' }] }
+              { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in pharmacyList" :key="index">{{ item.name }}</a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -94,6 +100,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import baiduMap from '@/utils/map/baiduMap'
 import drawerMap from '@/utils/map/searchmap/drawerMap'
 import {mapState} from 'vuex'
@@ -159,6 +166,8 @@ export default {
     }
   },
   data () {
+    this.lastFetchId = 0;
+    this.fetchUser = debounce(this.fetchUser, 800);
     return {
       formItemLayout,
       form: this.$form.createForm(this),
@@ -169,19 +178,47 @@ export default {
       localPoint: {},
       stayAddress: '',
       childrenDrawer: false,
+      hospitalList: [],
       pharmacyList: [],
       supplierList: [],
       pharmacyInfo: null,
       dataList: [],
-      drugList: []
+      drugList: [],
+      fetching: false
     }
   },
   mounted () {
     this.getSupplier()
     this.getDrug()
-    this.getPharmacy()
   },
   methods: {
+    fetchUser (value) {
+      if (value) {
+        this.lastFetchId += 1;
+        const fetchId = this.lastFetchId;
+        this.data = [];
+        this.fetching = true;
+        this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+          this.hospitalList = r.data.data
+
+          if (fetchId !== this.lastFetchId) {
+            // for fetch callback order
+            return;
+          }
+          const data = body.results.map(item => ({
+            text: `${item.hospitalName} ${item.hospitalNature}`,
+            value: item.id,
+          }));
+          this.hospitalList = data;
+          this.fetching = false;
+        })
+      }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
     getPharmacy () {
       this.$get('/cos/pharmacy-info/list').then((r) => {
         this.pharmacyList = r.data.data
@@ -203,7 +240,7 @@ export default {
     },
     pharmacyCheck (value) {
       if (value) {
-        this.pharmacyList.forEach(e => {
+        this.hospitalList.forEach(e => {
           if (e.id === value) {
             this.pharmacyInfo = e
           }

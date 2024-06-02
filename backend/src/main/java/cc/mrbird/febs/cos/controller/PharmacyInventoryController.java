@@ -76,9 +76,9 @@ public class PharmacyInventoryController {
     }
 
     /**
-     * 根据药房ID获取库存信息
+     * 根据医院ID获取库存信息
      *
-     * @param pharmacyId 药房ID
+     * @param pharmacyId 医院ID
      * @return 结果
      */
     @GetMapping("/detail/pharmacy/{pharmacyId}")

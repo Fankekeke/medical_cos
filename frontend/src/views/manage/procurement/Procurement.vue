@@ -7,18 +7,29 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="员工姓名"
+                label="采购单号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.name"/>
+                <a-input v-model="queryParams.code"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="员工编号"
+                label="采购人"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
+                <a-input v-model="queryParams.purchaser"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="采购状态"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.status" allowClear>
+                  <a-select-option value="1">运输中</a-select-option>
+                  <a-select-option value="2">已验收</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +42,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">药品采购</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -46,6 +57,8 @@
                @change="handleTableChange">
         <template slot="titleShow" slot-scope="text, record">
           <template>
+            <a-badge status="processing" v-if="record.rackUp === 1"/>
+            <a-badge status="error" v-if="record.rackUp === 0"/>
             <a-tooltip>
               <template slot="title">
                 {{ record.title }}
@@ -54,45 +67,62 @@
             </a-tooltip>
           </template>
         </template>
+        <template slot="contentShow" slot-scope="text, record">
+          <template>
+            <a-tooltip>
+              <template slot="title">
+                {{ record.content }}
+              </template>
+              {{ record.content.slice(0, 30) }} ...
+            </a-tooltip>
+          </template>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="file-search" @click="orderViewOpen(record)" title="详 情"></a-icon>
+          <a-icon v-if="record.status == 1" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="物流添加" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
-    <staff-add
-      v-if="staffAdd.visiable"
-      @close="handlestaffAddClose"
-      @success="handlestaffAddSuccess"
-      :staffAddVisiable="staffAdd.visiable">
-    </staff-add>
-    <staff-edit
-      ref="staffEdit"
-      @close="handlestaffEditClose"
-      @success="handlestaffEditSuccess"
-      :staffEditVisiable="staffEdit.visiable">
-    </staff-edit>
+    <purchase-view
+      @close="handleViewClose"
+      :purchaseShow="purchaseView.visiable"
+      :purchaseData="purchaseView.data">
+    </purchase-view>
+    <logistics-edit
+      ref="logisticsEdit"
+      @close="handlelogisticsEditClose"
+      @success="handlelogisticsEditSuccess"
+      :logisticsEditVisiable="logisticsEdit.visiable">
+    </logistics-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import staffAdd from './StaffAdd'
-import staffEdit from './StaffEdit'
+import purchaseView from './PurchaseView.vue'
+import logisticsEdit from './LogisticsEdit'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'staff',
-  components: {staffAdd, staffEdit, RangeDate},
+  name: 'purchase',
+  components: {purchaseView, logisticsEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      staffAdd: {
+      logisticsEdit: {
         visiable: false
       },
-      staffEdit: {
+      purchaseAdd: {
         visiable: false
+      },
+      purchaseEdit: {
+        visiable: false
+      },
+      purchaseView: {
+        visiable: false,
+        data: null
       },
       queryParams: {},
       filteredInfo: null,
@@ -118,53 +148,23 @@ export default {
     }),
     columns () {
       return [{
-        title: '员工姓名',
-        dataIndex: 'name'
-      }, {
-        title: '员工编号',
+        title: '采购单号',
         dataIndex: 'code'
       }, {
-        title: '所属医院',
-        dataIndex: 'hospitalName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
+        title: '采购药店',
+        dataIndex: 'pharmacyName'
       }, {
-        title: '性别',
-        dataIndex: 'sex',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>男</a-tag>
-            case 2:
-              return <a-tag>女</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '状态',
-        dataIndex: 'status',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag color="blue">在职</a-tag>
-            case 2:
-              return <a-tag color="pink">离职</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '照片',
+        title: '图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
+          if (!record.hospitalUrl && !record.images) return <a-avatar shape="square" icon="user" />
+          if (record.hospitalUrl) return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ record.hospitalUrl } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ record.hospitalUrl } />
+          </a-popover>
+          if (record.images) <a-popover>
             <template slot="content">
               <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
             </template>
@@ -172,26 +172,66 @@ export default {
           </a-popover>
         }
       }, {
-        title: '是否为管理',
-        dataIndex: 'status',
+        title: '采购总价',
+        dataIndex: 'totalPrice',
         customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag color="green">是</a-tag>
-            case 0:
-              return <a-tag color="red">否</a-tag>
-            default:
-              return '- -'
+          if (text !== null) {
+            return text + '元'
+          } else {
+            return '- -'
           }
         }
       }, {
-        title: '创建时间',
+        title: '采购数量',
+        dataIndex: 'amount',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '采购人',
+        dataIndex: 'purchaser',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '供应商',
+        dataIndex: 'name',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '采购时间',
         dataIndex: 'createDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
+          }
+        }
+      }, {
+        title: '采购状态',
+        dataIndex: 'status',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 1:
+              return <a-tag>运输中</a-tag>
+            case 2:
+              return <a-tag>已验收</a-tag>
+            default:
+              return '- -'
           }
         }
       }, {
@@ -205,11 +245,20 @@ export default {
     this.fetch()
   },
   methods: {
-    editStatus (row, status) {
-      this.$post('/cos/staff-info/account/status', { staffId: row.id, status }).then((r) => {
-        this.$message.success('修改成功')
-        this.fetch()
-      })
+    handlelogisticsEditClose () {
+      this.logisticsEdit.visiable = false
+    },
+    handlelogisticsEditSuccess () {
+      this.logisticsEdit.visiable = false
+      this.$message.success('修改成功')
+      this.search()
+    },
+    orderViewOpen (row) {
+      this.purchaseView.data = row
+      this.purchaseView.visiable = true
+    },
+    handleViewClose () {
+      this.purchaseView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -218,26 +267,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.staffAdd.visiable = true
+      this.purchaseAdd.visiable = true
     },
-    handlestaffAddClose () {
-      this.staffAdd.visiable = false
+    handlepurchaseAddClose () {
+      this.purchaseAdd.visiable = false
     },
-    handlestaffAddSuccess () {
-      this.staffAdd.visiable = false
-      this.$message.success('新增员工成功')
+    handlepurchaseAddSuccess () {
+      this.purchaseAdd.visiable = false
+      this.$message.success('新增成功')
       this.search()
     },
     edit (record) {
-      this.$refs.staffEdit.setFormValues(record)
-      this.staffEdit.visiable = true
+      this.$refs.logisticsEdit.setFormValues(record)
+      this.logisticsEdit.visiable = true
     },
-    handlestaffEditClose () {
-      this.staffEdit.visiable = false
+    handlepurchaseEditClose () {
+      this.purchaseEdit.visiable = false
     },
-    handlestaffEditSuccess () {
-      this.staffEdit.visiable = false
-      this.$message.success('修改员工成功')
+    handlepurchaseEditSuccess () {
+      this.purchaseEdit.visiable = false
+      this.$message.success('修改成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -255,7 +304,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/staff-info/' + ids).then(() => {
+          that.$delete('/cos/purchase-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -325,7 +374,10 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/staff-info/page', {
+      if (params.status === undefined) {
+        delete params.status
+      }
+      this.$get('/cos/purchase-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

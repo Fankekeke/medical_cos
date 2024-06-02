@@ -38,11 +38,11 @@
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店信息</span></a-col>
-        <a-col :span="8"><b>药店名称：</b>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院信息</span></a-col>
+        <a-col :span="8"><b>医院名称：</b>
             {{ orderAuditData.pharmacyName }}
           </a-col>
-        <a-col :span="8"><b>药店地址：</b>
+        <a-col :span="8"><b>医院地址：</b>
           {{ orderAuditData.address }}
         </a-col>
         <a-col :span="8"><b>联系方式：</b>

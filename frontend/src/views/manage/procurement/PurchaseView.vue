@@ -1,62 +1,52 @@
 <template>
-  <a-modal v-model="show" title="订单详情" @cancel="onClose" :width="900">
+  <a-modal v-model="show" title="采购详情" @cancel="onClose" :width="1200">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
     </template>
-    <div style="font-size: 13px;font-family: SimHei" v-if="orderData !== null">
-      <div style="padding-left: 24px;padding-right: 24px;margin-bottom: 50px;margin-top: 50px">
-        <a-steps :current="current" progress-dot size="small">
-          <a-step title="待付款" />
-          <a-step title="已下单" />
-          <a-step title="配送中" />
-          <a-step title="已收货" />
-        </a-steps>
-      </div>
+    <div style="font-size: 13px;font-family: SimHei" v-if="purchaseData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">基础信息</span></a-col>
-        <a-col :span="8"><b>工单编号：</b>
-          {{ orderData.code }}
+        <a-col :span="8"><b>采购单号：</b>
+          {{ purchaseData.code }}
         </a-col>
-        <a-col :span="8"><b>客户名称：</b>
-          {{ orderData.name ? orderData.name : '- -' }}
+        <a-col :span="8"><b>采购数量：</b>
+          {{ purchaseData.amount ? purchaseData.amount : '- -' }}
         </a-col>
-        <a-col :span="8"><b>联系方式：</b>
-          {{ orderData.phone ? orderData.phone : '- -' }}
+        <a-col :span="8"><b>采购人：</b>
+          {{ purchaseData.purchaser ? purchaseData.purchaser : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col :span="8"><b>当前状态：</b>
-          <span v-if="orderData.orderStatus == 0">待付款</span>
-          <span v-if="orderData.orderStatus == 1">已下单</span>
-          <span v-if="orderData.orderStatus == 2">配送中</span>
-          <span v-if="orderData.orderStatus == 3">已收货</span>
+          <span v-if="purchaseData.status == 1">运输中</span>
+          <span v-if="purchaseData.status == 2">已验收</span>
         </a-col>
-        <a-col :span="8"><b>订单金额：</b>
-          {{ orderData.totalCost }} 元
+        <a-col :span="8"><b>采购金额：</b>
+          {{ purchaseData.totalPrice }} 元
         </a-col>
-        <a-col :span="8"><b>下单时间：</b>
-          {{ orderData.createDate }}
+        <a-col :span="8"><b>采购时间：</b>
+          {{ purchaseData.createDate }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院信息</span></a-col>
-        <a-col :span="8"><b>医院名称：</b>
-            {{ orderData.pharmacyName }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">供应商信息</span></a-col>
+        <a-col :span="8"><b>供应商名称：</b>
+            {{ purchaseData.name }}
           </a-col>
-        <a-col :span="8"><b>医院地址：</b>
-          {{ orderData.address }}
+        <a-col :span="8"><b>统一社会信用代码：</b>
+          {{ purchaseData.creditCode }}
         </a-col>
-        <a-col :span="8"><b>联系方式：</b>
-          {{ orderData.pharmacyPhone }}
+        <a-col :span="8"><b>所属行业：</b>
+          {{ purchaseData.industry }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">购买药品信息</span></a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">采购药品信息</span></a-col>
          <a-col :span="24">
           <a-table :columns="columns" :data-source="durgList">
           </a-table>
@@ -86,20 +76,20 @@ function getBase64 (file) {
   })
 }
 export default {
-  name: 'orderView',
+  name: 'purchaseView',
   props: {
-    orderShow: {
+    purchaseShow: {
       type: Boolean,
       default: false
     },
-    orderData: {
+    purchaseData: {
       type: Object
     }
   },
   computed: {
     show: {
       get: function () {
-        return this.orderShow
+        return this.purchaseShow
       },
       set: function () {
       }
@@ -113,7 +103,7 @@ export default {
         dataIndex: 'brand'
       }, {
         title: '数量',
-        dataIndex: 'quantity'
+        dataIndex: 'reserve'
       }, {
         title: '药品图片',
         dataIndex: 'images',
@@ -155,22 +145,18 @@ export default {
     }
   },
   watch: {
-    orderShow: function (value) {
+    purchaseShow: function (value) {
       if (value) {
-        this.dataInit(this.orderData.id)
-        this.current = this.orderData.orderStatus
+        this.dataInit(this.purchaseData.id)
       }
     }
   },
   methods: {
-    dataInit (orderId) {
+    dataInit (purchaseId) {
       // 药品信息
-      this.$get(`/cos/order-detail/detail/${orderId}`).then((r) => {
-        this.durgList = r.data.data
-      })
-      // 物流信息
-      this.$get(`/cos/logistics-info/order/${orderId}`).then((r) => {
-        this.logisticsList = r.data.data
+      this.$get(`/cos/purchase-info/detail/${purchaseId}`).then((r) => {
+        this.durgList = r.data.drug
+        this.logisticsList = r.data.logistics
       })
     },
     imagesInit (images) {

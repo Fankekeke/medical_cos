@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="药店详情" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="医院详情" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
@@ -7,11 +7,11 @@
     </template>
     <div style="font-size: 13px;font-family: SimHei" v-if="pharmacyData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店信息</span></a-col>
-        <a-col :span="8"><b>药店名称：</b>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院信息</span></a-col>
+        <a-col :span="8"><b>医院名称：</b>
           {{ pharmacyData.name }}
         </a-col>
-        <a-col :span="8"><b>药店编号：</b>
+        <a-col :span="8"><b>医院编号：</b>
           {{ pharmacyData.code }}
         </a-col>
         <a-col :span="8"><b>详细地址：</b>
@@ -42,7 +42,7 @@
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店图片</span></a-col>
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院图片</span></a-col>
         <a-col :span="24">
           <a-upload
             name="avatar"
@@ -60,7 +60,7 @@
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店位置</span></a-col>
+        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院位置</span></a-col>
       </a-row>
       <div>
         <a-card :bordered="false" style="height: 400px">

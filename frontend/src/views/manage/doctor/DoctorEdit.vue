@@ -48,7 +48,7 @@
           </a-col>
           <a-col :span="8">
             <a-form-item label='所属科室' v-bind="formItemLayout">
-              <a-select @change="hospitalCheck" v-decorator="[
+              <a-select v-decorator="[
               'officesId',
               { rules: [{ required: true, message: '请输入所属科室!' }] }
               ]">
@@ -192,24 +192,26 @@ export default {
   },
   methods: {
     fetchUser (value) {
-      this.lastFetchId += 1;
-      const fetchId = this.lastFetchId;
-      this.data = [];
-      this.fetching = true;
-      this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
-        this.hospitalList = r.data.data
+      if (value) {
+        this.lastFetchId += 1;
+        const fetchId = this.lastFetchId;
+        this.data = [];
+        this.fetching = true;
+        this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+          this.hospitalList = r.data.data
 
-        if (fetchId !== this.lastFetchId) {
-          // for fetch callback order
-          return;
-        }
-        const data = body.results.map(item => ({
-          text: `${item.hospitalName} ${item.hospitalNature}`,
-          value: item.id,
-        }));
-        this.hospitalList = data;
-        this.fetching = false;
-      })
+          if (fetchId !== this.lastFetchId) {
+            // for fetch callback order
+            return;
+          }
+          const data = body.results.map(item => ({
+            text: `${item.hospitalName} ${item.hospitalNature}`,
+            value: item.id,
+          }));
+          this.hospitalList = data;
+          this.fetching = false;
+        })
+      }
     },
     selectHospitalList () {
       this.$get('/cos/hospital-info/list').then((r) => {

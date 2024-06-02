@@ -30,12 +30,18 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='所属药店' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'pharmacyId',
-              { rules: [{ required: true, message: '请输入所属药店!' }] }
+          <a-form-item label='所属医院' v-bind="formItemLayout">
+            <a-select
+              show-search
+              option-filter-prop="children"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              @search="fetchUser"
+              @change="hospitalCheck" v-decorator="[
+              'deptId',
+              { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in pharmacyList" :key="index">{{ item.name }}</a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -55,6 +61,22 @@
                 普通员工
               </a-radio-button>
             </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='邮箱地址' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'mail',
+            { rules: [{ required: true, message: '请输入邮箱地址!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='联系电话' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'phone',
+            { rules: [{ required: true, message: '请输入联系电话!' }] }
+            ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="8">
@@ -78,6 +100,14 @@
                 否
               </a-radio-button>
             </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label='备注' v-bind="formItemLayout">
+            <a-textarea :rows="4" v-decorator="[
+            'content',
+             { rules: [{ required: true, message: '请输入备注!' }] }
+            ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
@@ -108,6 +138,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import {mapState} from 'vuex'
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -141,10 +172,15 @@ export default {
     }
   },
   data () {
+    this.lastFetchId = 0;
+    this.fetchUser = debounce(this.fetchUser, 800);
     return {
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
+      fetching: false,
+      hospitalInfo: null,
+      hospitalList: [],
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -152,9 +188,44 @@ export default {
     }
   },
   mounted () {
-    this.getPharmacy()
   },
   methods: {
+    hospitalCheck (value) {
+      if (value) {
+        this.hospitalList.forEach(e => {
+          if (e.id === value) {
+            this.hospitalInfo = e
+          }
+        })
+      }
+    },
+    fetchUser (value) {
+      if (value) {
+        this.lastFetchId += 1;
+        const fetchId = this.lastFetchId;
+        this.data = [];
+        this.fetching = true;
+        this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+          this.hospitalList = r.data.data
+
+          if (fetchId !== this.lastFetchId) {
+            // for fetch callback order
+            return;
+          }
+          const data = body.results.map(item => ({
+            text: `${item.hospitalName} ${item.hospitalNature}`,
+            value: item.id,
+          }));
+          this.hospitalList = data;
+          this.fetching = false;
+        })
+      }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
     getPharmacy () {
       this.$get('/cos/pharmacy-info/list').then((r) => {
         this.pharmacyList = r.data.data

@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="药店编号"
+                label="医院编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="药店名称"
+                label="医院名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
@@ -148,10 +148,10 @@ export default {
     }),
     columns () {
       return [{
-        title: '药店编号',
+        title: '医院编号',
         dataIndex: 'code'
       }, {
-        title: '药房名称',
+        title: '医院名称',
         dataIndex: 'name',
         customRender: (text, row, index) => {
           if (text !== null) {
@@ -188,7 +188,7 @@ export default {
           }
         }
       }, {
-        title: '药店图片',
+        title: '医院图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
           if (!record.images) return <a-avatar shape="square" icon="user" />
@@ -261,7 +261,7 @@ export default {
     },
     handlepharmacyAddSuccess () {
       this.pharmacyAdd.visiable = false
-      this.$message.success('新增药房成功')
+      this.$message.success('新增医院成功')
       this.search()
     },
     edit (record) {
@@ -273,7 +273,7 @@ export default {
     },
     handlepharmacyEditSuccess () {
       this.pharmacyEdit.visiable = false
-      this.$message.success('修改药房成功')
+      this.$message.success('修改医院成功')
       this.search()
     },
     handleDeptChange (value) {

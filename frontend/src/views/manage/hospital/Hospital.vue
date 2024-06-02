@@ -152,10 +152,24 @@ export default {
         dataIndex: 'hospitalArea'
       }, {
         title: '医院院长姓名',
-        dataIndex: 'hospitalDeanName'
+        dataIndex: 'hospitalDeanName',
+        customRender: (text, row, index) => {
+          if (text !== null && text !== '0') {
+            return text
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '建院年份',
-        dataIndex: 'hospitalYear'
+        dataIndex: 'hospitalYear',
+        customRender: (text, row, index) => {
+          if (text !== null && text !== '0') {
+            return text
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '医院类别',
         dataIndex: 'hospitalNature'

@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="药房名称"
+                label="医院名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.pharmacyName"/>
@@ -145,10 +145,10 @@ export default {
           }
         }
       }, {
-        title: '药店名称',
+        title: '医院名称',
         dataIndex: 'pharmacyName'
       }, {
-        title: '药店编号',
+        title: '医院编号',
         dataIndex: 'pharmacyCode'
       }, {
         title: '药品名称',

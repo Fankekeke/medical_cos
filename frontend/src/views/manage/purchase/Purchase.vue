@@ -79,7 +79,6 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="file-search" @click="orderViewOpen(record)" title="详 情"></a-icon>
-<!--          <a-icon v-if="record.status == 1" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="物流添加" style="margin-left: 15px"></a-icon>-->
         </template>
       </a-table>
     </div>
@@ -158,14 +157,20 @@ export default {
         title: '采购单号',
         dataIndex: 'code'
       }, {
-        title: '药店名称',
+        title: '医院名称',
         dataIndex: 'pharmacyName'
       }, {
         title: '图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
+          if (!record.hospitalUrl && !record.images) return <a-avatar shape="square" icon="user" />
+          if (record.hospitalUrl) return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ record.hospitalUrl } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ record.hospitalUrl } />
+          </a-popover>
+          if (record.images) <a-popover>
             <template slot="content">
               <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
             </template>
@@ -215,16 +220,6 @@ export default {
       }, {
         title: '统一社会信用代码',
         dataIndex: 'creditCode',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '所属行业',
-        dataIndex: 'industry',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text

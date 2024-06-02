@@ -1,9 +1,5 @@
 package cc.mrbird.febs.cos.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -11,15 +7,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
- * 库存统计
+ * 库存预警
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class InventoryStatistics implements Serializable {
+public class StockAlertInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,24 +28,24 @@ public class InventoryStatistics implements Serializable {
     private Integer id;
 
     /**
-     * 药品ID
-     */
-    private Integer drugId;
-
-    /**
-     * 数量
-     */
-    private Integer quantity;
-
-    /**
-     * 出入库（1.出库 2.入库）
-     */
-    private Integer storageType;
-
-    /**
      * 医院ID
      */
-    private Integer pharmacyId;
+    private Integer shopId;
+
+    /**
+     * 药品ID
+     */
+    private Integer durgId;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 已读状态（0.未读 1.已读）
+     */
+    private Integer status;
 
     /**
      * 创建时间
@@ -55,17 +53,8 @@ public class InventoryStatistics implements Serializable {
     private String createDate;
 
     /**
-     * 保管人
+     * 医院名称
      */
-    private String custodian;
-
     @TableField(exist = false)
-    private String drugName;
-
-    @TableField(exist = false)
-    private String pharmacyName;
-
-    @TableField(exist = false)
-    private BigDecimal unitPrice;
-
+    private String shopName;
 }

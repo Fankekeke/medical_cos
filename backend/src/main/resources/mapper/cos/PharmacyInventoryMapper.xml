@@ -13,15 +13,15 @@
         pin.start_date,
         pin.end_date,
         pin.remark,
-        pi2.name as pharmacyName,
-        pi2.code as pharmacyCode,
+        pi2.hospital_name as pharmacyName,
+        pi2.hospital_post_code as pharmacyCode,
         di.name as drugName,
         di.brand,
         di.category,
         di.images
         from
         pharmacy_inventory pin
-        left join pharmacy_info pi2 on (pi2.id = pin.pharmacy_id)
+        left join hospital_info pi2 on (pi2.id = pin.pharmacy_id)
         left join drug_info di on (di.id = pin.drug_id)
         where 1 = 1
         <if test="pharmacyInventory.pharmacyName != null and pharmacyInventory.pharmacyName != ''">
@@ -35,7 +35,7 @@
         </if>
     </select>
 
-    <!-- 根据药房ID获取库存信息 -->
+    <!-- 根据医院ID获取库存信息 -->
     <select id="selectInventoryByPharmacy" resultType="java.util.LinkedHashMap">
         select
         pin.id,
@@ -46,8 +46,8 @@
         pin.start_date,
         pin.end_date,
         pin.remark,
-        pi2.name as pharmacyName,
-        pi2.code as pharmacyCode,
+        pi2.hospital_name as pharmacyName,
+        pi2.hospital_post_code as pharmacyCode,
         di.name as drugName,
         di.brand,
         di.category,
@@ -57,7 +57,7 @@
         di.images
         from
         pharmacy_inventory pin
-        left join pharmacy_info pi2 on (pi2.id = pin.pharmacy_id)
+        left join hospital_info pi2 on (pi2.id = pin.pharmacy_id)
         left join drug_info di on (di.id = pin.drug_id)
         where 1 = 1
         and pin.pharmacy_id = #{ pharmacyId }
@@ -74,8 +74,8 @@
         pin.start_date,
         pin.end_date,
         pin.remark,
-        pi2.name as pharmacyName,
-        pi2.code as pharmacyCode,
+        pi2.hospital_name as pharmacyName,
+        pi2.hospital_post_code as pharmacyCode,
         di.name as drugName,
         di.brand,
         di.category,
@@ -85,7 +85,7 @@
         di.images
         from
         pharmacy_inventory pin
-        left join pharmacy_info pi2 on (pi2.id = pin.pharmacy_id)
+        left join hospital_info pi2 on (pi2.id = pin.pharmacy_id)
         left join drug_info di on (di.id = pin.drug_id)
         where 1 = 1
         AND pin.shelf_status = 1

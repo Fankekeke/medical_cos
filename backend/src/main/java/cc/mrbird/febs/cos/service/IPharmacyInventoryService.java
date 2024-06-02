@@ -40,9 +40,9 @@ public interface IPharmacyInventoryService extends IService<PharmacyInventory> {
     boolean batchPutInventory(Integer pharmacyId, String pharmacyInventoryList) throws Exception;
 
     /**
-     * 根据药房ID获取库存信息
+     * 根据医院ID获取库存信息
      *
-     * @param pharmacyId 药房ID
+     * @param pharmacyId 医院ID
      * @return 结果
      */
     List<LinkedHashMap<String, Object>> selectInventoryByPharmacy(Integer pharmacyId);

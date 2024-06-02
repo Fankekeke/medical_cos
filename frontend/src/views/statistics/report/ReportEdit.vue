@@ -19,7 +19,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='药店'>
+          <a-form-item label='医院'>
             <a-select @change="pharmacyCheck" v-decorator="[
               'pharmacyId',
               ]">

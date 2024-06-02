@@ -24,9 +24,9 @@ public interface PharmacyInventoryMapper extends BaseMapper<PharmacyInventory> {
     IPage<LinkedHashMap<String, Object>> selectPharmacyInventoryPage(Page<PharmacyInventory> page, @Param("pharmacyInventory") PharmacyInventory pharmacyInventory);
 
     /**
-     * 根据药房ID获取库存信息
+     * 根据医院ID获取库存信息
      *
-     * @param pharmacyId 药房ID
+     * @param pharmacyId 医院ID
      * @return 结果
      */
     List<LinkedHashMap<String, Object>> selectInventoryByPharmacy(@Param("pharmacyId") Integer pharmacyId);

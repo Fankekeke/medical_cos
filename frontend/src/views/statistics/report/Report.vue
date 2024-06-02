@@ -138,7 +138,7 @@ export default {
           }
         }
       }, {
-        title: '药店',
+        title: '医院',
         dataIndex: 'pharmacyName',
         customRender: (text, row, index) => {
           if (text !== null) {

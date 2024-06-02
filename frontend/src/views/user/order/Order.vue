@@ -23,7 +23,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="药店名称"
+                label="医院名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.pharmacyName"/>
@@ -186,7 +186,7 @@ export default {
           }
         }
       }, {
-        title: '所属药店',
+        title: '所属医院',
         dataIndex: 'pharmacyName',
         customRender: (text, row, index) => {
           if (text !== null) {

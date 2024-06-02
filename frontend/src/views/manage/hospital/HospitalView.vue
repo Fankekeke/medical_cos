@@ -6,52 +6,94 @@
       </a-button>
     </template>
     <div style="font-size: 13px;font-family: SimHei" v-if="hospitalData !== null">
+      <div>
+        <a-card :bordered="false" style="height: 400px">
+          <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
+        </a-card>
+      </div>
+      <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院信息</span></a-col>
         <a-col :span="8"><b>医院姓名：</b>
           {{ hospitalData.hospitalName }}
         </a-col>
-        <a-col :span="8"><b>性别：</b>
-          {{ hospitalData.hospitalSex }}
+        <a-col :span="8"><b>医院地区：</b>
+          {{ hospitalData.hospitalArea }}
         </a-col>
         <a-col :span="8"><b>所属医院：</b>
-          {{ hospitalData.hospitalName }}
+          {{ hospitalData.hospitalDeanName != null ? hospitalData.hospitalDeanName : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>所属科室：</b>
-          {{ hospitalData.officesName }}
+        <a-col :span="8"><b>医院建院年份：</b>
+          {{ hospitalData.hospitalYear != null ? hospitalData.hospitalYear : '- -' }}
         </a-col>
-        <a-col :span="8"><b>医院职称：</b>
-          {{ hospitalData.hospitalTitle }}
+        <a-col :span="8"><b>医院类型：</b>
+          {{ hospitalData.hospitalNature != null ? hospitalData.hospitalNature : '- -' }}
         </a-col>
-        <a-col :span="8"><b>教学支职称：</b>
-          {{ hospitalData.teachTitle }}
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>行政职位：</b>
-          {{ hospitalData.hospitalAdministrative }}
-        </a-col>
-        <a-col :span="8"><b>学位：</b>
-          {{ hospitalData.hospitalDegree }}
+        <a-col :span="8"><b>医院等级：</b>
+          {{ hospitalData.hospitalGrade != null ? hospitalData.hospitalGrade : '- -' }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>行政职位：</b>
+        <a-col :span="8"><b>医院科室数量：</b>
+          {{ hospitalData.hospitalOfficesNum != null ? hospitalData.hospitalOfficesNum : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>医保人数：</b>
+          {{ hospitalData.medicalInsuranceNum != null ? hospitalData.medicalInsuranceNum : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>病床数量：</b>
+          {{ hospitalData.hospitalBedNum != null ? hospitalData.hospitalBedNum : '- -' }}
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="8"><b>年门诊量：</b>
+          {{ hospitalData.outpatientNum != null ? hospitalData.outpatientNum : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>是否医保：</b>
+          {{ hospitalData.isMedicalInsurance != null ? hospitalData.isMedicalInsurance : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>医院荣誉：</b>
+          {{ hospitalData.hospitalHonor != null ? hospitalData.hospitalHonor : '- -' }}
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="8"><b>医院电话：</b>
+          {{ hospitalData.hospitalPhone != null ? hospitalData.hospitalPhone : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>医院地址：</b>
+          {{ hospitalData.hospitalAddress != null ? hospitalData.hospitalAddress : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>医院邮编：</b>
+          {{ hospitalData.hospitalPostCode != null ? hospitalData.hospitalPostCode : '- -' }}
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="8"><b>医院公交路线：</b>
+          {{ hospitalData.hospitalBusRoute != null ? hospitalData.hospitalBusRoute : '- -' }}
+        </a-col>
+        <a-col :span="8"><b>是否开启挂号：</b>
+          <span v-if="hospitalData.isOpen != null && hospitalData.isOpen == 1" style="color: green">开启</span>
+          <span v-else style="color: red">关闭</span>
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="24"><b>医院设备介绍：</b>
+          {{ hospitalData.hospitalEquipment }}
+        </a-col>
+      </a-row>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col :span="24"><b>医院简介：</b>
           {{ hospitalData.hospitalAbout }}
         </a-col>
       </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>医院特长：</b>
-          {{ hospitalData.hospitalForte }}
-        </a-col>
-      </a-row>
-      <br/>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医院图片</span></a-col>
@@ -70,15 +112,6 @@
           </a-modal>
         </a-col>
       </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 5px"><span style="font-size: 15px;font-weight: 650;color: #000c17">药店位置</span></a-col>
-      </a-row>
-      <div>
-        <a-card :bordered="false" style="height: 400px">
-          <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
-        </a-card>
-      </div>
       <br/>
     </div>
   </a-modal>
@@ -130,12 +163,12 @@ export default {
         if (this.hospitalData.images !== null && this.hospitalData.images !== '') {
           this.imagesInit(this.hospitalData.images, 0)
         } else {
-          this.imagesInit(this.hospitalData.hospitalImg, 1)
+          this.imagesInit(this.hospitalData.hospitalUrl, 1)
         }
         setTimeout(() => {
           baiduMap.initMap('areas')
           setTimeout(() => {
-            this.local(this.pharmacyData)
+            this.local(this.hospitalData)
           }, 500)
         }, 200)
       }

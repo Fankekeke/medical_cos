@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改药店"
+    title="修改医院"
     :maskClosable="false"
     width=1350
     placement="right"
@@ -14,7 +14,7 @@
           <span style="font-size: 13px">基础信息填报</span>
         </a-divider>
         <a-col :span="4">
-          <a-form-item label='药房名称'>
+          <a-form-item label='医院名称'>
             <a-input v-decorator="[
             'name',
             { rules: [{ required: true, message: '请输入名称!' }] }
@@ -78,7 +78,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="24">
-          <a-form-item label='药店图片' v-bind="formItemLayout">
+          <a-form-item label='医院图片' v-bind="formItemLayout">
             <a-upload
               name="avatar"
               action="http://127.0.0.1:9527/file/fileUpload/"

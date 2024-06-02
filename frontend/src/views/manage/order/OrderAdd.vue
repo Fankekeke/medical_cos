@@ -11,13 +11,13 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="10">
         <a-divider orientation="left">
-          <span style="font-size: 13px">选择药房</span>
+          <span style="font-size: 13px">选择医院</span>
         </a-divider>
         <a-col :span="12">
-          <a-form-item label='药店'>
+          <a-form-item label='医院'>
             <a-select @change="pharmacyCheck" v-decorator="[
               'pharmacyId',
-              { rules: [{ required: true, message: '请输入所属药店!' }] }
+              { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
               <a-select-option :value="item.id" v-for="(item, index) in pharmacyList" :key="index">{{
                   item.name
@@ -44,7 +44,7 @@
         <a-col :span="8"><b>营业时间：</b>
           {{ pharmacyInfo.businessHours }}
         </a-col>
-        <a-col :span="8"><b>药店编号：</b>
+        <a-col :span="8"><b>医院编号：</b>
           {{ pharmacyInfo.code }}
         </a-col>
         <a-col :span="8"><b>地址：</b>
