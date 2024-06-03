@@ -11,6 +11,7 @@
         mi.`date`,
         mi.images,
         mi.rack_up,
+        mi.views,
         mi.`type`,
         mi.publisher
         from

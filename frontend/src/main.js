@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import Vue from 'vue'
 import Febs from './FEBS'
 import router from './router'
@@ -7,9 +8,13 @@ import request from 'utils/request'
 import db from 'utils/localstorage'
 import VueApexCharts from 'vue-apexcharts'
 
+
 import 'ant-design-vue/dist/antd.css'
 
 import 'utils/install'
+
+import Es6Promise from 'es6-promise'
+Es6Promise.polyfill()
 
 Vue.config.productionTip = false
 Vue.use(Antd)
