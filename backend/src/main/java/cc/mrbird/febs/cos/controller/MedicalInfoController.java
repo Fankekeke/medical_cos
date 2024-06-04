@@ -4,11 +4,13 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.MedicalInfo;
 import cc.mrbird.febs.cos.service.IMedicalInfoService;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,7 @@ public class MedicalInfoController {
      */
     @PostMapping
     public R save(MedicalInfo medicalInfo) {
+        medicalInfo.setDate(DateUtil.formatDateTime(new Date()));
         return R.ok(medicalInfoService.save(medicalInfo));
     }
 

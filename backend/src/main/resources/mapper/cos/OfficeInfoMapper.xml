@@ -16,7 +16,7 @@
         oi.hospital_id,
         hi.hospital_name,
         hi.hospital_img,
-        hi.images as hospitalImages
+        hi.images as images
         from
         office_info oi
         left join hospital_info hi on

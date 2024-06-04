@@ -46,10 +46,19 @@ public class OfficeInfo implements Serializable {
      */
     private String doctorNum;
 
+    /**
+     * 荣誉资质
+     */
     private String officesHonor;
 
+    /**
+     * 设备
+     */
     private String officesEquipment;
 
+    /**
+     * 关于我们
+     */
     private String officesAbout;
 
     /**

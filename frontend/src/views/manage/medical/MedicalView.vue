@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="章节详情" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="资讯详情" @cancel="onClose" :width="1000">
     <template slot="footer">
       <a-button key="back" @click="onClose" type="danger">
         关闭
@@ -7,37 +7,28 @@
     </template>
     <div style="font-size: 13px;font-family: SimHei" v-if="medicalData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">章节信息</span></a-col>
-        <a-col :span="8"><b>书籍编号：</b>
-          {{ medicalData.code ? medicalData.code : '- -' }}
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">资讯信息</span></a-col>
+        <a-col :span="8"><b>标题：</b>
+          {{ medicalData.title ? medicalData.title : '- -' }}
         </a-col>
-        <a-col :span="8"><b>书籍名称：</b>
-          {{ medicalData.medicalName ? medicalData.medicalName : '- -' }}
+        <a-col :span="8"><b>发布时间：</b>
+          {{ medicalData.date ? medicalData.date : '- -' }}
         </a-col>
-        <a-col :span="8"><b>章节名称：</b>
-          {{ medicalData.name ? medicalData.name : '- -' }}
+        <a-col :span="8"><b>资讯名称：</b>
+          <span style="color: red" v-if="medicalData.rackUp == 0">下架</span>
+          <span style="color: green" v-if="medicalData.rackUp == 1">发布</span>
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>排序：</b>
-          {{ medicalData.indexNo ? medicalData.indexNo : '- -' }}
+        <a-col :span="8"><b>发布人：</b>
+          {{ medicalData.publisher ? medicalData.publisher : '- -' }}
         </a-col>
         <a-col :span="8"><b>浏览量：</b>
-          {{ medicalData.views ? medicalData.views : '- -' }}
+          {{ medicalData.views }}
         </a-col>
-        <a-col :span="8"><b>是否需要会员：</b>
-          <span v-if="medicalData.checkFlag == 0">否</span>
-          <span v-if="medicalData.checkFlag == 1" style="color: green">是</span>
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>本章字数：</b>
-          {{ medicalData.words ? medicalData.words : '- -' }}
-        </a-col>
-        <a-col :span="8"><b>创建时间：</b>
-          {{ medicalData.createDate }}
+        <a-col :span="8"><b>消息类型：</b>
+          {{ medicalData.type ? medicalData.type : '- -' }}
         </a-col>
       </a-row>
       <br/>

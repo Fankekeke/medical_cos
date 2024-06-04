@@ -50,7 +50,7 @@ public class MedicalInfo implements Serializable {
     /**
      * 上下架（0.下架 1.发布）
      */
-    private Integer rackUp;
+    private String rackUp;
     private Integer views;
 
     /**
