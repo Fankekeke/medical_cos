@@ -11,29 +11,37 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="6">
-          <a-form-item label='章节名称' v-bind="formItemLayout">
+          <a-form-item label='标题' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'name',
-            { rules: [{ required: true, message: '请输入章节名称!' }] }
+            'title',
+            { rules: [{ required: true, message: '请输入标题!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="6">
-          <a-form-item label='所属书籍' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'medicalId',
-              { rules: [{ required: true, message: '请输入所属书籍!' }] }
-              ]">
-              <a-select-option :value="item.id" v-for="(item, index) in medicalList" :key="index">{{ item.name }}</a-select-option>
-            </a-select>
+          <a-form-item label='发布人' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'publisher',
+            { rules: [{ required: true, message: '请输入发布人!' }] }
+            ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="6">
-          <a-form-item label='会员权限' v-bind="formItemLayout">
+          <a-form-item label='状态' v-bind="formItemLayout">
             <a-radio-group button-style="solid"
-                           v-decorator="['checkFlag',{rules: [{ required: true, message: '请选择状态'}]}]">
+                           v-decorator="['rackUp',{rules: [{ required: true, message: '请选择状态'}]}]">
               <a-radio-button value="0">关</a-radio-button>
               <a-radio-button value="1">开</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label='消息类型' v-bind="formItemLayout">
+            <a-radio-group button-style="solid"
+                           v-decorator="['type',{rules: [{ required: true, message: '请选择消息类型'}]}]">
+              <a-radio-button value="系统公告">系统公告</a-radio-button>
+              <a-radio-button value="病情求助">病情求助</a-radio-button>
+              <a-radio-button value="引导信息">引导信息</a-radio-button>
             </a-radio-group>
           </a-form-item>
         </a-col>
@@ -122,7 +130,6 @@ export default {
     }
   },
   mounted () {
-    this.selectmedicalList()
   },
   beforeDestroy () {
     const editor = this.editor
@@ -162,7 +169,7 @@ export default {
     },
     setFormValues ({...medical}) {
       this.rowId = medical.id
-      let fields = ['name', 'checkFlag', 'medicalId']
+      let fields = ['title', 'type', 'publisher', 'rackUp']
       let obj = {}
       Object.keys(medical).forEach((key) => {
         if (key === 'images') {

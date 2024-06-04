@@ -56,7 +56,7 @@ public class MedicalInfo implements Serializable {
     /**
      * 消息类型
      */
-    private Integer type;
+    private String type;
 
     /**
      * 发布人

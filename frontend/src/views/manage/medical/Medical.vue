@@ -187,36 +187,8 @@ export default {
           }
         }
       }, {
-        title: '类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '1':
-              return <a-tag>玄幻</a-tag>
-            case '2':
-              return <a-tag>奇幻</a-tag>
-            case '3':
-              return <a-tag>武侠</a-tag>
-            case '4':
-              return <a-tag>都市</a-tag>
-            case '5':
-              return <a-tag>现实</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '书籍图片',
-        dataIndex: 'images',
-        customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-          </a-popover>
-        }
+        title: '消息类型',
+        dataIndex: 'type'
       }, {
         title: '操作',
         dataIndex: 'operation',
