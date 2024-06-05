@@ -8,66 +8,35 @@
     <div style="font-size: 13px;font-family: SimHei" v-if="officeData !== null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">科室信息</span></a-col>
-        <a-col :span="8"><b>科室姓名：</b>
-          {{ officeData.officeName }}
-        </a-col>
-        <a-col :span="8"><b>性别：</b>
-          {{ officeData.officeSex }}
-        </a-col>
-        <a-col :span="8"><b>所属医院：</b>
-          {{ officeData.hospitalName }}
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>所属科室：</b>
+        <a-col :span="8"><b>科室名称：</b>
           {{ officeData.officesName }}
         </a-col>
-        <a-col :span="8"><b>科室职称：</b>
-          {{ officeData.officeTitle }}
+        <a-col :span="8"><b>医生人数：</b>
+          {{ officeData.doctorNum == null ? '未知' : officeData.doctorNum }}
         </a-col>
-        <a-col :span="8"><b>教学支职称：</b>
-          {{ officeData.teachTitle }}
-        </a-col>
-      </a-row>
-      <br/>
-      <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="8"><b>行政职位：</b>
-          {{ officeData.officeAdministrative }}
-        </a-col>
-        <a-col :span="8"><b>学位：</b>
-          {{ officeData.officeDegree }}
+        <a-col :span="8"><b>所属医院：</b>
+          {{ officeData.hospitalName == null ? '未知' : officeData.hospitalName }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>行政职位：</b>
-          {{ officeData.officeAbout }}
+        <a-col :span="8"><b>荣誉资质：</b>
+          {{ officeData.officesHonor == null ? '未知' : officeData.officesHonor }}
+        </a-col>
+        <a-col :span="8"><b>设备：</b>
+          {{ officeData.officesEquipment == null ? '未知' : officeData.officesEquipment }}
         </a-col>
       </a-row>
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col :span="24"><b>科室特长：</b>
-          {{ officeData.officeForte }}
+        <a-col :span="24"><b>关于我们：</b>
+          {{ officeData.officesAbout }}
         </a-col>
       </a-row>
       <br/>
-      <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;">
-        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">科室图片</span></a-col>
-        <a-col :span="24">
-          <a-upload
-            name="avatar"
-            action="http://127.0.0.1:9527/file/fileUpload/"
-            list-type="picture-card"
-            :file-list="fileList"
-            @preview="handlePreview"
-            @change="picHandleChange"
-          >
-          </a-upload>
-          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%" :src="previewImage" />
-          </a-modal>
+        <a-col :span="24"><b>诊疗范围：</b>
+          {{ officeData.officesDiagnosisScope }}
         </a-col>
       </a-row>
       <br/>

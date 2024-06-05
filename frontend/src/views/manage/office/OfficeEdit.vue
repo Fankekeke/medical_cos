@@ -13,20 +13,9 @@
         <a-col :span="8">
           <a-form-item label='科室名称' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'officeName',
+            'officesName',
             { rules: [{ required: true, message: '请输入科室名称!' }] }
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label='性别' v-bind="formItemLayout">
-            <a-select v-decorator="[
-              'officeSex',
-              { rules: [{ required: true, message: '请输入性别!' }] }
-              ]">
-              <a-select-option value="1">男</a-select-option>
-              <a-select-option value="2">女</a-select-option>
-            </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="8">
@@ -209,7 +198,7 @@ export default {
     setFormValues ({...office}) {
       this.dataLoading = true
       this.rowId = office.id
-      let fields = ['officeName', 'officeSex', 'officeImg', 'officeTitle', 'teachTitle', 'officeAdministrative', 'officeDegree', 'officeForte', 'officeAbout', 'hospitalId', 'officesId']
+      let fields = ['officesName', 'hospitalId', 'doctorNum', 'officesHonor', 'officesEquipment', 'officesAbout', 'officesDiagnosisScope']
       let obj = {}
       Object.keys(office).forEach((key) => {
         if (key === 'images') {
@@ -225,7 +214,6 @@ export default {
         }
         if (key === 'hospitalId' && office['hospitalId'] != null && office['hospitalName'] != null) {
           this.fetchUser(office['hospitalName'])
-          this.selectOfficeList(office['hospitalId'])
         }
       })
       setTimeout(() => {
