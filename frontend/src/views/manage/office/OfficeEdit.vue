@@ -168,7 +168,7 @@ export default {
         this.hospitalList.forEach(e => {
           if (e.id === value) {
             this.hospitalInfo = e
-            this.selectOfficeList(e.id)
+            console.log(this.hospitalInfo)
           }
         })
       }
@@ -243,6 +243,9 @@ export default {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
+          if (this.hospitalInfo != null) {
+            values.hospitalName = this.hospitalInfo.hospitalName
+          }
           this.loading = true
           this.$put('/cos/office-info', {
             ...values

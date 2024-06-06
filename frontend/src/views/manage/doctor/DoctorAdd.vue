@@ -47,7 +47,7 @@
         </a-col>
         <a-col :span="8">
           <a-form-item label='所属科室' v-bind="formItemLayout">
-            <a-select v-decorator="[
+            <a-select @change="officesCheck" v-decorator="[
               'officesId',
               { rules: [{ required: true, message: '请输入所属科室!' }] }
               ]">
@@ -180,6 +180,7 @@ export default {
       loading: false,
       fetching: false,
       hospitalInfo: null,
+      officesInfo: null,
       hospitalList: [],
       officeList: [],
       fileList: [],
@@ -237,6 +238,15 @@ export default {
         })
       }
     },
+    officesCheck (value) {
+      if (value) {
+        this.officeList.forEach(e => {
+          if (e.id === value) {
+            this.officesInfo = e
+          }
+        })
+      }
+    },
     handleCancel () {
       this.previewVisible = false
     },
@@ -266,6 +276,8 @@ export default {
       })
       this.form.validateFields((err, values) => {
         values.images = images.length > 0 ? images.join(',') : null
+        values.hospitalName = this.hospitalInfo.hospitalName
+        values.officesName = this.officesInfo.officesName
         if (!err) {
           this.loading = true
           this.$post('/cos/doctor-info', {

@@ -48,10 +48,10 @@
           </a-col>
           <a-col :span="8">
             <a-form-item label='所属科室' v-bind="formItemLayout">
-              <a-select v-decorator="[
-              'officesId',
-              { rules: [{ required: true, message: '请输入所属科室!' }] }
-              ]">
+              <a-select @change="officesCheck" v-decorator="[
+                'officesId',
+                { rules: [{ required: true, message: '请输入所属科室!' }] }
+                ]">
                 <a-select-option :value="item.id" v-for="(item, index) in officeList" :key="index">{{ item.officesName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -181,6 +181,7 @@ export default {
       dataLoading: false,
       fetching: false,
       hospitalInfo: null,
+      officesInfo: null,
       hospitalList: [],
       officeList: [],
       fileList: [],
@@ -229,6 +230,15 @@ export default {
           if (e.id === value) {
             this.hospitalInfo = e
             this.selectOfficeList(e.id)
+          }
+        })
+      }
+    },
+    officesCheck (value) {
+      if (value) {
+        this.officeList.forEach(e => {
+          if (e.id === value) {
+            this.officesInfo = e
           }
         })
       }
@@ -303,6 +313,12 @@ export default {
       this.form.validateFields((err, values) => {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
+        if (this.hospitalInfo != null) {
+          values.hospitalName = this.hospitalInfo.hospitalName
+        }
+        if (this.officesInfo != null) {
+          values.officesName = this.officesInfo.officesName
+        }
         if (!err) {
           this.loading = true
           this.$put('/cos/doctor-info', {

@@ -208,6 +208,7 @@ export default {
       })
       this.form.validateFields((err, values) => {
         values.images = images.length > 0 ? images.join(',') : null
+        values.hospitalName = this.hospitalInfo.hospitalName
         if (!err) {
           this.loading = true
           this.$post('/cos/office-info', {
