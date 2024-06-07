@@ -8,24 +8,23 @@
         oi.id,
         oi.code,
         oi.pharmacy_id,
+        oi.staff_id,
         oi.total_cost,
         oi.user_id,
         oi.create_date,
         oi.logistics_id,
         oi.order_status,
-        oi.del_flag,
         ui.id AS userId,
         ui.name,
         ui.phone,
         ui.address AS userAddress,
-        phi.name AS pharmacyName,
-        phi.address,
-        phi.legal_person,
-        phi.phone as pharmacyPhone,
+        phi.hospital_name AS pharmacyName,
+        phi.hospital_address AS address,
+        phi.hospital_phone as pharmacyPhone,
         oe.id as evaluateFlag
         from
         order_info oi
-        left join pharmacy_info phi on
+        left join hospital_info phi on
         (phi.id = oi.pharmacy_id)
         left join user_info ui on
         (ui.id = oi.user_id)

@@ -14,25 +14,28 @@
           <span style="font-size: 13px">选择医院</span>
         </a-divider>
         <a-col :span="12">
-          <a-form-item label='医院'>
-            <a-select @change="pharmacyCheck" v-decorator="[
+          <a-form-item label='所属医院' v-bind="formItemLayout">
+            <a-select
+              show-search
+              option-filter-prop="children"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              @search="fetchUser"
+              @change="hospitalCheck" v-decorator="[
               'pharmacyId',
               { rules: [{ required: true, message: '请输入所属医院!' }] }
               ]">
-              <a-select-option :value="item.id" v-for="(item, index) in pharmacyList" :key="index">{{
-                  item.name
-                }}
-              </a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="12">
           <a-form-item label='员工'>
             <a-select v-decorator="[
-              'staffCode',
+              'staffId',
               { rules: [{ required: true, message: '请输入所属员工!' }] }
               ]">
-              <a-select-option :value="item.code" v-for="(item, index) in staffList" :key="index">{{
+              <a-select-option :value="item.id" v-for="(item, index) in staffList" :key="index">{{
                   item.name
                 }}
               </a-select-option>
@@ -41,14 +44,14 @@
         </a-col>
       </a-row>
       <a-row :gutter="10" style="font-size: 13px;font-family: SimHei" v-if="pharmacyInfo != null">
-        <a-col :span="8"><b>营业时间：</b>
-          {{ pharmacyInfo.businessHours }}
+        <a-col :span="8"><b>医院地区：</b>
+          {{ pharmacyInfo.hospitalArea }}
         </a-col>
-        <a-col :span="8"><b>医院编号：</b>
-          {{ pharmacyInfo.code }}
+        <a-col :span="8"><b>医院类型：</b>
+          {{ pharmacyInfo.hospitalNature }}
         </a-col>
-        <a-col :span="8"><b>地址：</b>
-          {{ pharmacyInfo.address }}
+        <a-col :span="8"><b>医院等级：</b>
+          {{ pharmacyInfo.hospitalGrade }}
         </a-col>
       </a-row>
       <br/>
@@ -184,10 +187,11 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
+      fetching: false,
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      localPoint: {},
+      hospitalList: [],
       stayAddress: '',
       childrenDrawer: false,
       pharmacyList: [],
@@ -199,8 +203,6 @@ export default {
     }
   },
   mounted () {
-    this.getPharmacy()
-    this.getStaff()
   },
   methods: {
     handleChange (value, record) {
@@ -219,21 +221,49 @@ export default {
         })
       }
     },
-    pharmacyCheck (value) {
+    dataAdd () {
+      this.dataList.push({drugId: null, quantity: 1, brand: '', classification: '', dosageForm: '', unitPrice: ''})
+    },
+    fetchUser (value) {
       if (value) {
-        this.pharmacyList.forEach(e => {
+        this.lastFetchId += 1;
+        const fetchId = this.lastFetchId;
+        this.data = [];
+        this.fetching = true;
+        this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
+          this.hospitalList = r.data.data
+
+          if (fetchId !== this.lastFetchId) {
+            // for fetch callback order
+            return;
+          }
+          const data = body.results.map(item => ({
+            text: `${item.hospitalName} ${item.hospitalNature}`,
+            value: item.id,
+          }));
+          this.hospitalList = data;
+          this.fetching = false;
+        })
+      }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    hospitalCheck (value) {
+      if (value) {
+        this.hospitalList.forEach(e => {
           if (e.id === value) {
-            this.getDrug(e.id)
             this.pharmacyInfo = e
+            this.getDrug(e.id)
+            this.getStaff(e.id)
           }
         })
       }
     },
-    dataAdd () {
-      this.dataList.push({drugId: null, quantity: 1, brand: '', classification: '', dosageForm: '', unitPrice: ''})
-    },
     getStaff (pharmacyId) {
-      this.$get(`/cos/staff-info/list`).then((r) => {
+      this.$get(`/cos/staff-info/selectStaffByHospital/${pharmacyId}`).then((r) => {
         this.staffList = r.data.data
       })
     },

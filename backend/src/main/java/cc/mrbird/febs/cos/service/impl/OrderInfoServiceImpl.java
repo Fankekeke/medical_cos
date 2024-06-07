@@ -112,6 +112,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setOrderStatus(flag ? 3 : 0);
         orderInfo.setCode("OR-" + System.currentTimeMillis());
         orderInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        orderInfo.setStaffId(orderInfoVo.getStaffId());
         orderInfo.setPharmacyId(orderInfoVo.getPharmacyId());
         // 所属用户
         UserInfo userInfo = userInfoMapper.selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, orderInfoVo.getUserId()));
@@ -134,7 +135,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         boolean result = this.updateById(orderInfo);
         if (flag) {
-            this.orderPaymentPlatform(orderInfo.getCode(), orderInfoVo.getStaffCode());
+            this.orderPaymentPlatform(orderInfo.getCode(), null);
         }
         // 重新更新订单信息
 
@@ -258,7 +259,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         pharmacyInventoryService.updateBatchById(inventoryList);
         // 添加库房统计
         inventoryStatisticsService.saveBatch(statisticsList);
-        orderInfo.setOrderStatus(1);
+        orderInfo.setOrderStatus(3);
         this.updateById(orderInfo);
     }
 

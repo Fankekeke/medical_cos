@@ -34,6 +34,17 @@ public class OrderDetailController {
     }
 
     /**
+     * 根据订单ID获取购买详细物品
+     *
+     * @param orderId 订单ID
+     * @return 结果
+     */
+    @GetMapping("/detail/{orderId}")
+    public R selectDetailByOrder(@PathVariable("orderId") Integer orderId) {
+        return R.ok(orderDetailService.selectDetailByOrder(orderId));
+    }
+
+    /**
      * 查询订单详情信息详情
      *
      * @param id 主键ID

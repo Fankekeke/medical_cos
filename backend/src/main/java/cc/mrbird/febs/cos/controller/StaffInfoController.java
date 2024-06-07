@@ -4,6 +4,7 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.StaffInfo;
 import cc.mrbird.febs.cos.service.IStaffInfoService;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,17 @@ public class StaffInfoController {
     @GetMapping("/list")
     public R list() {
         return R.ok(staffInfoService.list());
+    }
+
+    /**
+     * 根据医院获取员工信息
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/selectStaffByHospital/{hospitalId}")
+    public R selectStaffByHospital(@PathVariable("hospitalId") Integer hospitalId) {
+        return R.ok(staffInfoService.list(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getDeptId, hospitalId)));
     }
 
     /**

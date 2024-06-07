@@ -17,6 +17,4 @@ public class OrderInfoVo extends OrderInfo {
 
     private String orderDetailList;
 
-    private String staffCode;
-
 }

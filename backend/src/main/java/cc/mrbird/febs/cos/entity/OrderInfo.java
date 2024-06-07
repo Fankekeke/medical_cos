@@ -45,6 +45,16 @@ public class OrderInfo implements Serializable {
     private Integer userId;
 
     /**
+     * 员工ID
+     */
+    private Integer staffId;
+
+    /**
+     * 物流ID
+     */
+    private Integer logisticsId;
+
+    /**
      * 购买时间
      */
     private String createDate;
