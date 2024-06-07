@@ -7,26 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医生姓名"
+                label="图书名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.doctorName"/>
+                <a-input v-model="queryParams.bookName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="所属医院"
+                label="学生名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.hospitalName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="科室名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.officesName"/>
+                <a-input v-model="queryParams.studentName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -39,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -56,60 +48,45 @@
           <template>
             <a-tooltip>
               <template slot="title">
-                {{ record.title }}
+                {{ record.content }}
               </template>
-              {{ record.title.slice(0, 8) }} ...
+              {{ record.content.slice(0, 20) }} ...
             </a-tooltip>
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="cloud" @click="handledoctorViewOpen(record)" title="详 情"></a-icon>
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px"></a-icon>
+          <a-icon type="cloud" @click="handlerecordViewOpen(record)" title="详 情" style="margin-right: 10px"></a-icon>
         </template>
       </a-table>
     </div>
-    <doctor-add
-      v-if="doctorAdd.visiable"
-      @close="handledoctorAddClose"
-      @success="handledoctorAddSuccess"
-      :doctorAddVisiable="doctorAdd.visiable">
-    </doctor-add>
-    <doctor-edit
-      ref="doctorEdit"
-      @close="handledoctorEditClose"
-      @success="handledoctorEditSuccess"
-      :doctorEditVisiable="doctorEdit.visiable">
-    </doctor-edit>
-    <doctor-view
-      @close="handledoctorViewClose"
-      :doctorShow="doctorView.visiable"
-      :doctorData="doctorView.data">
-    </doctor-view>
+    <record-view
+      @close="handlerecordViewClose"
+      :recordShow="recordView.visiable"
+      :recordData="recordView.data">
+    </record-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import doctorAdd from './DoctorAdd.vue'
-import doctorEdit from './DoctorEdit.vue'
-import doctorView from './DoctorView.vue'
 import {mapState} from 'vuex'
+import recordView from './ReplyView.vue'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'doctor',
-  components: {doctorAdd, doctorEdit, doctorView, RangeDate},
+  name: 'record',
+  components: {RangeDate, recordView},
   data () {
     return {
       advanced: false,
-      doctorAdd: {
+      recordAdd: {
         visiable: false
       },
-      doctorEdit: {
+      recordEdit: {
         visiable: false
       },
-      doctorView: {
+      recordView: {
         visiable: false,
         data: null
       },
@@ -128,7 +105,7 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      recordList: []
     }
   },
   computed: {
@@ -137,54 +114,33 @@ export default {
     }),
     columns () {
       return [{
-        title: '医生姓名',
-        dataIndex: 'doctorName'
+        title: '资讯标题',
+        dataIndex: 'title'
       }, {
-        title: '性别',
-        dataIndex: 'doctorSex'
+        title: '上传人',
+        dataIndex: 'publisher'
       }, {
-        title: '所属医院',
-        dataIndex: 'hospitalName'
+        title: '评论人',
+        dataIndex: 'name'
       }, {
-        title: '所属科室',
-        dataIndex: 'officesName'
-      }, {
-        title: '医生类别',
-        dataIndex: 'doctorTitle'
-      }, {
-        title: '医生图片',
+        title: '用户头像',
         dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.doctorImg && !record.images) return <a-avatar shape="square" icon="user" />
-          if (record.doctorImg) return <a-popover>
+          if (!record.images) return <a-avatar shape="square" icon="record" />
+          return <a-popover>
             <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ record.doctorImg } />
+              <a-avatar shape="square" size={132} icon="record" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
             </template>
-            <a-avatar shape="square" icon="user" src={ record.doctorImg } />
-          </a-popover>
-          if (record.images) <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            <a-avatar shape="square" icon="record" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
           </a-popover>
         }
       }, {
-        title: '教学支职称',
-        dataIndex: 'teachTitle'
+        title: '回复内容',
+        dataIndex: 'content',
+        scopedSlots: {customRender: 'titleShow'}
       }, {
-        title: '行政职位',
-        dataIndex: 'doctorAdministrative',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '学位',
-        dataIndex: 'doctorDegree',
+        title: '回复时间',
+        dataIndex: 'createDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -203,12 +159,12 @@ export default {
     this.fetch()
   },
   methods: {
-    handledoctorViewOpen (row) {
-      this.doctorView.data = row
-      this.doctorView.visiable = true
+    handlerecordViewOpen (row) {
+      this.recordView.data = row
+      this.recordView.visiable = true
     },
-    handledoctorViewClose () {
-      this.doctorView.visiable = false
+    handlerecordViewClose () {
+      this.recordView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -217,26 +173,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.doctorAdd.visiable = true
+      this.recordAdd.visiable = true
     },
-    handledoctorAddClose () {
-      this.doctorAdd.visiable = false
+    handlerecordAddClose () {
+      this.recordAdd.visiable = false
     },
-    handledoctorAddSuccess () {
-      this.doctorAdd.visiable = false
-      this.$message.success('新增医生成功')
+    handlerecordAddSuccess () {
+      this.recordAdd.visiable = false
+      this.$message.success('新增记录成功')
       this.search()
     },
     edit (record) {
-      this.$refs.doctorEdit.setFormValues(record)
-      this.doctorEdit.visiable = true
+      this.$refs.recordEdit.setFormValues(record)
+      this.recordEdit.visiable = true
     },
-    handledoctorEditClose () {
-      this.doctorEdit.visiable = false
+    handlerecordEditClose () {
+      this.recordEdit.visiable = false
     },
-    handledoctorEditSuccess () {
-      this.doctorEdit.visiable = false
-      this.$message.success('修改医生成功')
+    handlerecordEditSuccess () {
+      this.recordEdit.visiable = false
+      this.$message.success('修改记录成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -254,7 +210,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/doctor-info/' + ids).then(() => {
+          that.$delete('/cos/reply-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -324,10 +280,11 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
+      params.recucleType = 2
       if (params.type === undefined) {
         delete params.type
       }
-      this.$get('/cos/doctor-info/page', {
+      this.$get('/cos/reply-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
@@ -345,7 +302,4 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
-/deep/ .ant-card-body {
-  font-family: SimHei;
-}
 </style>

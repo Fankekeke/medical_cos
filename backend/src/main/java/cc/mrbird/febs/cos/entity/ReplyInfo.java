@@ -53,4 +53,10 @@ public class ReplyInfo implements Serializable {
      */
     @TableField(exist = false)
     private String name;
+
+    /**
+     * 标题
+     */
+    @TableField(exist = false)
+    private String title;
 }
