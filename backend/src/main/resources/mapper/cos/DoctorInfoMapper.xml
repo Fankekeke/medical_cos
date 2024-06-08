@@ -5,6 +5,7 @@
     <!-- 分页获取医生信息 -->
     <select id="selectDoctorPage" resultType="java.util.LinkedHashMap">
         select di.id,
+        di.code,
         di.doctor_name,
         di.doctor_sex,
         di.hospital_name,

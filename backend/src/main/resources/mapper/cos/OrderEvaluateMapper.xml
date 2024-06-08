@@ -17,12 +17,12 @@
         oi.total_cost,
         ui.name,
         ui.address AS userAddress,
-        phi.name AS pharmacyName
+        phi.hospital_name AS pharmacyName
         from
         order_evaluate oe
         left join order_info oi on
         (oi.id = oe.order_id)
-        left join pharmacy_info phi on
+        left join hospital_info phi on
         (phi.id = oe.pharmacy_id)
         left join user_info ui on
         (ui.id = oe.user_id)

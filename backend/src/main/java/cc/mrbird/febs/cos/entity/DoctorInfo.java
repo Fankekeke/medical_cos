@@ -32,6 +32,16 @@ public class DoctorInfo implements Serializable {
     private String doctorName;
 
     /**
+     * 医生编号
+     */
+    private String code;
+
+    /**
+     * 账户ID
+     */
+    private Integer userId;
+
+    /**
      * 性别
      */
     private String doctorSex;

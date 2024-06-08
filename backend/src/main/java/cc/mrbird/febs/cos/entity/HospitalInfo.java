@@ -34,6 +34,16 @@ public class HospitalInfo implements Serializable {
     private String hospitalName;
 
     /**
+     * 医院编号
+     */
+    private String code;
+
+    /**
+     * 账户ID
+     */
+    private Integer userId;
+
+    /**
      * 医院地区
      */
     private String hospitalArea;

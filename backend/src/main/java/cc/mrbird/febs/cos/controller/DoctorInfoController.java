@@ -135,7 +135,9 @@ public class DoctorInfoController {
      * @return 结果
      */
     @PostMapping
+    @Transactional(rollbackFor = Exception.class)
     public R save(DoctorInfo doctorInfo) {
+        doctorInfo.setCode("DT-" + System.currentTimeMillis());
         return R.ok(doctorInfoService.save(doctorInfo));
     }
 

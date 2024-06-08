@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -98,7 +99,9 @@ public class HospitalInfoController {
      * @return 结果
      */
     @PostMapping
+    @Transactional(rollbackFor = Exception.class)
     public R save(HospitalInfo hospitalInfo) {
+        hospitalInfo.setCode("HPL-" + System.currentTimeMillis());
         return R.ok(hospitalInfoService.save(hospitalInfo));
     }
 

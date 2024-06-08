@@ -6,6 +6,12 @@ import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.service.CacheService;
 import cc.mrbird.febs.common.utils.SortUtil;
 import cc.mrbird.febs.common.utils.MD5Util;
+import cc.mrbird.febs.cos.entity.DoctorInfo;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
+import cc.mrbird.febs.cos.entity.UserInfo;
+import cc.mrbird.febs.cos.service.IDoctorInfoService;
+import cc.mrbird.febs.cos.service.IHospitalInfoService;
+import cc.mrbird.febs.cos.service.IUserInfoService;
 import cc.mrbird.febs.system.dao.UserMapper;
 import cc.mrbird.febs.system.dao.UserRoleMapper;
 import cc.mrbird.febs.system.domain.User;
@@ -46,6 +52,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserRoleService userRoleService;
     @Autowired
     private UserManager userManager;
+
+    @Autowired
+    private IUserInfoService userInfoService;
+
+    @Autowired
+    private IDoctorInfoService doctorInfoService;
+
+    @Autowired
+    private IHospitalInfoService hospitalInfoService;
 
 
     @Override
@@ -169,103 +184,100 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void registUser(String username, String password, String name) throws Exception {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName(name);
+        userInfo.setCode("U-" + System.currentTimeMillis());
+        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
 
+        User user = new User();
+        user.setPassword(MD5Util.encrypt(username, password));
+        user.setUsername(username);
+        user.setCreateTime(new Date());
+        user.setStatus(User.STATUS_VALID);
+        user.setSsex(User.SEX_UNKNOW);
+        user.setAvatar(User.DEFAULT_AVATAR);
+        user.setDescription("注册用户");
+        this.save(user);
+        userInfo.setUserId(user.getUserId());
+        userInfoService.save(userInfo);
+
+        UserRole ur = new UserRole();
+        ur.setUserId(user.getUserId());
+        ur.setRoleId(76L); // 注册用户角色 ID
+        this.userRoleMapper.insert(ur);
+
+        // 创建用户默认的个性化配置
+        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+        // 将用户相关信息保存到 Redis中
+        userManager.loadUserRedisCache(user);
     }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void regist(String username, String password, String staffCode) throws Exception {
-//        StaffInfo staffInfo = staffInfoService.getOne(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getCode, staffCode));
-//        if (staffInfo == null) {
-//            throw new FebsException("员工编号不存在");
-//        }
-//
-//        User user = new User();
-//        user.setPassword(MD5Util.encrypt(username, password));
-//        user.setUsername(username);
-//        user.setCreateTime(new Date());
-//        user.setStatus(User.STATUS_VALID);
-//        user.setSsex(User.SEX_UNKNOW);
-//        user.setAvatar(User.DEFAULT_AVATAR);
-//        user.setDescription("注册用户");
-//        this.save(user);
-//
-//
-//        UserRole ur = new UserRole();
-//        ur.setUserId(user.getUserId());
-//        ur.setRoleId(75L); // 注册用户角色 ID
-//        this.userRoleMapper.insert(ur);
-//
-//        // 创建用户默认的个性化配置
-//        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
-//        // 将用户相关信息保存到 Redis中
-//        userManager.loadUserRedisCache(user);
-//
-//    }
+    /**
+     * 添加医生信息
+     *
+     * @param username   用户名
+     * @param password   密码
+     * @param doctorInfo 医生信息
+     */
+    @Override
+    public void registDoctor(String username, String password, DoctorInfo doctorInfo) throws Exception {
+        User user = new User();
+        user.setPassword(MD5Util.encrypt(username, password));
+        user.setUsername(username);
+        user.setCreateTime(new Date());
+        user.setStatus(User.STATUS_VALID);
+        user.setSsex(User.SEX_UNKNOW);
+        user.setAvatar(User.DEFAULT_AVATAR);
+        user.setDescription("注册用户");
+        this.save(user);
+        doctorInfo.setUserId(Math.toIntExact(user.getUserId()));
+        doctorInfoService.save(doctorInfo);
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void registUser(String username, String password, String name) throws Exception {
-//        UserInfo userInfo = new UserInfo();
-//        userInfo.setName(name);
-//        userInfo.setCode("U-" + System.currentTimeMillis());
-//        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-//
-//        User user = new User();
-//        user.setPassword(MD5Util.encrypt(username, password));
-//        user.setUsername(username);
-//        user.setCreateTime(new Date());
-//        user.setStatus(User.STATUS_VALID);
-//        user.setSsex(User.SEX_UNKNOW);
-//        user.setAvatar(User.DEFAULT_AVATAR);
-//        user.setDescription("注册用户");
-//        this.save(user);
-//        userInfo.setUserId(user.getUserId());
-//        userInfoService.save(userInfo);
-//
-//        UserRole ur = new UserRole();
-//        ur.setUserId(user.getUserId());
-//        ur.setRoleId(75L); // 注册用户角色 ID
-//        this.userRoleMapper.insert(ur);
-//
-//        // 创建用户默认的个性化配置
-//        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
-//        // 将用户相关信息保存到 Redis中
-//        userManager.loadUserRedisCache(user);
-//    }
+        UserRole ur = new UserRole();
+        ur.setUserId(user.getUserId());
+        ur.setRoleId(75L); // 注册用户角色 ID
+        this.userRoleMapper.insert(ur);
 
-//    /**
-//     * 添加用户
-//     *
-//     * @param username 用户名
-//     * @param password 密码
-//     */
-//    @Override
-//    public void registNewUser(String username, String password, UserInfo userInfo) throws Exception {
-//
-//        User user = new User();
-//        user.setPassword(MD5Util.encrypt(username, password));
-//        user.setUsername(username);
-//        user.setCreateTime(new Date());
-//        user.setStatus(User.STATUS_VALID);
-//        user.setSsex(User.SEX_UNKNOW);
-//        user.setAvatar(User.DEFAULT_AVATAR);
-//        user.setDescription("注册用户");
-//        this.save(user);
-//        userInfo.setUserId(user.getUserId());
-//        userInfoService.save(userInfo);
-//
-//        UserRole ur = new UserRole();
-//        ur.setUserId(user.getUserId());
-//        ur.setRoleId(75L); // 注册用户角色 ID
-//        this.userRoleMapper.insert(ur);
-//
-//        // 创建用户默认的个性化配置
-//        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
-//        // 将用户相关信息保存到 Redis中
-//        userManager.loadUserRedisCache(user);
-//    }
+        // 创建用户默认的个性化配置
+        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+        // 将用户相关信息保存到 Redis中
+        userManager.loadUserRedisCache(user);
+    }
+
+    /**
+     * 添加医院信息
+     *
+     * @param username     用户名
+     * @param password     密码
+     * @param hospitalInfo 医院信息
+     */
+    @Override
+    public void registHospital(String username, String password, HospitalInfo hospitalInfo) throws Exception {
+        User user = new User();
+        user.setPassword(MD5Util.encrypt(username, password));
+        user.setUsername(username);
+        user.setCreateTime(new Date());
+        user.setStatus(User.STATUS_VALID);
+        user.setSsex(User.SEX_UNKNOW);
+        user.setAvatar(User.DEFAULT_AVATAR);
+        user.setDescription("注册用户");
+        this.save(user);
+        hospitalInfo.setUserId(Math.toIntExact(user.getUserId()));
+        hospitalInfoService.save(hospitalInfo);
+
+        UserRole ur = new UserRole();
+        ur.setUserId(user.getUserId());
+        ur.setRoleId(77L); // 注册用户角色 ID
+        this.userRoleMapper.insert(ur);
+
+        // 创建用户默认的个性化配置
+        userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+        // 将用户相关信息保存到 Redis中
+        userManager.loadUserRedisCache(user);
+    }
+
 
     @Override
     @Transactional

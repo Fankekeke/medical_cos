@@ -1,6 +1,8 @@
 package cc.mrbird.febs.system.service;
 
 import cc.mrbird.febs.common.domain.QueryRequest;
+import cc.mrbird.febs.cos.entity.DoctorInfo;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.system.domain.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -19,7 +21,7 @@ public interface UserService extends IService<User> {
     /**
      * 查询用户详情，包括基本信息，用户角色，用户部门
      *
-     * @param user user
+     * @param user         user
      * @param queryRequest queryRequest
      * @return IPage
      */
@@ -93,12 +95,22 @@ public interface UserService extends IService<User> {
     void registUser(String username, String password, String name) throws Exception;
 
     /**
-     * 添加用户
+     * 添加医生信息
      *
-     * @param username 用户名
-     * @param password 密码
+     * @param username   用户名
+     * @param password   密码
+     * @param doctorInfo 医生信息
      */
-//    void registNewUser(String username, String password, UserInfo userInfo) throws Exception;
+    void registDoctor(String username, String password, DoctorInfo doctorInfo) throws Exception;
+
+    /**
+     * 添加医院信息
+     *
+     * @param username     用户名
+     * @param password     密码
+     * @param hospitalInfo 医院信息
+     */
+    void registHospital(String username, String password, HospitalInfo hospitalInfo) throws Exception;
 
     /**
      * 重置密码

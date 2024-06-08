@@ -5,6 +5,7 @@
     <!-- 分页获取医院信息 -->
     <select id="selectHospitalPage" resultType="java.util.LinkedHashMap">
         select id,
+        code,
         hospital_name,
         hospital_area,
         hospital_img,
