@@ -74,6 +74,7 @@ public class RegisterInfoController {
      */
     @PostMapping
     public R save(RegisterInfo registerInfo) {
+        registerInfo.setCode("REG-" + System.currentTimeMillis());
         return R.ok(registerInfoService.save(registerInfo));
     }
 

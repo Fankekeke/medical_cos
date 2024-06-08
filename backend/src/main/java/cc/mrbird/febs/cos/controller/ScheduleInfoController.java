@@ -4,11 +4,13 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.ScheduleInfo;
 import cc.mrbird.febs.cos.service.IScheduleInfoService;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,7 @@ public class ScheduleInfoController {
      */
     @PostMapping
     public R save(ScheduleInfo scheduleInfo) {
+        scheduleInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(scheduleInfoService.save(scheduleInfo));
     }
 

@@ -24,11 +24,12 @@
         ri.schedule_id,
         oi.offices_name,
         hi.hospital_name,
-        hi.hospital_img,
         hi.images as hospitalImages,
         ui.name,
         ui.phone,
-        ui.address as userAddress
+        ui.address as userAddress,
+        di.doctor_name,
+        di.images
         from
         register_info ri
         left join office_info oi on
@@ -37,6 +38,8 @@
         (hi.id = oi.hospital_id)
         left join user_info ui on
         (ui.id = ri.user_id)
+        left join doctor_info di on
+        (di.id = ri.staff_id)
         where
         1 = 1
         <if test="registerInfo.userName != null and registerInfo.userName != ''">

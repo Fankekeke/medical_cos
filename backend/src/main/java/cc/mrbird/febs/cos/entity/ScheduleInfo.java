@@ -38,6 +38,11 @@ public class ScheduleInfo implements Serializable {
     private String name;
 
     /**
+     * 日期
+     */
+    private String taskDate;
+
+    /**
      * 开始时间
      */
     private String startDate;
@@ -46,6 +51,11 @@ public class ScheduleInfo implements Serializable {
      * 结束时间
      */
     private String endDate;
+
+    /**
+     * 创建时间
+     */
+    private String createDate;
 
     /**
      * 所属员工
