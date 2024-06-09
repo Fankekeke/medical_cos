@@ -177,13 +177,7 @@ export default {
         title: '医院图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
-          if (!record.hospitalUrl && !record.images) return <a-avatar shape="square" icon="user" />
-          if (record.hospitalUrl) return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ record.hospitalUrl } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ record.hospitalUrl } />
-          </a-popover>
+          if (!record.images) return <a-avatar shape="square" icon="user" />
           if (record.images) <a-popover>
             <template slot="content">
               <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
