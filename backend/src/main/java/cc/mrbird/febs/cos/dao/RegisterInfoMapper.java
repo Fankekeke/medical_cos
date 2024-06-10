@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.dao;
 
+import cc.mrbird.febs.cos.entity.OrderInfo;
 import cc.mrbird.febs.cos.entity.RegisterInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,4 +32,18 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
      * @return 结果
      */
     List<RegisterInfo> selectRegisterByDate(@Param("year") String year, @Param("month") String month);
+
+    /**
+     * 获取本月订单信息
+     *
+     * @return 结果
+     */
+    List<RegisterInfo> selectRegisterByMonth();
+
+    /**
+     * 获取本年订单信息
+     *
+     * @return 结果
+     */
+    List<RegisterInfo> selectRegisterByYear();
 }

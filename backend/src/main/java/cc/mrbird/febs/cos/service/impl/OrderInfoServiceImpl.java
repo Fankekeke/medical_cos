@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
 import cc.mrbird.febs.common.exception.FebsException;
+import cc.mrbird.febs.cos.dao.RegisterInfoMapper;
 import cc.mrbird.febs.cos.dao.UserInfoMapper;
 import cc.mrbird.febs.cos.entity.*;
 import cc.mrbird.febs.cos.dao.OrderInfoMapper;
@@ -48,6 +49,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     private final IOfficeInfoService officeInfoService;
 
+    private final IRegisterInfoService registerInfoService;
+
+    private final IBulletinInfoService bulletinInfoService;
+
+    private final RegisterInfoMapper registerInfoMapper;
 
 
     /**
@@ -216,6 +222,56 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 //        BigDecimal totalPrice = inventoryList.stream().map(e -> NumberUtil.mul(e.getUnitPrice(), e.getQuantity())).reduce(BigDecimal.ZERO, BigDecimal::add);
 //        result.put("before", NumberUtil.round(totalPrice, 2));
 //        result.put("after", NumberUtil.mul(totalPrice, new BigDecimal("0.2")));
+        return result;
+    }
+
+    /**
+     * 主页数据
+     *
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> homeData() {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+        // 总挂号数量
+        List<String> status = new ArrayList<>();
+        status.add("1");
+        status.add("2");
+        status.add("3");
+        status.add("4");
+        result.put("registerNum", registerInfoService.count(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getStatus, status)));
+        // 总收益
+        result.put("orderPrice", baseMapper.selectOrderPrice());
+        // 医生数量
+        result.put("doctorNum", doctorInfoService.count());
+        // 医院数量
+        result.put("hospitalNum", hospitalInfoService.count(Wrappers.<HospitalInfo>lambdaQuery()));
+
+        // 本月挂号数量
+        List<RegisterInfo> registerInfoList = registerInfoMapper.selectRegisterByMonth();
+        List<OrderInfo> orderList = baseMapper.selectOrderByMonth();
+        result.put("monthOrderNum", CollectionUtil.isEmpty(registerInfoList) ? 0 : registerInfoList.size());
+        BigDecimal orderPrice = orderList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal registerPrice = registerInfoList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        // 获取本月收益
+        result.put("monthOrderPrice", orderPrice.add(registerPrice));
+
+        // 本年挂号数量
+        List<RegisterInfo> registerYearList = registerInfoMapper.selectRegisterByYear();
+        List<OrderInfo> orderYearList = baseMapper.selectOrderByYear();
+        result.put("yearOrderNum", CollectionUtil.isEmpty(registerYearList) ? 0 : registerYearList.size());
+        // 本年总收益
+        BigDecimal orderYearPrice = orderYearList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal registerYearPrice = registerYearList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("yearOrderPrice", orderYearPrice.add(registerYearPrice));
+
+        // 公告信息
+        result.put("bulletin", bulletinInfoService.list(Wrappers.<BulletinInfo>lambdaQuery().eq(BulletinInfo::getRackUp, 1)));
+
+        // 近十天内订单统计
+        result.put("orderNumWithinDays", baseMapper.selectOrderNumWithinDays(null));
+        // 近十天内收益统计
+        result.put("orderPriceWithinDays", baseMapper.selectOrderPriceWithinDays(null));
         return result;
     }
 

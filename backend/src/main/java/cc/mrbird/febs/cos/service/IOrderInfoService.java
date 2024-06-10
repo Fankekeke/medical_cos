@@ -54,6 +54,13 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     LinkedHashMap<String, BigDecimal> selectPerformanceByStaffCodeMonth(String staffCode, String year, String month);
 
     /**
+     * 主页数据
+     *
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> homeData();
+
+    /**
      * 订单付款
      *
      * @param orderCode 订单编号

@@ -34,7 +34,7 @@
       <br/>
       <br/>
       <a-col :span="24" style="padding-left: 30px">
-        <div style="font-size: 20px;font-family: SimHei;margin-top: 30px;margin-bottom: 18px">待缴费</div>
+        <div style="font-size: 20px;font-family: SimHei;margin-top: 30px;margin-bottom: 18px">待挂号</div>
         <a-row>
           <a-col :span="6" v-for="(item, index) in oweBookList" :key="index">
             <a-card :bordered="false" hoverable>
@@ -139,7 +139,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">未缴费图书</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">未挂号图书</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.bookOweNum }}
@@ -151,7 +151,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">已缴费图书</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">已挂号图书</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.bookOwnNum }}
@@ -279,7 +279,7 @@ export default {
           height: 300
         },
         title: {
-          text: '缴费单统计',
+          text: '挂号单统计',
           align: 'left'
         },
         plotOptions: {
@@ -398,8 +398,8 @@ export default {
       this.newsContent = `《${this.newsList[this.newsPage].title}》 ${this.newsList[this.newsPage].content}`
     },
     selectHomeData () {
-      this.$get('/cos/pay-record/home/data').then((r) => {
-        let titleData = { orderCode: r.data.orderCode, orderPrice: r.data.orderPrice, pharmacyNum: r.data.pharmacyNum, staffNum: r.data.staffNum }
+      this.$get('/cos/order-info/home/data').then((r) => {
+        let titleData = { registerNum: r.data.registerNum, orderPrice: r.data.orderPrice, doctorNum: r.data.doctorNum, hospitalNum: r.data.hospitalNum }
         this.$emit('setTitle', titleData)
         this.titleData.monthOrderNum = r.data.monthOrderNum
         this.titleData.monthOrderPrice = r.data.monthOrderPrice

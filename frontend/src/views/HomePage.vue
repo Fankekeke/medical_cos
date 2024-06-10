@@ -23,16 +23,16 @@
               <a-col :span="4"></a-col>
               <a-col :span="4"></a-col>
               <a-col :span="4">
-                <head-info title="总缴费数量" :content="titleData.orderCode" :center="false" :bordered="false"/>
+                <head-info title="总挂号数量" :content="titleData.registerNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
                 <head-info title="总收益" :content="titleData.orderPrice" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="学生数量" :content="titleData.pharmacyNum" :center="false" :bordered="false"/>
+                <head-info title="医生数量" :content="titleData.doctorNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="图书数量" :content="titleData.staffNum" :center="false"/>
+                <head-info title="医院数量" :content="titleData.hospitalNum" :center="false"/>
               </a-col>
             </a-row>
           </div>
@@ -63,10 +63,10 @@ export default {
     return {
       userAvatar: '',
       titleData: {
-        orderCode: 0,
+        registerNum: 0,
         orderPrice: 0,
-        pharmacyNum: 0,
-        staffNum: 0
+        doctorNum: 0,
+        hospitalNum: 0
       },
       series: [],
       chartOptions: {

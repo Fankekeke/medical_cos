@@ -85,6 +85,16 @@ public class OrderInfoController {
     }
 
     /**
+     * 统计数据
+     *
+     * @return 结果
+     */
+    @GetMapping("/home/data")
+    public R selectHomeData() {
+        return R.ok(orderInfoService.homeData());
+    }
+
+    /**
      * 添加订单
      *
      * @param orderInfoVo 订单信息

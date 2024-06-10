@@ -22,6 +22,8 @@
         hi.hospital_img,
         hi.images as hospitalImages,
         ui.name as userName,
+        ui.phone,
+        ui.address,
         ui.images as userImages
         from
         medication_info mi
