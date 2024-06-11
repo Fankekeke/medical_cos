@@ -90,4 +90,10 @@ public class MedicationInfo implements Serializable {
      */
     @TableField(exist = false)
     private String hospitalName;
+
+    /**
+     * 所属医院
+     */
+    @TableField(exist = false)
+    private Integer hospitalId;
 }

@@ -318,6 +318,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
+      params.hospitalId = this.currentUser.userId
       if (params.type === undefined) {
         delete params.type
       }

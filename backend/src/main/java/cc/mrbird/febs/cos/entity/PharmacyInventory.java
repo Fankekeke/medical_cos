@@ -78,4 +78,10 @@ public class PharmacyInventory implements Serializable {
     @TableField(exist = false)
     private String images;
 
+    /**
+     * 所属医院
+     */
+    @TableField(exist = false)
+    private Integer hospitalId;
+
 }

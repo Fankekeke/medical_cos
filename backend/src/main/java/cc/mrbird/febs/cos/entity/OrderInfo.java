@@ -80,4 +80,10 @@ public class OrderInfo implements Serializable {
     @TableField(exist = false)
     private String pharmacyName;
 
+    /**
+     * 所属医院
+     */
+    @TableField(exist = false)
+    private Integer hospitalId;
+
 }

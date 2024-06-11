@@ -129,4 +129,10 @@ public class RegisterInfo implements Serializable {
     @TableField(exist = false)
     private String officesName;
 
+    /**
+     * 所属医院
+     */
+    @TableField(exist = false)
+    private Integer hospitalId;
+
 }

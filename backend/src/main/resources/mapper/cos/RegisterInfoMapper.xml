@@ -54,6 +54,9 @@
         <if test="registerInfo.status != null and registerInfo.status != ''">
             AND ri.status = #{registerInfo.status}
         </if>
+        <if test="registerInfo.hospitalId != null">
+            AND hi.user_id = #{registerInfo.hospitalId}
+        </if>
         order by
         ri.create_date desc
     </select>

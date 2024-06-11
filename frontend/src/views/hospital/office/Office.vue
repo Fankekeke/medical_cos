@@ -318,6 +318,7 @@ export default {
       if (params.type === undefined) {
         delete params.type
       }
+      params.hospitalId = this.currentUser.userId
       this.$get('/cos/office-info/page', {
         ...params
       }).then((r) => {

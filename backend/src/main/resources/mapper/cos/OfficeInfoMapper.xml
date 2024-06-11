@@ -32,6 +32,9 @@
         <if test="officeInfo.officesDiagnosisScope != null and officeInfo.officesDiagnosisScope != ''">
             AND oi.offices_diagnosis_scope LIKE CONCAT('%',#{officeInfo.officesDiagnosisScope},'%')
         </if>
+        <if test="officeInfo.hospitalId != null">
+            AND hi.user_id = #{officeInfo.hospitalId}
+        </if>
         order by
         oi.offices_name desc
     </select>

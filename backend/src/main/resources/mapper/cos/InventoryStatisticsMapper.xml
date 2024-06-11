@@ -34,6 +34,9 @@
         <if test="inventoryStatistics.storageType != null and inventoryStatistics.storageType != ''">
             AND ist.storage_type = #{inventoryStatistics.storageType}
         </if>
+        <if test="inventoryStatistics.hospitalId != null">
+            AND hi.user_id = #{inventoryStatistics.hospitalId}
+        </if>
         order by
         ist.create_date desc
     </select>

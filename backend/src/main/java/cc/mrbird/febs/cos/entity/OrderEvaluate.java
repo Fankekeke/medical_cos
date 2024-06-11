@@ -71,4 +71,10 @@ public class OrderEvaluate implements Serializable {
 
     @TableField(exist = false)
     private String pharmacyName;
+
+    /**
+     * 所属医院
+     */
+    @TableField(exist = false)
+    private Integer hospitalId;
 }

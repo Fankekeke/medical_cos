@@ -18,6 +18,8 @@
         logistics_info li
         left join order_info oi on
         (oi.id = li.order_id)
+        left join hospital_info phi on
+        (phi.id = oi.pharmacy_id)
         left join user_info ui on
         (ui.id = oi.user_id)
         where
@@ -28,6 +30,9 @@
         </if>
         <if test="logisticsInfo.userName != null and logisticsInfo.userName != ''">
             AND ui.name LIKE CONCAT('%',#{logisticsInfo.userName},'%')
+        </if>
+        <if test="logisticsInfo.hospitalId != null">
+            AND phi.user_id = #{logisticsInfo.hospitalId}
         </if>
         order by
         oi.create_date desc

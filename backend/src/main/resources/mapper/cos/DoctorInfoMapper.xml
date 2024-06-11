@@ -35,6 +35,9 @@
         <if test="doctorInfo.officesName != null and doctorInfo.officesName != ''">
             AND oi.offices_name LIKE CONCAT('%',#{doctorInfo.officesName},'%')
         </if>
+        <if test="doctorInfo.hospitalId != null">
+            AND hi.user_id = #{doctorInfo.hospitalId}
+        </if>
         order by di.doctor_name desc
     </select>
 </mapper>

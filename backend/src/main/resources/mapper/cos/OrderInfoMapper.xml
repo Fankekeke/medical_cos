@@ -44,6 +44,9 @@
         <if test="orderInfo.userId != null">
             AND ui.user_id = #{orderInfo.userId}
         </if>
+        <if test="orderInfo.hospitalId != null">
+            AND phi.user_id = #{orderInfo.hospitalId}
+        </if>
         order by
         oi.create_date desc
     </select>

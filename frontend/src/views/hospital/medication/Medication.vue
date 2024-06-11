@@ -370,6 +370,7 @@ export default {
       if (params.status === undefined) {
         delete params.status
       }
+      params.hospitalId = this.currentUser.userId
       this.$get('/cos/medication-info/page', {
         ...params
       }).then((r) => {

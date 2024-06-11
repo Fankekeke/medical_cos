@@ -47,6 +47,9 @@
         <if test="medicationInfo.hospitalName != null and medicationInfo.hospitalName != ''">
             AND hi.hospital_name LIKE CONCAT('%',#{medicationInfo.hospitalName},'%')
         </if>
+        <if test="medicationInfo.hospitalId != null">
+            AND hi.user_id = #{medicationInfo.hospitalId}
+        </if>
         order by
         create_date desc
     </select>

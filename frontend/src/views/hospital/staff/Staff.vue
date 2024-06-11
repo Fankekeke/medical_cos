@@ -325,6 +325,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
+      params.hospitalId = this.currentUser.userId
       this.$get('/cos/staff-info/page', {
         ...params
       }).then((r) => {
