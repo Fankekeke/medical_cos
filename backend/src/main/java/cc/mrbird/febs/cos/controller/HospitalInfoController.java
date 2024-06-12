@@ -3,7 +3,9 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
+import cc.mrbird.febs.cos.entity.RegisterInfo;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
+import cc.mrbird.febs.cos.service.IRegisterInfoService;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -23,6 +26,8 @@ import java.util.List;
 public class HospitalInfoController {
 
     private final IHospitalInfoService hospitalInfoService;
+
+    private final IRegisterInfoService registerInfoService;
 
     /**
      * 分页获取医院信息
@@ -59,6 +64,22 @@ public class HospitalInfoController {
     @GetMapping("/selectHospitalByMap/{key}")
     public R selectHospitalByMap(@PathVariable(value = "key", required = false) String key) {
         return R.ok(hospitalInfoService.selectHospitalByMap(key));
+    }
+
+    /**
+     * 根据用户ID获取医院信息
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/user/detail/{userId}")
+    public R selectDetailByUserId(@PathVariable("userId") Integer userId) {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, userId));
+        result.put("hospital", hospitalInfo);
+        List<RegisterInfo> registerInfoList = registerInfoService.list(Wrappers.<RegisterInfo>lambdaQuery().eq(RegisterInfo::getDeptId, hospitalInfo.getId()));
+        result.put("order", registerInfoList);
+        return R.ok(result);
     }
 
     /**

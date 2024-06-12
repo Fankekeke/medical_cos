@@ -396,46 +396,6 @@ export default {
     onChildrenDrawerClose () {
       this.childrenDrawer = false
     },
-    fetchUser (value) {
-      this.lastFetchId += 1;
-      const fetchId = this.lastFetchId;
-      this.data = [];
-      this.fetching = true;
-      this.$get(`/cos/hospital-info/list/key/${value}`).then((r) => {
-        this.hospitalList = r.data.data
-
-        if (fetchId !== this.lastFetchId) {
-          // for fetch callback order
-          return;
-        }
-        const data = body.results.map(item => ({
-          text: `${item.hospitalName} ${item.hospitalNature}`,
-          value: item.id,
-        }));
-        this.hospitalList = data;
-        this.fetching = false;
-      })
-    },
-    selectHospitalList () {
-      this.$get('/cos/hospital-info/list').then((r) => {
-        this.hospitalList = r.data.data
-      })
-    },
-    selectOfficeList (hospitalId) {
-      this.$get(`/cos/office-info/list/byhospital/${hospitalId}`).then((r) => {
-        this.officeList = r.data.data
-      })
-    },
-    hospitalCheck (value) {
-      if (value) {
-        this.hospitalList.forEach(e => {
-          if (e.id === value) {
-            this.hospitalInfo = e
-            this.selectOfficeList(e.id)
-          }
-        })
-      }
-    },
     handleCancel () {
       this.previewVisible = false
     },
