@@ -15,14 +15,6 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="所属医院"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.hospitalName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="科室名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">

@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,22 @@ public class OfficeInfoController {
     @GetMapping("/list/byhospital/{hospitalId}")
     public R selectListByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalId)));
+    }
+
+    /**
+     * 根据医院ID获取科室信息
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/list/byhospital/user/{hospitalId}")
+    public R selectListByHospitalUser(@PathVariable("hospitalId") Integer hospitalId) {
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalId));
+        if (hospitalInfo == null) {
+            return R.ok(Collections.emptyList());
+        } else {
+            return R.ok(officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalInfo.getId())));
+        }
     }
 
     /**
@@ -118,6 +135,23 @@ public class OfficeInfoController {
      */
     @PostMapping
     public R save(OfficeInfo officeInfo) {
+        return R.ok(officeInfoService.save(officeInfo));
+    }
+
+    /**
+     * 新增科室信息
+     *
+     * @param officeInfo 科室信息
+     * @return 结果
+     */
+    @PostMapping("/user")
+    public R saveByHospital(OfficeInfo officeInfo) {
+        // 医院信息
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, officeInfo.getHospitalId()));
+        if (hospitalInfo != null) {
+            officeInfo.setHospitalName(hospitalInfo.getHospitalName());
+            officeInfo.setHospitalId(hospitalInfo.getId());
+        }
         return R.ok(officeInfoService.save(officeInfo));
     }
 

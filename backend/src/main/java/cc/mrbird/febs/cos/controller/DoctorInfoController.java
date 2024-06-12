@@ -11,6 +11,7 @@ import cc.mrbird.febs.cos.service.IOfficeInfoService;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +138,25 @@ public class DoctorInfoController {
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
     public R save(DoctorInfo doctorInfo) {
+        doctorInfo.setCode("DT-" + System.currentTimeMillis());
+        return R.ok(doctorInfoService.save(doctorInfo));
+    }
+
+    /**
+     * 新增医生信息
+     *
+     * @param doctorInfo 医生信息
+     * @return 结果
+     */
+    @PostMapping("/hospital")
+    @Transactional(rollbackFor = Exception.class)
+    public R saveByHospital(DoctorInfo doctorInfo) {
+        // 医院信息
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, doctorInfo.getHospitalId()));
+        if (hospitalInfo != null) {
+            doctorInfo.setHospitalName(hospitalInfo.getHospitalName());
+            doctorInfo.setHospitalId(hospitalInfo.getId());
+        }
         doctorInfo.setCode("DT-" + System.currentTimeMillis());
         return R.ok(doctorInfoService.save(doctorInfo));
     }

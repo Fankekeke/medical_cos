@@ -19,22 +19,6 @@
           </a-form-item>
         </a-col>
         <a-col :span="8">
-          <a-form-item label='所属医院' v-bind="formItemLayout">
-            <a-select
-              show-search
-              option-filter-prop="children"
-              :filter-option="false"
-              :not-found-content="fetching ? undefined : null"
-              @search="fetchUser"
-              @change="hospitalCheck" v-decorator="[
-              'hospitalId',
-              { rules: [{ required: true, message: '请输入所属医院!' }] }
-              ]">
-              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
           <a-form-item label='医生人数' v-bind="formItemLayout">
             <a-input v-decorator="[
             'doctorNum',
@@ -243,9 +227,6 @@ export default {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
-          if (this.hospitalInfo != null) {
-            values.hospitalName = this.hospitalInfo.hospitalName
-          }
           this.loading = true
           this.$put('/cos/office-info', {
             ...values

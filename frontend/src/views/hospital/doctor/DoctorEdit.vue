@@ -31,22 +31,6 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label='所属医院' v-bind="formItemLayout">
-              <a-select
-                show-search
-                option-filter-prop="children"
-                :filter-option="false"
-                :not-found-content="fetching ? undefined : null"
-                @search="fetchUser"
-                @change="hospitalCheck" v-decorator="[
-              'hospitalId',
-              { rules: [{ required: true, message: '请输入所属医院!' }] }
-              ]">
-                <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
             <a-form-item label='所属科室' v-bind="formItemLayout">
               <a-select @change="officesCheck" v-decorator="[
                 'officesId',
@@ -190,6 +174,7 @@ export default {
     }
   },
   mounted () {
+    this.selectOfficeList(this.currentUser.userId)
   },
   methods: {
     fetchUser (value) {
@@ -220,7 +205,7 @@ export default {
       })
     },
     selectOfficeList (hospitalId) {
-      this.$get(`/cos/office-info/list/byhospital/${hospitalId}`).then((r) => {
+      this.$get(`/cos/office-info/list/byhospital/user/${hospitalId}`).then((r) => {
         this.officeList = r.data.data
       })
     },
@@ -282,10 +267,6 @@ export default {
           this.form.getFieldDecorator(key)
           obj[key] = doctor[key]
         }
-        if (key === 'hospitalId' && doctor['hospitalId'] != null && doctor['hospitalName'] != null) {
-          this.fetchUser(doctor['hospitalName'])
-          this.selectOfficeList(doctor['hospitalId'])
-        }
       })
       setTimeout(() => {
         this.form.setFieldsValue(obj)
@@ -313,9 +294,6 @@ export default {
       this.form.validateFields((err, values) => {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
-        if (this.hospitalInfo != null) {
-          values.hospitalName = this.hospitalInfo.hospitalName
-        }
         if (this.officesInfo != null) {
           values.officesName = this.officesInfo.officesName
         }

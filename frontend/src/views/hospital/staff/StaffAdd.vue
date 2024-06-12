@@ -30,22 +30,6 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='所属医院' v-bind="formItemLayout">
-            <a-select
-              show-search
-              option-filter-prop="children"
-              :filter-option="false"
-              :not-found-content="fetching ? undefined : null"
-              @search="fetchUser"
-              @change="hospitalCheck" v-decorator="[
-              'deptId',
-              { rules: [{ required: true, message: '请输入所属医院!' }] }
-              ]">
-              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
           <a-form-item label='职位' v-bind="formItemLayout">
             <a-radio-group button-style="solid" v-decorator="[
               'position',
@@ -262,8 +246,9 @@ export default {
         if (!err) {
           values.images = images.length > 0 ? images.join(',') : null
           values.status = 1
+          values.hospitalId = this.currentUser.userId
           this.loading = true
-          this.$post('/cos/staff-info', {
+          this.$post('/cos/staff-info/user', {
             ...values
           }).then((r) => {
             this.reset()
