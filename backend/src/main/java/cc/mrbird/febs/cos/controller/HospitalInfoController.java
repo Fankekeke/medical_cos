@@ -119,8 +119,9 @@ public class HospitalInfoController {
      * @param type 类型 1.地区统计 2.医院类型 3.医院等级
      * @return 结果
      */
+    @GetMapping("/selectHospitalRate/{type}")
     public R selectHospitalRate(@PathVariable("type") Integer type) {
-        return R.ok();
+        return R.ok(hospitalInfoService.selectHospitalRate(type));
     }
 
     /**

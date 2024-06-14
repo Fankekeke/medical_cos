@@ -4,15 +4,13 @@ import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.dao.HospitalInfoMapper;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -80,7 +78,40 @@ public class HospitalInfoServiceImpl extends ServiceImpl<HospitalInfoMapper, Hos
      * @return 结果
      */
     @Override
-    public LinkedHashMap<String, Object> selectHospitalRate(Integer type) {
-        return null;
+    public List<LinkedHashMap<String, Object>> selectHospitalRate(Integer type) {
+        // 返回数据
+        List<LinkedHashMap<String, Object>> result = new ArrayList<>();
+
+        // 获取所有医院信息
+        List<HospitalInfo> hospitalInfoList = this.list();
+        if (CollectionUtil.isEmpty(hospitalInfoList)) {
+            return Collections.emptyList();
+        }
+
+        Map<String, List<HospitalInfo>> mapRate;
+        switch (type) {
+            case 1:
+                mapRate = hospitalInfoList.stream().filter(e -> StrUtil.isNotEmpty(e.getHospitalArea())).collect(Collectors.groupingBy(HospitalInfo::getHospitalArea));
+                break;
+            case 2:
+                mapRate = hospitalInfoList.stream().filter(e -> StrUtil.isNotEmpty(e.getHospitalNature())).collect(Collectors.groupingBy(HospitalInfo::getHospitalNature));
+                break;
+            case 3:
+                mapRate = hospitalInfoList.stream().filter(e -> StrUtil.isNotEmpty(e.getHospitalGrade())).collect(Collectors.groupingBy(HospitalInfo::getHospitalGrade));
+                break;
+            default:
+                return Collections.emptyList();
+        }
+        mapRate.forEach((key, value) -> {
+            LinkedHashMap<String, Object> item = new LinkedHashMap<String, Object>(){
+                {
+                    put("data", value);
+                    put("name", key);
+                }
+            };
+            result.add(item);
+        });
+
+        return result;
     }
 }
