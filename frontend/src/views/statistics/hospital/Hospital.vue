@@ -4,13 +4,13 @@
       <a-col :span="8">
         <a-radio-group button-style="solid" v-model="checkFlag" style="width: 100%">
           <a-radio-button value="1" style="width: 25%;text-align: center">
-            各省统计
+            地区统计
           </a-radio-button>
           <a-radio-button value="2" style="width: 25%;text-align: center">
-            房源状态
+            医院类型
           </a-radio-button>
           <a-radio-button value="3" style="width: 25%;text-align: center">
-            员工任务
+            医院等级
           </a-radio-button>
         </a-radio-group>
       </a-col>

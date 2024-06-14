@@ -72,4 +72,15 @@ public class HospitalInfoServiceImpl extends ServiceImpl<HospitalInfoMapper, Hos
         // 获取医院信息【过滤经纬度为空】
         return baseMapper.selectHospitalByMap(key);
     }
+
+    /**
+     * 医院统计
+     *
+     * @param type 类型 1.地区统计 2.医院类型 3.医院等级
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectHospitalRate(Integer type) {
+        return null;
+    }
 }

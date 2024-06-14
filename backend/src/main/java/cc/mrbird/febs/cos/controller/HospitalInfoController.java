@@ -114,6 +114,16 @@ public class HospitalInfoController {
     }
 
     /**
+     * 医院统计
+     *
+     * @param type 类型 1.地区统计 2.医院类型 3.医院等级
+     * @return 结果
+     */
+    public R selectHospitalRate(@PathVariable("type") Integer type) {
+        return R.ok();
+    }
+
+    /**
      * 新增医院信息
      *
      * @param hospitalInfo 医院信息
