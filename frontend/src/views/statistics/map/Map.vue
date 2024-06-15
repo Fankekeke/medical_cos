@@ -16,123 +16,17 @@
         </a-col>
         <a-col :span="6" style="height: 100%;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff">
           <div>
-            <div v-if="rentShow" class="scenicInfo" style="height: 100vh; overflow-y: auto;padding-left: 5px;overflow-x: hidden">
-              <a-carousel autoplay style="height: 250px;" v-if="rentData.roomPictures !== undefined && rentData.roomPictures !== ''">
-                <div style="width: 100%;height: 250px" v-for="(item, index) in rentData.roomPictures.split(',')" :key="index">
+            <div v-if="rentShow && hospitalInfo" class="scenicInfo" style="height: 100vh; overflow-y: auto;padding-left: 5px;overflow-x: hidden">
+              <a-carousel autoplay style="height: 250px;" v-if="hospitalInfo.images">
+                <div style="width: 100%;height: 250px" v-for="(item, index) in hospitalInfo.images.split(',')" :key="index">
                   <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 100%">
                 </div>
               </a-carousel>
-              <a-card :title="rentData.houseAddress" :bordered="false">
+              <a-card :title="hospitalInfo.hospitalName" :bordered="false">
                 <a slot="extra" @click="rentNavigation" style="margin-right: 10px">导航</a>
                 <a slot="extra" @click="rentBack">返回</a>
               </a-card>
               <div style="font-size: 12px;font-family: SimHei;color: #404040;margin-top: 15px">
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="24"><b>出租标题：</b>
-                    {{ rentData.title !== null ? rentData.title : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="8"><b>租金每月：</b>
-                    {{ rentData.rentPrice !== null ? rentData.rentPrice : '- -' }}元
-                  </a-col>
-                  <a-col :span="8"><b>出租状态：</b>
-                    <span v-if="rentData.flag === 1">上架</span>
-                    <span v-if="rentData.flag === 2">下架</span>
-                    <span v-if="rentData.flag === 2">已被出租</span>
-                  </a-col>
-                  <a-col :span="8"><b>合租类型：</b>
-                    <span v-if="rentData.rentType === 1">整租</span>
-                    <span v-if="rentData.rentType === 2">合租</span>
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="8"><b>访问量：</b>
-                    {{ rentData.views !== null ? rentData.views : '- -' }}次
-                  </a-col>
-                  <a-col :span="8"><b>房间类型：</b>
-                    <span v-if="rentData.roomType === 1">主卧</span>
-                    <span v-if="rentData.roomType === 2">次卧</span>
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>发布时间：</b>
-                    {{ rentData.createDate !== null ? rentData.createDate : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row :gutter="10" style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">包含设施</span></a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasBed == 1 ? 'green' : 'red'}">床</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/chuang.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasRefrigerator == 1 ? 'green' : 'red'}">冰箱</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/dankaimenbingxiang.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasAirConditioner == 1 ? 'green' : 'red'}">空调</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/kongtiao.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasBroadband == 1 ? 'green' : 'red'}">宽带</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/kuandai.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasBalcony == 1 ? 'green' : 'red'}">阳台</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/loutianyangtai.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasGasStoves == 1 ? 'green' : 'red'}">燃气灶</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/ranqizao.png">
-                  </a-col>
-                  <a-col :span="24" style="margin: 20px 0px"></a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasWaterHeater == 1 ? 'green' : 'red'}">热水器</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/reshuiqi.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasSofa == 1 ? 'green' : 'red'}">沙发</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/shafa_1.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasCook == 1 ? 'green' : 'red'}">做饭</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/weibolu.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasBathroom == 1 ? 'green' : 'red'}">卫生间</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/weiyu.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasTelevision == 1 ? 'green' : 'red'}">电视</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/dianshi.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasWashingMachine == 1 ? 'green' : 'red'}">洗衣机</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/xiyiji.png">
-                  </a-col>
-                  <a-col :span="24" style="margin: 20px 0px"></a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasWardrobe == 1 ? 'green' : 'red'}">衣柜</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/yigui.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasRangeHood == 1 ? 'green' : 'red'}">油烟机</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/youyanji.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasHeating == 1 ? 'green' : 'red'}">暖气</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/zaotai.png">
-                  </a-col>
-                  <a-col :span="4" style="text-align: center">
-                    <div :style="{color: rentData.hasDoorLock == 1 ? 'green' : 'red'}">智能门锁</div>
-                    <img src="http://127.0.0.1:9527/imagesWeb/zhinengmensuo.png">
-                  </a-col>
-                </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
                   <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">周边设施</span></a-col>
@@ -153,276 +47,102 @@
                     </a-radio-group>
                   </a-col>
                 </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">租金备注</span></a-col>
-                  {{ rentData.rentRemark !== null ? rentData.rentRemark : '- -' }}元
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">出租要求</span></a-col>
-                  {{ rentData.rentalRequest !== null ? rentData.rentalRequest : '- -' }}元
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">房间信息</span></a-col>
-                  <a-col :span="12"><b>房间数量：</b>
-                    {{ houseInfo.roomNumber !== null ? houseInfo.roomNumber : '- -' }}
+                <a-row style="padding-left: 24px;padding-right: 24px;margin-top: 20px">
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">医院信息</span></a-col>
+                  <a-col :span="12"><b>医院姓名：</b>
+                    {{ hospitalInfo.hospitalName }}
                   </a-col>
-                  <a-col :span="12"><b>客厅数量：</b>
-                    {{ houseInfo.livingRoomNumber !== null ? houseInfo.livingRoomNumber : '- -' }}
+                  <a-col :span="12"><b>医院地区：</b>
+                    {{ hospitalInfo.hospitalArea }}
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>卫生间数量：</b>
-                    {{ houseInfo.bathroomNumber !== null ? houseInfo.bathroomNumber : '- -' }}
+                  <a-col :span="12"><b>院长：</b>
+                    {{ hospitalInfo.hospitalDeanName != null ? hospitalInfo.hospitalDeanName : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>装修类型：</b>
-                    <span v-if="houseInfo.decorationType === 1">精装修</span>
-                    <span v-if="houseInfo.decorationType === 2">普通装修</span>
-                    <span v-if="houseInfo.decorationType === 3">暂无装修</span>
+                  <a-col :span="12"><b>医院建院年份：</b>
+                    {{ hospitalInfo.hospitalYear != null ? hospitalInfo.hospitalYear : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>小区编号：</b>
-                    {{ community.code !== null ? community.code : '- -' }}
+                  <a-col :span="12"><b>医院类型：</b>
+                    {{ hospitalInfo.hospitalNature != null ? hospitalInfo.hospitalNature : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>所在地：</b>
-                    {{ houseInfo.address !== null ? houseInfo.address : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>房间面积：</b>
-                    {{ houseInfo.roomSize !== null ? houseInfo.roomSize : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>楼层：</b>
-                    {{ houseInfo.floor !== null ? houseInfo.floor : '- -' }}
+                  <a-col :span="12"><b>医院等级：</b>
+                    {{ hospitalInfo.hospitalGrade != null ? hospitalInfo.hospitalGrade : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>经度：</b>
-                    {{ houseInfo.longitude !== null ? houseInfo.longitude : '- -' }}
+                  <a-col :span="12"><b>医院科室数量：</b>
+                    {{ hospitalInfo.hospitalOfficesNum != null ? hospitalInfo.hospitalOfficesNum : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>纬度：</b>
-                    {{ houseInfo.latitude !== null ? houseInfo.latitude : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>房屋类型：</b>
-                    <span v-if="houseInfo.rentType === 1">普通住宅</span>
-                    <span v-if="houseInfo.rentType === 2">高层楼</span>
-                    <span v-if="houseInfo.rentType === 3">别墅</span>
-                    <span v-if="houseInfo.rentType === 3">大平层</span>
-                  </a-col>
-                  <a-col :span="12"><b>朝向：</b>
-                    {{ houseInfo.towards !== null ? houseInfo.towards : '- -' }}
+                  <a-col :span="12"><b>医保人数：</b>
+                    {{ hospitalInfo.medicalInsuranceNum != null ? hospitalInfo.medicalInsuranceNum : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col :span="12"><b>标签：</b>
-                    {{ houseInfo.tags !== null ? houseInfo.tags : '- -' }}
+                  <a-col :span="12"><b>病床数量：</b>
+                    {{ hospitalInfo.hospitalBedNum != null ? hospitalInfo.hospitalBedNum : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>所属小区：</b>
-                    {{ community.communityName !== null ? community.communityName : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="community != null">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">所属物业配套</span></a-col>
-                  <a-col :span="12"><b>绿化率：</b>
-                    {{ community.greeningRate !== null ? community.greeningRate : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>建筑类型：</b>
-                    <span v-if="community.buildingType === 1">居住建筑</span>
-                    <span v-if="community.buildingType === 2">公共建筑</span>
-                    <span v-if="community.buildingType === 3">工业建筑</span>
-                    <span v-if="community.buildingType === 4">农业建筑</span>
-                    <span v-if="community.buildingType === 5">大量性建筑</span>
-                    <span v-if="community.buildingType == null">- -</span>
+                  <a-col :span="12"><b>年门诊量：</b>
+                    {{ hospitalInfo.outpatientNum != null ? hospitalInfo.outpatientNum : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="community != null">
-                  <a-col :span="12"><b>统一供暖：</b>
-                    <span v-if="community.unifiedHeating === 1" style="color: green">是</span>
-                    <span v-if="community.unifiedHeating === 2" style="color: red">否</span>
-                    <span v-if="community.unifiedHeating == null">- -</span>
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="12"><b>是否医保：</b>
+                    {{ hospitalInfo.isMedicalInsurance != null ? hospitalInfo.isMedicalInsurance : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>供水供电：</b>
-                    <span v-if="community.waterSupply === 1">民用</span>
-                    <span v-if="community.waterSupply === 2">商用</span>
-                    <span v-if="community.waterSupply == null">- -</span>
+                  <a-col :span="12"><b>医院荣誉：</b>
+                    {{ hospitalInfo.hospitalHonor != null ? hospitalInfo.hospitalHonor : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="community != null">
-                  <a-col :span="12"><b>停车位：</b>
-                    {{ community.parkingSpace !== null ? community.parkingSpace : '- -' }}
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="12"><b>医院电话：</b>
+                    {{ hospitalInfo.hospitalPhone != null ? hospitalInfo.hospitalPhone : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>所属商圈：</b>
-                    {{ community.businessDistrict !== null ? community.businessDistrict : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="community != null">
-                  <a-col :span="12"><b>物业费：</b>
-                    {{ community.propertyCosts !== null ? community.propertyCosts : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>停车费：</b>
-                    {{ community.parkingFee !== null ? community.parkingFee : '- -' }}
+                  <a-col :span="12"><b>医院地址：</b>
+                    {{ hospitalInfo.hospitalAddress != null ? hospitalInfo.hospitalAddress : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="community != null">
-                  <a-col :span="12"><b>物业公司：</b>
-                    {{ community.propertyCompany !== null ? community.propertyCompany : '- -' }}
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="12"><b>医院邮编：</b>
+                    {{ hospitalInfo.hospitalPostCode != null ? hospitalInfo.hospitalPostCode : '- -' }}
                   </a-col>
-                  <a-col :span="12"><b>开发商：</b>
-                    {{ community.developer !== null ? community.developer : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;margin-bottom: 25px" v-if="community != null">
-                  <a-col :span="12"><b>车位管理费：</b>
-                    {{ community.parkingManagementFee !== null ? community.parkingManagementFee : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>位置：</b>
-                    {{  rentData.province + rentData.city + rentData.area }}
-                  </a-col>
-                </a-row>
-              </div>
-            </div>
-            <div v-if="communityShow" class="scenicInfo" style="height: 100vh; overflow-y: auto;padding-left: 5px;overflow-x: hidden">
-              <a-card :title="communityData.communityName" :bordered="false">
-                <a slot="extra" @click="rentNavigation" style="margin-right: 10px">导航</a>
-                <a slot="extra" @click="communityBack">返回</a>
-              </a-card>
-              <div style="font-size: 12px;font-family: SimHei;color: #404040;margin-top: 15px">
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">周边设施</span></a-col>
-                  <a-col :span="24">
-                    <a-radio-group button-style="solid" style="width: 100%" @change="gisOnChange">
-                      <a-radio-button value="1" style="width: 25%;text-align: center">
-                        交通
-                      </a-radio-button>
-                      <a-radio-button value="2" style="width: 25%;text-align: center">
-                        餐饮
-                      </a-radio-button>
-                      <a-radio-button value="3" style="width: 25%;text-align: center">
-                        教育
-                      </a-radio-button>
-                      <a-radio-button value="4" style="width: 25%;text-align: center">
-                        医疗
-                      </a-radio-button>
-                    </a-radio-group>
+                  <a-col :span="12"><b>医院公交路线：</b>
+                    {{ hospitalInfo.hospitalBusRoute != null ? hospitalInfo.hospitalBusRoute : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 14px;font-weight: 650;color: #000c17">小区信息</span></a-col>
-                  <a-col :span="12"><b>绿化率：</b>
-                    {{ communityData.greeningRate !== null ? communityData.greeningRate : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>建筑类型：</b>
-                    <span v-if="communityData.buildingType === 1">居住建筑</span>
-                    <span v-if="communityData.buildingType === 2">公共建筑</span>
-                    <span v-if="communityData.buildingType === 3">工业建筑</span>
-                    <span v-if="communityData.buildingType === 4">农业建筑</span>
-                    <span v-if="communityData.buildingType === 5">大量性建筑</span>
-                    <span v-if="communityData.buildingType == null">- -</span>
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="12"><b>是否开启挂号：</b>
+                    <span v-if="hospitalInfo.isOpen != null && hospitalInfo.isOpen == 1" style="color: green">开启</span>
+                    <span v-else style="color: red">关闭</span>
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="12"><b>统一供暖：</b>
-                    <span v-if="communityData.unifiedHeating === 1" style="color: green">是</span>
-                    <span v-if="communityData.unifiedHeating === 2" style="color: red">否</span>
-                    <span v-if="communityData.unifiedHeating == null">- -</span>
-                  </a-col>
-                  <a-col :span="12"><b>供水供电：</b>
-                    <span v-if="communityData.waterSupply === 1">民用</span>
-                    <span v-if="communityData.waterSupply === 2">商用</span>
-                    <span v-if="communityData.waterSupply == null">- -</span>
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="24"><b>医院设备介绍：</b>
+                    {{ hospitalInfo.hospitalEquipment }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="12"><b>停车位：</b>
-                    {{ communityData.parkingSpace !== null ? communityData.parkingSpace : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>所属商圈：</b>
-                    {{ communityData.businessDistrict !== null ? communityData.businessDistrict : '- -' }}
+                <a-row style="padding-left: 24px;padding-right: 24px;">
+                  <a-col :span="24"><b>医院简介：</b>
+                    {{ hospitalInfo.hospitalAbout }}
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="24"><b>物业费：</b>
-                    {{ communityData.propertyCosts !== null ? communityData.propertyCosts : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="24"><b>停车费：</b>
-                    {{ communityData.parkingFee !== null ? communityData.parkingFee : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="24"><b>物业公司：</b>
-                    {{ communityData.propertyCompany !== null ? communityData.propertyCompany : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="24"><b>开发商：</b>
-                    {{ communityData.developer !== null ? communityData.developer : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col :span="12"><b>车位管理费：</b>
-                    {{ communityData.parkingManagementFee !== null ? communityData.parkingManagementFee : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>产权年限：</b>
-                    {{ communityData.propertyTenure !== null ? communityData.propertyTenure : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;margin-bottom: 25px" v-if="communityData != null">
-                  <a-col :span="12"><b>总户数：</b>
-                    {{ communityData.totalHouses !== null ? communityData.totalHouses : '- -' }}
-                  </a-col>
-                  <a-col :span="12"><b>总建面积：</b>
-                    {{ communityData.totalConstructionArea !== null ? communityData.totalConstructionArea : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col><span style="font-size: 14px;font-weight: 650;color: #000c17">房价走势-{{ new Date().getFullYear() }}年</span></a-col>
-                </a-row>
-                <a-card v-if="echartsShow" hoverable :bordered="false" style="width: 100%">
-                  <a-skeleton active v-if="checkLoading" />
-                  <apexchart v-if="!checkLoading" type="bar" height="180" :options="chartOptions" :series="series"></apexchart>
-                </a-card>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;" v-if="communityData != null">
-                  <a-col><span style="font-size: 14px;font-weight: 650;color: #000c17">出租情况</span></a-col>
-                </a-row>
-                <br/>
-                <div style="text-align: center">
-                  <a-icon type="smile" theme="twoTone" style="font-size: 75px"/>
-                  <p style="margin-top: 25px;font-size: 20px;font-family: SimHei">当前小区共有套{{ communityRent }}房源!</p>
-                </div>
               </div>
             </div>
             <div v-if="!rentShow" style="text-align: center;font-size: 13px;height: 100vh; overflow-y: auto;padding: 15px;overflow-x: hidden">
+              <a-input-search placeholder="请输入关键字搜索..." style="margin-bottom: 15px;margin-top: 15px" @search="onSearch" />
               <div style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in rentList" :key="index">
                 <a-divider orientation="left">
                   <span style="font-size: 12px;font-family: SimHei;">{{item.hospitalName}} - {{item.hospitalAddress}}</span>
@@ -460,7 +180,6 @@ export default {
     return {
       communityRent: 0,
       rentShow: false,
-      rentData: null,
       communityShow: false,
       communityData: null,
       checkedList: ['Apple', 'Orange'],
@@ -471,7 +190,7 @@ export default {
       rentList: [],
       communityList: [],
       community: null,
-      houseInfo: null,
+      hospitalInfo: null,
       nowPoint: null,
       roadData: [],
       checkLoading: false,
@@ -520,12 +239,11 @@ export default {
   },
   mounted () {
     this.visible = true
-    this.getRentList()
-    this.getCommunityList()
     setTimeout(() => {
       baiduMap.initMap('areas')
       this.getLocal()
     }, 500)
+    this.getRentList()
   },
   methods: {
     selectRentCountByCommunity (communityCode) {
@@ -550,10 +268,13 @@ export default {
           break
       }
       if (this.rentShow) {
-        baiduMap.searchNear(this.rentData.longitude, this.rentData.latitude, key)
+        baiduMap.searchNear(this.hospitalInfo.longitude, this.hospitalInfo.latitude, key)
       } else {
         baiduMap.searchNear(this.communityData.longitude, this.communityData.latitude, key)
       }
+    },
+    onSearch (value) {
+      console.log(value)
     },
     selectHousePriceTrend (row) {
       if (!this.echartsShow) {
@@ -627,7 +348,7 @@ export default {
       let start = new BMap.Point(this.nowPoint.lng, this.nowPoint.lat)
       let end = null
       if (this.rentShow) {
-        end = new BMap.Point(this.rentData.longitude, this.rentData.latitude)
+        end = new BMap.Point(this.hospitalInfo.longitude, this.hospitalInfo.latitude)
       } else {
         end = new BMap.Point(this.communityData.longitude, this.communityData.latitude)
       }
@@ -641,15 +362,14 @@ export default {
       this.communityShow = false
     },
     rentNavigation () {
-      this.navigation(this.rentData)
+      this.navigation(this.hospitalInfo)
     },
     home () {
       this.$router.push('/home')
     },
     rentDetail (row) {
-      this.rentData = row
       this.rentShow = true
-      this.getHouseInfo(this.rentData.houseCode)
+      this.getHospitalInfo(row.id)
       this.local(row)
     },
     communityDetail (row) {
@@ -670,10 +390,10 @@ export default {
         this.community = r.data.data
       })
     },
-    getHouseInfo (houseCode) {
-      this.$get(`/cos/house-info/detail/${houseCode}`).then((r) => {
-        this.houseInfo = r.data.data
-        this.getCommunity(this.houseInfo.communityCode)
+    getHospitalInfo (hospitalId) {
+      this.$get(`/cos/hospital-info/${hospitalId}`).then((r) => {
+        this.hospitalInfo = r.data.data
+        console.log(this.hospitalInfo)
       })
     },
     getRentList (key) {
