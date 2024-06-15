@@ -1,15 +1,18 @@
 package cc.mrbird.febs.cos.service.impl;
 
+import cc.mrbird.febs.common.utils.SpaceUtil;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.dao.HospitalInfoMapper;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +72,31 @@ public class HospitalInfoServiceImpl extends ServiceImpl<HospitalInfoMapper, Hos
     public List<LinkedHashMap<String, Object>> selectHospitalByMap(String key) {
         // 获取医院信息【过滤经纬度为空】
         return baseMapper.selectHospitalByMap(key);
+    }
+
+    /**
+     * 逆地址解析
+     */
+    @Override
+    public void addressResolve() {
+        // 获取所有医院信息
+        List<HospitalInfo> hospitalInfoList = this.list(Wrappers.<HospitalInfo>lambdaQuery().isNotNull(HospitalInfo::getHospitalAddress));
+        if (CollectionUtil.isEmpty(hospitalInfoList)) {
+            return;
+        }
+        // 待更新的医院数据
+        List<HospitalInfo> toupList = new ArrayList<>();
+        for (HospitalInfo hospitalInfo : hospitalInfoList) {
+            String point = SpaceUtil.getCoordinate(hospitalInfo.getHospitalAddress());
+            if (StrUtil.isEmpty(point)) {
+                continue;
+            }
+            List<String> pointList = StrUtil.split(point, ',');
+            hospitalInfo.setLongitude(new BigDecimal(pointList.get(0)));
+            hospitalInfo.setLatitude(new BigDecimal(pointList.get(1)));
+            toupList.add(hospitalInfo);
+        }
+        this.updateBatchById(toupList);
     }
 
     /**

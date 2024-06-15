@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,12 +59,23 @@ public class HospitalInfoController {
     /**
      * 查询医院地图
      *
-     * @param key 关键字
      * @return 结果
      */
-    @GetMapping("/selectHospitalByMap/{key}")
-    public R selectHospitalByMap(@PathVariable(value = "key", required = false) String key) {
-        return R.ok(hospitalInfoService.selectHospitalByMap(key));
+    @GetMapping("/hospital/map")
+    public R selectHospitalByMap() {
+        return R.ok(hospitalInfoService.selectHospitalByMap(null));
+    }
+
+    /**
+     * 逆地址解析
+     *
+     * @return 结果
+     */
+    @Async
+    @GetMapping("/addressResolve")
+    public R addressResolve() {
+        hospitalInfoService.addressResolve();
+        return R.ok(true);
     }
 
     /**

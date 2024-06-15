@@ -422,55 +422,29 @@
                 </div>
               </div>
             </div>
-            <a-tabs default-active-key="1" v-if="!rentShow && !communityShow" style="text-align: center;font-size: 13px">
-              <a-tab-pane key="1" tab="房源" style="height: 93vh; overflow-y: auto;padding: 15px">
-                <div style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in rentList" :key="index">
-                  <a-divider orientation="left">
-                    <span style="font-size: 12px;font-family: SimHei;">{{item.province}}{{item.city}}{{item.area}} - {{item.communityName}}</span>
-                  </a-divider>
-                  <a-card :bordered="false" @click="rentDetail(item)" hoverable>
-                    <div v-if="item.roomPictures !== null">
-                      <a-popover v-for="(item1, index1) in item.roomPictures.split(',')" :key="index1">
-                        <template slot="content">
-                          <a-avatar shape="square" :size="132" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/'+item1"/>
-                        </template>
-                        <a-avatar shape="square" :size="50" icon="user" style="margin-bottom: 15px;margin-right: 10px" :src="'http://127.0.0.1:9527/imagesWeb/'+item1"/>
-                      </a-popover>
-                    </div>
-                    <a-card-meta :title="item.houseAddress" :description="item.rentalRequest.slice(0, 25)+'...'"></a-card-meta>
-                    <div style="font-size: 12px;font-family: SimHei;margin-top: 5px">
-                      <span>{{ item.towards }}</span> |
-                      <span style="margin-left: 2px">{{ item.roomNumber }}室{{ item.livingRoomNumber }}厅</span> |
-                      <span style="margin-left: 2px" v-if="item.rentType == 1">整租</span>
-                      <span style="margin-left: 2px" v-if="item.rentType == 2">合租</span>
-                      <span style="color: #f5222d; font-size: 13px;float: right">{{ item.rentPrice }}元</span>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-              <a-tab-pane key="2" tab="小区" style="padding: 15px">
-                <div style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in communityList" :key="index">
-                  <a-divider orientation="left">
-                    <span style="font-size: 12px;font-family: SimHei;">{{item.province}}{{item.city}}{{item.area}} - {{item.code}}</span>
-                  </a-divider>
-                  <a-card :bordered="false" @click="communityDetail(item)" hoverable>
-                    <a-card-meta :title="item.communityName" :description="item.address.slice(0, 50)+'...'"></a-card-meta>
-                    <div style="font-size: 12px;font-family: SimHei;margin-top: 8px">
-                      <span v-if="item.propertyType == 1">公寓住宅 |</span>
-                      <span v-if="item.propertyType == 2">商业物业 |</span>
-                      <span v-if="item.propertyType == 3">工业物业 |</span>
-                      <span style="margin-left: 2px" v-if="item.tenureCategory == 1">商品房住宅 |</span>
-                      <span style="margin-left: 2px" v-if="item.tenureCategory == 2">央产房 |</span>
-                      <span style="margin-left: 2px" v-if="item.tenureCategory == 3">军产房 |</span>
-                      <span style="margin-left: 2px" v-if="item.tenureCategory == 4">小产权房 |</span>
-                      <span style="margin-left: 2px" v-if="item.tenureCategory == 5">自建房 |</span>
-                      {{ item.propertyTenure }}年
-                      <a style=" font-size: 13px;float: right">详情</a>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-            </a-tabs>
+            <div v-if="!rentShow" style="text-align: center;font-size: 13px;height: 100vh; overflow-y: auto;padding: 15px;overflow-x: hidden">
+              <div style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in rentList" :key="index">
+                <a-divider orientation="left">
+                  <span style="font-size: 12px;font-family: SimHei;">{{item.hospitalName}} - {{item.hospitalAddress}}</span>
+                </a-divider>
+                <a-card :bordered="false" @click="rentDetail(item)" hoverable>
+                  <div v-if="item.images !== null">
+                    <a-popover v-for="(item1, index1) in item.images.split(',')" :key="index1">
+                      <template slot="content">
+                        <a-avatar shape="square" :size="132" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/'+item1"/>
+                      </template>
+                      <a-avatar shape="square" :size="50" icon="user" style="margin-bottom: 15px;margin-right: 10px" :src="'http://127.0.0.1:9527/imagesWeb/'+item1"/>
+                    </a-popover>
+                  </div>
+                  <a-card-meta :title="item.hospitalAddress" :description="item.hospitalAddress.slice(0, 25)+'...'"></a-card-meta>
+                  <div style="font-size: 12px;font-family: SimHei;margin-top: 5px">
+                    <span>{{ item.hospitalGrade }}</span> |
+                    <span>{{ item.hospitalArea }}</span> |
+                    <span style="color: #f5222d; font-size: 13px;float: right">{{ item.hospitalNature }}</span>
+                  </div>
+                </a-card>
+              </div>
+            </div>
           </div>
         </a-col>
       </a-row>
@@ -702,9 +676,9 @@ export default {
         this.getCommunity(this.houseInfo.communityCode)
       })
     },
-    getRentList () {
-      this.$get('/cos/rent-info/page').then((r) => {
-        this.rentList = r.data.data.records
+    getRentList (key) {
+      this.$get('/cos/hospital-info/hospital/map/').then((r) => {
+        this.rentList = r.data.data
       })
     },
     getCommunityList () {

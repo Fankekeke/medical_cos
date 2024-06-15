@@ -41,6 +41,11 @@ public interface IHospitalInfoService extends IService<HospitalInfo> {
     List<LinkedHashMap<String, Object>> selectHospitalByMap(String key);
 
     /**
+     * 逆地址解析
+     */
+    void addressResolve();
+
+    /**
      * 医院统计
      *
      * @param type 类型 1.地区统计 2.医院类型 3.医院等级

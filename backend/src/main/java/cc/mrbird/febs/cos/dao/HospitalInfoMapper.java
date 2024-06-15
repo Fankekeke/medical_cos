@@ -29,5 +29,5 @@ public interface HospitalInfoMapper extends BaseMapper<HospitalInfo> {
      * @param key 关键字
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> selectHospitalByMap(String key);
+    List<LinkedHashMap<String, Object>> selectHospitalByMap(@Param("key")String key);
 }

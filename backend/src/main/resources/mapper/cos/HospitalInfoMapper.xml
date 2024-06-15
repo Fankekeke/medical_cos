@@ -51,6 +51,7 @@
     <select id="selectHospitalByMap" resultType="java.util.LinkedHashMap">
         select id,
         hospital_name,
+        hospital_area,
         hospital_img,
         hospital_nature,
         hospital_grade,
@@ -61,7 +62,7 @@
         from hospital_info
         where 1 = 1
         <if test="key != null and key != ''">
-            AND (hospital_name LIKE CONCAT('%',#{key},'%') OR address LIKE CONCAT('%',#{key},'%'))
+            AND (hospital_name LIKE CONCAT('%',#{key},'%') OR hospital_address LIKE CONCAT('%',#{key},'%'))
         </if>
         AND longitude is not null AND latitude is not null
         order by hospital_name desc
