@@ -146,7 +146,7 @@ public class HospitalInfo implements Serializable {
     /**
      * 图片
      */
-    private Integer images;
+    private String images;
 
     /**
      * 经度

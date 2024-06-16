@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,6 +69,22 @@ public class StaffInfoController {
     @GetMapping("/selectStaffByHospital/{hospitalId}")
     public R selectStaffByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(staffInfoService.list(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getDeptId, hospitalId)));
+    }
+
+    /**
+     * 根据医院获取员工信息
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/selectStaffByHospital/user/{hospitalId}")
+    public R selectStaffByHospitalUser(@PathVariable("hospitalId") Integer hospitalId) {
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalId));
+        if (hospitalInfo != null) {
+            return R.ok(staffInfoService.list(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getDeptId, hospitalInfo.getId())));
+        } else {
+            return R.ok(Collections.emptyList());
+        }
     }
 
     /**

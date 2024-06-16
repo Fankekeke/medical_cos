@@ -120,30 +120,36 @@
                 DATE_FORMAT( oi.create_date, '%Y%m' ) = DATE_FORMAT(
                     CURDATE(),
                     '%Y%m')
+        <if test="hospitalId != null">
+            AND oi.dept_id = #{hospitalId}
+        </if>
     </select>
 
     <!-- 获取本年挂号信息 -->
     <select id="selectRegisterByYear" resultType="cc.mrbird.febs.cos.entity.RegisterInfo">
         select oi.id,
-               oi.user_id,
-               oi.price,
-               oi.register_date,
-               oi.dept_id,
-               oi.staff_id,
-               oi.start_date,
-               oi.end_date,
-               oi.status,
-               oi.pay_date,
-               oi.file,
-               oi.remark,
-               oi.code,
-               oi.drug_price,
-               oi.reference,
-               oi.create_date,
-               oi.schedule_id
+        oi.user_id,
+        oi.price,
+        oi.register_date,
+        oi.dept_id,
+        oi.staff_id,
+        oi.start_date,
+        oi.end_date,
+        oi.status,
+        oi.pay_date,
+        oi.file,
+        oi.remark,
+        oi.code,
+        oi.drug_price,
+        oi.reference,
+        oi.create_date,
+        oi.schedule_id
         from register_info oi
         where DATE_FORMAT(oi.create_date, '%Y') = DATE_FORMAT(
-                CURDATE(),
-                '%Y')
+        CURDATE(),
+        '%Y')
+        <if test="hospitalId != null">
+            AND oi.dept_id = #{hospitalId}
+        </if>
     </select>
 </mapper>

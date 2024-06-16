@@ -54,7 +54,7 @@
         </a-row>
       </a-col>
     </a-row>
-    <a-row style="margin-top: 15px" v-if="user.roleId == 74">
+    <a-row style="margin-top: 15px" v-if="user.roleId == 74 || user.roleId == 77">
       <a-col :span="12">
         <a-card hoverable :bordered="false" style="width: 100%">
           <a-skeleton active v-if="loading" />
@@ -70,7 +70,7 @@
     </a-row>
     <a-row style="margin-top: 15px">
       <a-col :span="24">
-        <div style="background: ghostwhite; padding: 30px;" v-if="user.roleId == 74">
+        <div style="background: ghostwhite; padding: 30px;" v-if="user.roleId == 74 || user.roleId == 77">
           <a-row :gutter="16">
             <a-col :span="6">
               <a-card hoverable>
@@ -398,38 +398,73 @@ export default {
       this.newsContent = `《${this.newsList[this.newsPage].title}》 ${this.newsList[this.newsPage].content}`
     },
     selectHomeData () {
-      this.$get('/cos/order-info/home/data').then((r) => {
-        let titleData = { registerNum: r.data.registerNum, orderPrice: r.data.orderPrice, doctorNum: r.data.doctorNum, hospitalNum: r.data.hospitalNum }
-        this.$emit('setTitle', titleData)
-        this.titleData.monthOrderNum = r.data.monthOrderNum
-        this.titleData.monthOrderPrice = r.data.monthOrderPrice
-        this.titleData.yearOrderNum = r.data.yearOrderNum
-        this.titleData.yearOrderPrice = r.data.yearOrderPrice
-        this.bulletinList = r.data.bulletin
-        let values = []
-        if (r.data.orderNumWithinDays !== null && r.data.orderNumWithinDays.length !== 0) {
-          if (this.chartOptions1.xaxis.categories.length === 0) {
-            console.log(r.data.orderNumWithinDays)
-            this.chartOptions1.xaxis.categories = Array.from(r.data.orderNumWithinDays, ({days}) => days)
+      if (this.user.roleId.toString() === '74') {
+        this.$get('/cos/order-info/home/data').then((r) => {
+          let titleData = { registerNum: r.data.registerNum, orderPrice: r.data.orderPrice, doctorNum: r.data.doctorNum, hospitalNum: r.data.hospitalNum }
+          this.$emit('setTitle', titleData)
+          this.titleData.monthOrderNum = r.data.monthOrderNum
+          this.titleData.monthOrderPrice = r.data.monthOrderPrice
+          this.titleData.yearOrderNum = r.data.yearOrderNum
+          this.titleData.yearOrderPrice = r.data.yearOrderPrice
+          this.bulletinList = r.data.bulletin
+          let values = []
+          if (r.data.orderNumWithinDays !== null && r.data.orderNumWithinDays.length !== 0) {
+            if (this.chartOptions1.xaxis.categories.length === 0) {
+              console.log(r.data.orderNumWithinDays)
+              this.chartOptions1.xaxis.categories = Array.from(r.data.orderNumWithinDays, ({days}) => days)
+            }
+            let itemData = { name: '订单数', data: Array.from(r.data.orderNumWithinDays, ({count}) => count) }
+            values.push(itemData)
+            this.series1 = values
           }
-          let itemData = { name: '订单数', data: Array.from(r.data.orderNumWithinDays, ({count}) => count) }
-          values.push(itemData)
-          this.series1 = values
-        }
-        this.series[0].data = Array.from(r.data.orderPriceWithinDays, ({price}) => price)
-        this.chartOptions.xaxis.categories = Array.from(r.data.orderPriceWithinDays, ({days}) => days)
-        if (r.data.orderDrugType.length !== 0) {
-          let series = []
-          let chartOptions = []
-          r.data.orderDrugType.forEach(e => {
-            series.push(e.count)
-            chartOptions.push(e.name)
-          })
-          this.series2 = series
-          this.chartOptions2.labels = chartOptions
-          console.log(this.chartOptions2.labels)
-        }
-      })
+          this.series[0].data = Array.from(r.data.orderPriceWithinDays, ({price}) => price)
+          this.chartOptions.xaxis.categories = Array.from(r.data.orderPriceWithinDays, ({days}) => days)
+          if (r.data.orderDrugType.length !== 0) {
+            let series = []
+            let chartOptions = []
+            r.data.orderDrugType.forEach(e => {
+              series.push(e.count)
+              chartOptions.push(e.name)
+            })
+            this.series2 = series
+            this.chartOptions2.labels = chartOptions
+            console.log(this.chartOptions2.labels)
+          }
+        })
+      } else {
+        this.$get(`/cos/order-info/home/data/hospital/${this.user.userId}`).then((r) => {
+          let titleData = { registerNum: r.data.registerNum, orderPrice: r.data.orderPrice, doctorNum: r.data.doctorNum, hospitalNum: r.data.hospitalNum }
+          this.$emit('setTitle', titleData)
+          this.titleData.monthOrderNum = r.data.monthOrderNum
+          this.titleData.monthOrderPrice = r.data.monthOrderPrice
+          this.titleData.yearOrderNum = r.data.yearOrderNum
+          this.titleData.yearOrderPrice = r.data.yearOrderPrice
+          this.bulletinList = r.data.bulletin
+          let values = []
+          if (r.data.orderNumWithinDays !== null && r.data.orderNumWithinDays.length !== 0) {
+            if (this.chartOptions1.xaxis.categories.length === 0) {
+              console.log(r.data.orderNumWithinDays)
+              this.chartOptions1.xaxis.categories = Array.from(r.data.orderNumWithinDays, ({days}) => days)
+            }
+            let itemData = { name: '订单数', data: Array.from(r.data.orderNumWithinDays, ({count}) => count) }
+            values.push(itemData)
+            this.series1 = values
+          }
+          this.series[0].data = Array.from(r.data.orderPriceWithinDays, ({price}) => price)
+          this.chartOptions.xaxis.categories = Array.from(r.data.orderPriceWithinDays, ({days}) => days)
+          if (r.data.orderDrugType.length !== 0) {
+            let series = []
+            let chartOptions = []
+            r.data.orderDrugType.forEach(e => {
+              series.push(e.count)
+              chartOptions.push(e.name)
+            })
+            this.series2 = series
+            this.chartOptions2.labels = chartOptions
+            console.log(this.chartOptions2.labels)
+          }
+        })
+      }
     },
     selectHomeByStudentData () {
       if (this.user.roleId == '75') {

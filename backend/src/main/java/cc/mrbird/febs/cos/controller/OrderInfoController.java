@@ -3,9 +3,11 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.OrderInfo;
 import cc.mrbird.febs.cos.entity.vo.OrderDetailVo;
 import cc.mrbird.febs.cos.entity.vo.OrderInfoVo;
+import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IOrderInfoService;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +26,8 @@ import java.util.List;
 public class OrderInfoController {
 
     private final IOrderInfoService orderInfoService;
+
+    private final IHospitalInfoService hospitalInfoService;
 
     /**
      * 分页获取订单信息
@@ -72,6 +76,22 @@ public class OrderInfoController {
     }
 
     /**
+     * 平台内添加订单
+     *
+     * @param orderInfoVo 订单信息
+     * @return 结果
+     */
+    @PostMapping("/platform/user")
+    public R saveOrderByPlatformHospital(OrderInfoVo orderInfoVo) {
+        // 获取医院信息
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, orderInfoVo.getPharmacyId()));
+        if (hospitalInfo != null) {
+            orderInfoVo.setPharmacyId(hospitalInfo.getId());
+        }
+        return R.ok(orderInfoService.orderAdd(orderInfoVo, true));
+    }
+
+    /**
      * 根据用户月份获取绩效
      *
      * @param staffCode 员工编号
@@ -92,6 +112,16 @@ public class OrderInfoController {
     @GetMapping("/home/data")
     public R selectHomeData() {
         return R.ok(orderInfoService.homeData());
+    }
+
+    /**
+     * 统计数据
+     *
+     * @return 结果
+     */
+    @GetMapping("/home/data/hospital/{hospitalId}")
+    public R selectHomeDataByHospital(@PathVariable("hospitalId") Integer hospitalId) {
+        return R.ok(orderInfoService.homeDataHospital(hospitalId));
     }
 
     /**

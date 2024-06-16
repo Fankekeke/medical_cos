@@ -14,22 +14,6 @@
           <span style="font-size: 13px">选择医院</span>
         </a-divider>
         <a-col :span="12">
-          <a-form-item label='所属医院' v-bind="formItemLayout">
-            <a-select
-              show-search
-              option-filter-prop="children"
-              :filter-option="false"
-              :not-found-content="fetching ? undefined : null"
-              @search="fetchUser"
-              @change="hospitalCheck" v-decorator="[
-              'pharmacyId',
-              { rules: [{ required: true, message: '请输入所属医院!' }] }
-              ]">
-              <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
           <a-form-item label='员工'>
             <a-select v-decorator="[
               'staffId',
@@ -203,6 +187,8 @@ export default {
     }
   },
   mounted () {
+    this.getStaff(this.currentUser.userId)
+    this.getDrug(this.currentUser.userId)
   },
   methods: {
     handleChange (value, record) {
@@ -263,12 +249,12 @@ export default {
       }
     },
     getStaff (pharmacyId) {
-      this.$get(`/cos/staff-info/selectStaffByHospital/${pharmacyId}`).then((r) => {
+      this.$get(`/cos/staff-info/selectStaffByHospital/user/${pharmacyId}`).then((r) => {
         this.staffList = r.data.data
       })
     },
     getDrug (pharmacyId) {
-      this.$get(`/cos/pharmacy-inventory/detail/pharmacy/${pharmacyId}`).then((r) => {
+      this.$get(`/cos/pharmacy-inventory/detail/pharmacy/user/${pharmacyId}`).then((r) => {
         this.drugList = r.data.data
       })
     },
@@ -331,10 +317,11 @@ export default {
     },
     handleSubmit () {
       this.form.validateFields((err, values) => {
+        values.pharmacyId = this.currentUser.userId
         values.orderDetailList = JSON.stringify(this.dataList)
         if (!err) {
           this.loading = true
-          this.$post('/cos/order-info/platform', {
+          this.$post('/cos/order-info/platform/user', {
             ...values
           }).then((r) => {
             this.reset()

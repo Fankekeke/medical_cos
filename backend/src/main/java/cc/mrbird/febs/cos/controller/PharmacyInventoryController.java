@@ -2,7 +2,9 @@ package cc.mrbird.febs.cos.controller;
 
 
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.PharmacyInventory;
+import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IPharmacyInventoryService;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
@@ -25,6 +27,8 @@ import java.util.List;
 public class PharmacyInventoryController {
 
     private final IPharmacyInventoryService pharmacyInventoryService;
+
+    private final IHospitalInfoService hospitalInfoService;
 
     /**
      * 获取药品信息
@@ -84,6 +88,18 @@ public class PharmacyInventoryController {
     @GetMapping("/detail/pharmacy/{pharmacyId}")
     public R selectInventoryByPharmacy(@PathVariable("pharmacyId") Integer pharmacyId) {
         return R.ok(pharmacyInventoryService.selectInventoryByPharmacy(pharmacyId));
+    }
+
+    /**
+     * 根据医院ID获取库存信息
+     *
+     * @param pharmacyId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/detail/pharmacy/user/{pharmacyId}")
+    public R selectInventoryByPharmacyUser(@PathVariable("pharmacyId") Integer pharmacyId) {
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, pharmacyId));
+        return R.ok(pharmacyInventoryService.selectInventoryByPharmacy(hospitalInfo.getId()));
     }
 
     /**

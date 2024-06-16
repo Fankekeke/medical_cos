@@ -38,12 +38,12 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
      *
      * @return 结果
      */
-    List<RegisterInfo> selectRegisterByMonth();
+    List<RegisterInfo> selectRegisterByMonth(@Param("hospitalId") Integer hospitalId);
 
     /**
      * 获取本年订单信息
      *
      * @return 结果
      */
-    List<RegisterInfo> selectRegisterByYear();
+    List<RegisterInfo> selectRegisterByYear(@Param("hospitalId") Integer hospitalId);
 }

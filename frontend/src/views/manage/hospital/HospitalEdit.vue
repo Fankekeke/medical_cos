@@ -462,7 +462,7 @@ export default {
       this.form.validateFields((err, values) => {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
-        values.isOpen = this.checked ? 0 : 1
+        values.isOpen = this.checked ? 1 : 0
         if (!err) {
           this.loading = true
           this.$put('/cos/hospital-info', {

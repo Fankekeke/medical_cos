@@ -241,15 +241,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         status.add("4");
         result.put("registerNum", registerInfoService.count(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getStatus, status)));
         // 总收益
-        result.put("orderPrice", baseMapper.selectOrderPrice());
+        result.put("orderPrice", baseMapper.selectOrderPrice(null));
         // 医生数量
         result.put("doctorNum", doctorInfoService.count());
         // 医院数量
         result.put("hospitalNum", hospitalInfoService.count(Wrappers.<HospitalInfo>lambdaQuery()));
 
         // 本月挂号数量
-        List<RegisterInfo> registerInfoList = registerInfoMapper.selectRegisterByMonth();
-        List<OrderInfo> orderList = baseMapper.selectOrderByMonth();
+        List<RegisterInfo> registerInfoList = registerInfoMapper.selectRegisterByMonth(null);
+        List<OrderInfo> orderList = baseMapper.selectOrderByMonth(null);
         result.put("monthOrderNum", CollectionUtil.isEmpty(registerInfoList) ? 0 : registerInfoList.size());
         BigDecimal orderPrice = orderList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal registerPrice = registerInfoList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -257,8 +257,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("monthOrderPrice", orderPrice.add(registerPrice));
 
         // 本年挂号数量
-        List<RegisterInfo> registerYearList = registerInfoMapper.selectRegisterByYear();
-        List<OrderInfo> orderYearList = baseMapper.selectOrderByYear();
+        List<RegisterInfo> registerYearList = registerInfoMapper.selectRegisterByYear(null);
+        List<OrderInfo> orderYearList = baseMapper.selectOrderByYear(null);
         result.put("yearOrderNum", CollectionUtil.isEmpty(registerYearList) ? 0 : registerYearList.size());
         // 本年总收益
         BigDecimal orderYearPrice = orderYearList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -272,6 +272,59 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("orderNumWithinDays", baseMapper.selectOrderNumWithinDays(null));
         // 近十天内收益统计
         result.put("orderPriceWithinDays", baseMapper.selectOrderPriceWithinDays(null));
+        return result;
+    }
+
+    /**
+     * 主页数据
+     *
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> homeDataHospital(Integer hospitalId) {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+
+        // 医院信息
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalId));
+
+        // 总挂号数量
+        List<String> status = new ArrayList<>();
+        status.add("1");
+        status.add("2");
+        status.add("3");
+        status.add("4");
+        result.put("registerNum", registerInfoService.count(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getStatus, status).eq(RegisterInfo::getDeptId, hospitalInfo.getId())));
+        // 总收益
+        result.put("orderPrice", baseMapper.selectOrderPrice(hospitalInfo.getId()));
+        // 医生数量
+        result.put("doctorNum", doctorInfoService.count(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getHospitalId, hospitalInfo.getId())));
+
+        // 本月挂号数量
+        List<RegisterInfo> registerInfoList = registerInfoMapper.selectRegisterByMonth(hospitalInfo.getId());
+        List<OrderInfo> orderList = baseMapper.selectOrderByMonth(hospitalInfo.getId());
+        result.put("monthOrderNum", CollectionUtil.isEmpty(registerInfoList) ? 0 : registerInfoList.size());
+        BigDecimal orderPrice = orderList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal registerPrice = registerInfoList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        // 获取本月收益
+        result.put("monthOrderPrice", orderPrice.add(registerPrice));
+
+        // 本年挂号数量
+        List<RegisterInfo> registerYearList = registerInfoMapper.selectRegisterByYear(hospitalInfo.getId());
+        List<OrderInfo> orderYearList = baseMapper.selectOrderByYear(hospitalInfo.getId());
+        result.put("yearOrderNum", CollectionUtil.isEmpty(registerYearList) ? 0 : registerYearList.size());
+        // 本年总收益
+        BigDecimal orderYearPrice = orderYearList.stream().map(OrderInfo::getTotalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal registerYearPrice = registerYearList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("yearOrderPrice", orderYearPrice.add(registerYearPrice));
+
+        // 公告信息
+        result.put("bulletin", bulletinInfoService.list(Wrappers.<BulletinInfo>lambdaQuery().eq(BulletinInfo::getRackUp, 1)));
+
+        // 近十天内订单统计
+        result.put("orderNumWithinDays", baseMapper.selectOrderNumWithinDays(hospitalInfo.getId()));
+        // 近十天内收益统计
+        result.put("orderPriceWithinDays", baseMapper.selectOrderPriceWithinDays(hospitalInfo.getId()));
         return result;
     }
 

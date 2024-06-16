@@ -261,6 +261,9 @@
               </a-row>
             </a-spin>
           </a-form>
+          <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
+            修改
+          </a-button>
           <drawerMap :childrenDrawerShow="childrenDrawer" @handlerClosed="handlerClosed"></drawerMap>
         </a-card>
       </div>
@@ -475,7 +478,7 @@ export default {
       this.form.validateFields((err, values) => {
         values.id = this.rowId
         values.images = images.length > 0 ? images.join(',') : null
-        values.isOpen = this.checked ? 0 : 1
+        values.isOpen = this.checked ? 1 : 0
         if (!err) {
           this.loading = true
           this.$put('/cos/hospital-info', {

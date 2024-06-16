@@ -29,21 +29,21 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      *
      * @return 结果
      */
-    BigDecimal selectOrderPrice();
+    BigDecimal selectOrderPrice(@Param("hospitalId") Integer hospitalId);
 
     /**
      * 获取本月订单信息
      *
      * @return 结果
      */
-    List<OrderInfo> selectOrderByMonth();
+    List<OrderInfo> selectOrderByMonth(@Param("hospitalId") Integer hospitalId);
 
     /**
      * 获取本年订单信息
      *
      * @return 结果
      */
-    List<OrderInfo> selectOrderByYear();
+    List<OrderInfo> selectOrderByYear(@Param("hospitalId") Integer hospitalId);
 
     /**
      * 十天内订单数量统计

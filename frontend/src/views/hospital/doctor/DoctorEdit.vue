@@ -25,8 +25,8 @@
               'doctorSex',
               { rules: [{ required: true, message: '请输入性别!' }] }
               ]">
-                <a-select-option value="1">男</a-select-option>
-                <a-select-option value="2">女</a-select-option>
+                <a-select-option value="男">男</a-select-option>
+                <a-select-option value="女">女</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
