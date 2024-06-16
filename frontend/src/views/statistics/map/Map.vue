@@ -143,7 +143,8 @@
             </div>
             <div v-if="!rentShow" style="text-align: center;font-size: 13px;height: 100vh; overflow-y: auto;padding: 15px;overflow-x: hidden">
               <a-input-search placeholder="请输入关键字搜索..." style="margin-bottom: 15px;margin-top: 15px" @search="onSearch" />
-              <div style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in rentList" :key="index">
+              <a-skeleton :loading="loading" active />
+              <div v-show="!loading" style="width: 100%;margin-bottom: 15px;text-align: left" v-for="(item, index) in rentList" :key="index">
                 <a-divider orientation="left">
                   <span style="font-size: 12px;font-family: SimHei;">{{item.hospitalName}} - {{item.hospitalAddress}}</span>
                 </a-divider>
@@ -178,6 +179,7 @@ export default {
   name: 'Map',
   data () {
     return {
+      loading: false,
       communityRent: 0,
       rentShow: false,
       communityShow: false,
@@ -188,6 +190,7 @@ export default {
       plainOptions: ['Apple', 'Pear', 'Orange'],
       visible: false,
       rentList: [],
+      rentListBack: [],
       communityList: [],
       community: null,
       hospitalInfo: null,
@@ -274,7 +277,15 @@ export default {
       }
     },
     onSearch (value) {
-      console.log(value)
+      this.loading = true
+      if (value) {
+        this.rentList = this.rentListBack.filter( v => v.hospitalAddress.indexOf(value) > -1 || v.hospitalName.indexOf(value) > -1)
+      } else {
+        this.rentList = this.rentListBack
+      }
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
     },
     selectHousePriceTrend (row) {
       if (!this.echartsShow) {
@@ -398,7 +409,9 @@ export default {
     },
     getRentList (key) {
       this.$get('/cos/hospital-info/hospital/map/').then((r) => {
-        this.rentList = r.data.data
+        let data = r.data.data
+        this.rentList = data
+        this.rentListBack = data
       })
     },
     getCommunityList () {
