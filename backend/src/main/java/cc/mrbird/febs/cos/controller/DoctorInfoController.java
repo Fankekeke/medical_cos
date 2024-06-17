@@ -8,6 +8,7 @@ import cc.mrbird.febs.cos.entity.OfficeInfo;
 import cc.mrbird.febs.cos.service.IDoctorInfoService;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IOfficeInfoService;
+import cc.mrbird.febs.system.service.UserService;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -38,6 +39,8 @@ public class DoctorInfoController {
     private final IOfficeInfoService officeInfoService;
 
     private final IHospitalInfoService hospitalInfoService;
+
+    private final UserService userService;
 
     /**
      * 分页获取医生信息
@@ -137,9 +140,10 @@ public class DoctorInfoController {
      */
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
-    public R save(DoctorInfo doctorInfo) {
+    public R save(DoctorInfo doctorInfo) throws Exception {
         doctorInfo.setCode("DT-" + System.currentTimeMillis());
-        return R.ok(doctorInfoService.save(doctorInfo));
+        userService.registDoctor(doctorInfo.getCode(), "1234qwer", doctorInfo);
+        return R.ok(true);
     }
 
     /**
@@ -150,7 +154,7 @@ public class DoctorInfoController {
      */
     @PostMapping("/hospital")
     @Transactional(rollbackFor = Exception.class)
-    public R saveByHospital(DoctorInfo doctorInfo) {
+    public R saveByHospital(DoctorInfo doctorInfo) throws Exception {
         // 医院信息
         HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, doctorInfo.getHospitalId()));
         if (hospitalInfo != null) {
@@ -158,7 +162,8 @@ public class DoctorInfoController {
             doctorInfo.setHospitalId(hospitalInfo.getId());
         }
         doctorInfo.setCode("DT-" + System.currentTimeMillis());
-        return R.ok(doctorInfoService.save(doctorInfo));
+        userService.registDoctor(doctorInfo.getCode(), "1234qwer", doctorInfo);
+        return R.ok(true);
     }
 
     /**

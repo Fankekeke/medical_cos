@@ -6,6 +6,7 @@ import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.RegisterInfo;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IRegisterInfoService;
+import cc.mrbird.febs.system.service.UserService;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,6 +30,8 @@ public class HospitalInfoController {
     private final IHospitalInfoService hospitalInfoService;
 
     private final IRegisterInfoService registerInfoService;
+
+    private final UserService userService;
 
     /**
      * 分页获取医院信息
@@ -144,9 +147,10 @@ public class HospitalInfoController {
      */
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
-    public R save(HospitalInfo hospitalInfo) {
+    public R save(HospitalInfo hospitalInfo) throws Exception {
         hospitalInfo.setCode("HPL-" + System.currentTimeMillis());
-        return R.ok(hospitalInfoService.save(hospitalInfo));
+        userService.registHospital(hospitalInfo.getCode(), "1234qwer", hospitalInfo);
+        return R.ok(true);
     }
 
     /**

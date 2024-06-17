@@ -2,6 +2,7 @@ package cc.mrbird.febs.cos.service.impl;
 
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.cos.dao.RegisterInfoMapper;
+import cc.mrbird.febs.cos.dao.ScheduleInfoMapper;
 import cc.mrbird.febs.cos.dao.UserInfoMapper;
 import cc.mrbird.febs.cos.entity.*;
 import cc.mrbird.febs.cos.dao.OrderInfoMapper;
@@ -54,6 +55,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private final IBulletinInfoService bulletinInfoService;
 
     private final RegisterInfoMapper registerInfoMapper;
+
+    private final ScheduleInfoMapper scheduleMapper;
 
 
     /**
@@ -325,6 +328,41 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("orderNumWithinDays", baseMapper.selectOrderNumWithinDays(hospitalInfo.getId()));
         // 近十天内收益统计
         result.put("orderPriceWithinDays", baseMapper.selectOrderPriceWithinDays(hospitalInfo.getId()));
+        return result;
+    }
+
+    /**
+     * 医生数据统计
+     *
+     * @param doctorId 医生ID
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectHomeDataByDoctor(Integer doctorId) {
+        // 医生信息
+        DoctorInfo doctorInfo = doctorInfoService.getOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, doctorId));
+
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+        result.put("doctorInfo", doctorInfo);
+
+        // 所属医院
+        result.put("hospitalName", doctorInfo.getHospitalName());
+        // 所属科室
+        result.put("officesName", doctorInfo.getOfficesName());
+
+        // 排班数量
+        List<ScheduleInfo> scheduleList = scheduleMapper.selectList(Wrappers.<ScheduleInfo>lambdaQuery().eq(ScheduleInfo::getStaffIds, doctorInfo.getId()));
+        Integer scheduleNum = scheduleList.size();
+        result.put("scheduleNum", scheduleNum);
+        // 挂号数量
+        List<Integer> scheduleIds = scheduleList.stream().map(ScheduleInfo::getId).collect(Collectors.toList());
+        if (CollectionUtil.isEmpty(scheduleIds)) {
+            result.put("registerNum", 0);
+        } else {
+            Integer registerNum = registerInfoService.count(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getScheduleId, scheduleIds));
+            result.put("registerNum", registerNum);
+        }
         return result;
     }
 

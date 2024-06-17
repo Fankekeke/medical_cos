@@ -68,6 +68,14 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     LinkedHashMap<String, Object> homeDataHospital(Integer hospitalId);
 
     /**
+     * 医生数据统计
+     *
+     * @param doctorId 医生ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectHomeDataByDoctor(Integer doctorId);
+
+    /**
      * 订单付款
      *
      * @param orderCode 订单编号

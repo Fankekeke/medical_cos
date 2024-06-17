@@ -145,6 +145,9 @@ export default {
     }),
     columns () {
       return [{
+        title: '医院编号',
+        dataIndex: 'code'
+      }, {
         title: '医院名称',
         dataIndex: 'hospitalName'
       }, {

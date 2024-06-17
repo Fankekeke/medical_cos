@@ -125,6 +125,17 @@ public class OrderInfoController {
     }
 
     /**
+     * 医生数据统计
+     *
+     * @param doctorId 医生ID
+     * @return 结果
+     */
+    @GetMapping("/home/data/doctor/{doctorId}")
+    public R selectHomeDataByDoctor(@PathVariable("doctorId") Integer doctorId) {
+        return R.ok(orderInfoService.selectHomeDataByDoctor(doctorId));
+    }
+
+    /**
      * 添加订单
      *
      * @param orderInfoVo 订单信息

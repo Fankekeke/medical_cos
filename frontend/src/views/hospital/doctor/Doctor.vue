@@ -129,6 +129,9 @@ export default {
     }),
     columns () {
       return [{
+        title: '医生编号',
+        dataIndex: 'code'
+      }, {
         title: '医生姓名',
         dataIndex: 'doctorName'
       }, {
