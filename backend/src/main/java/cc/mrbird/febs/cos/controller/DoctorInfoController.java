@@ -55,6 +55,30 @@ public class DoctorInfoController {
     }
 
     /**
+     * 根据医院获取医生信息
+     *
+     * @param hospitalUserId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/list/hospital/user/{hospitalUserId}")
+    public R selectDoctorByHospitalUserId(@PathVariable("hospitalUserId") Integer hospitalUserId) {
+        // 获取医院信息
+        HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalUserId));
+        return R.ok(doctorInfoService.list(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getHospitalId, hospitalInfo.getId())));
+    }
+
+    /**
+     * 根据医院获取医生信息
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/list/hospital/{hospitalId}")
+    public R selectDoctorByHospitalId(@PathVariable("hospitalId") Integer hospitalId) {
+        return R.ok(doctorInfoService.list(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getHospitalId, hospitalId)));
+    }
+
+    /**
      * 设置医生科室及医院信息
      *
      * @return 结果

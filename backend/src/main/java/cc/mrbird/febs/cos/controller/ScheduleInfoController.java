@@ -2,7 +2,9 @@ package cc.mrbird.febs.cos.controller;
 
 
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.DoctorInfo;
 import cc.mrbird.febs.cos.entity.ScheduleInfo;
+import cc.mrbird.febs.cos.service.IDoctorInfoService;
 import cc.mrbird.febs.cos.service.IScheduleInfoService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +24,8 @@ import java.util.List;
 public class ScheduleInfoController {
 
     private final IScheduleInfoService scheduleInfoService;
+
+    private final IDoctorInfoService doctorInfoService;
 
     /**
      * 分页获取排班信息
@@ -64,7 +68,12 @@ public class ScheduleInfoController {
      */
     @PostMapping
     public R save(ScheduleInfo scheduleInfo) {
+        scheduleInfo.setCode("SCH-" + System.currentTimeMillis());
         scheduleInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+
+        // 医生信息
+        DoctorInfo doctorInfo = doctorInfoService.getById(scheduleInfo.getStaffIds());
+        scheduleInfo.setHospitalId(doctorInfo.getOfficesId());
         return R.ok(scheduleInfoService.save(scheduleInfo));
     }
 
@@ -76,6 +85,9 @@ public class ScheduleInfoController {
      */
     @PutMapping
     public R edit(ScheduleInfo scheduleInfo) {
+        // 医生信息
+        DoctorInfo doctorInfo = doctorInfoService.getById(scheduleInfo.getStaffIds());
+        scheduleInfo.setHospitalId(doctorInfo.getOfficesId());
         return R.ok(scheduleInfoService.updateById(scheduleInfo));
     }
 

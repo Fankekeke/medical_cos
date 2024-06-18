@@ -11,26 +11,47 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='排班姓名' v-bind="formItemLayout">
+          <a-form-item label='排班名称' v-bind="formItemLayout">
             <a-input v-decorator="[
             'name',
-            { rules: [{ required: true, message: '请输入名称!' }] }
+            { rules: [{ required: true, message: '请输入排班名称!' }] }
             ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='作业员工' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'mail',
-            { rules: [{ required: true, message: '请输入作业员工!' }] }
-            ]"/>
+          <a-form-item label='作业医生' v-bind="formItemLayout">
+            <a-select v-decorator="[
+              'staffIds',
+              { rules: [{ required: true, message: '请输入作业医生!' }] }
+              ]">
+              <a-select-option :value="item.id" v-for="(item, index) in doctorList" :key="index">{{
+                  item.doctorName
+                }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='邮箱地址' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'mail',
-            { rules: [{ required: true, message: '请输入邮箱地址!' }] }
+          <a-form-item label='排班开始时间' v-bind="formItemLayout">
+            <a-time-picker :default-open-value="moment('00:00:00', 'HH:mm:ss')" style="width: 100%" v-decorator="[
+            'startDate',
+            { rules: [{ required: true, message: '请输入排班开始时间!' }] }
+            ]" />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='排班结束时间' v-bind="formItemLayout">
+            <a-time-picker style="width: 100%" v-decorator="[
+            'endDate',
+            { rules: [{ required: true, message: '请输入排班结束时间!' }] }
+            ]" />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='排班时间' v-bind="formItemLayout">
+            <a-date-picker style="width: 100%;" v-decorator="[
+            'taskDate',
+            { rules: [{ required: true, message: '请输入排班时间!' }] }
             ]"/>
           </a-form-item>
         </a-col>
@@ -41,6 +62,8 @@
 
 <script>
 import debounce from 'lodash/debounce';
+import moment from 'moment'
+moment.locale('zh-cn')
 import {mapState} from 'vuex'
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -77,6 +100,7 @@ export default {
     this.lastFetchId = 0;
     this.fetchUser = debounce(this.fetchUser, 800);
     return {
+      moment,
       formItemLayout,
       form: this.$form.createForm(this),
       loading: false,
@@ -86,10 +110,12 @@ export default {
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      pharmacyList: []
+      pharmacyList: [],
+      doctorList: []
     }
   },
   mounted () {
+    this.getDoctorList()
   },
   methods: {
     hospitalCheck (value) {
@@ -128,9 +154,9 @@ export default {
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       )
     },
-    getPharmacy () {
-      this.$get('/cos/pharmacy-info/list').then((r) => {
-        this.pharmacyList = r.data.data
+    getDoctorList () {
+      this.$get(`/cos/doctor-info/list/hospital/user/${this.currentUser.userId}`).then((r) => {
+        this.doctorList = r.data.data
       })
     },
     handleCancel () {
@@ -163,6 +189,9 @@ export default {
         })
         if (!err) {
           values.images = images.length > 0 ? images.join(',') : null
+          values.taskDate = moment(values.taskDate).format('YYYY-MM-DD')
+          values.startDate = moment(values.startDate).format('HH:mm:ss')
+          values.endDate = moment(values.endDate).format('HH:mm:ss')
           values.status = 1
           this.loading = true
           this.$post('/cos/schedule-info', {
