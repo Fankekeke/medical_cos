@@ -73,7 +73,7 @@ public class ScheduleInfoController {
 
         // 医生信息
         DoctorInfo doctorInfo = doctorInfoService.getById(scheduleInfo.getStaffIds());
-        scheduleInfo.setHospitalId(doctorInfo.getOfficesId());
+        scheduleInfo.setOfficeId(doctorInfo.getOfficesId());
         return R.ok(scheduleInfoService.save(scheduleInfo));
     }
 
@@ -87,7 +87,7 @@ public class ScheduleInfoController {
     public R edit(ScheduleInfo scheduleInfo) {
         // 医生信息
         DoctorInfo doctorInfo = doctorInfoService.getById(scheduleInfo.getStaffIds());
-        scheduleInfo.setHospitalId(doctorInfo.getOfficesId());
+        scheduleInfo.setOfficeId(doctorInfo.getOfficesId());
         return R.ok(scheduleInfoService.updateById(scheduleInfo));
     }
 

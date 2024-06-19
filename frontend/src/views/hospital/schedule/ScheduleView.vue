@@ -35,8 +35,32 @@
         <a-col :span="8"><b>作业医生：</b>
           {{ scheduleData.doctorName }}
         </a-col>
+        <a-col :span="8"><b>排班开始时间：</b>
+          {{ scheduleData.startDate }}
+        </a-col>
+        <a-col :span="8"><b>排班结束时间：</b>
+          {{ scheduleData.endDate }}
+        </a-col>
       </a-row>
       <br/>
+      <br/>
+      <a-row style="padding-left: 24px;padding-right: 24px;">
+        <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">医生图片</span></a-col>
+        <a-col :span="24">
+          <a-upload
+            name="avatar"
+            action="http://127.0.0.1:9527/file/fileUpload/"
+            list-type="picture-card"
+            :file-list="fileList"
+            @preview="handlePreview"
+            @change="picHandleChange"
+          >
+          </a-upload>
+          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal>
+        </a-col>
+      </a-row>
     </div>
   </a-modal>
 </template>
