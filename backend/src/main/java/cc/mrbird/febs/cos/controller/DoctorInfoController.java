@@ -68,6 +68,17 @@ public class DoctorInfoController {
     }
 
     /**
+     * 根据账户ID获取医生信息
+     *
+     * @param userId 医生账户ID
+     * @return 结果
+     */
+    @GetMapping("/user/{userId}")
+    public R selectDoctorByUserId(@PathVariable("userId") Integer userId) {
+        return R.ok(doctorInfoService.getOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, userId)));
+    }
+
+    /**
      * 根据医院获取医生信息
      *
      * @param hospitalId 医院ID
