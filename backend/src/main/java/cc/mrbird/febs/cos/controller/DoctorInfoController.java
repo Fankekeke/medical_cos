@@ -5,9 +5,11 @@ import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DoctorInfo;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.OfficeInfo;
+import cc.mrbird.febs.cos.entity.RegisterInfo;
 import cc.mrbird.febs.cos.service.IDoctorInfoService;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IOfficeInfoService;
+import cc.mrbird.febs.cos.service.IRegisterInfoService;
 import cc.mrbird.febs.system.service.UserService;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
@@ -20,10 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +38,8 @@ public class DoctorInfoController {
     private final IOfficeInfoService officeInfoService;
 
     private final IHospitalInfoService hospitalInfoService;
+
+    private final IRegisterInfoService registerInfoService;
 
     private final UserService userService;
 
@@ -65,6 +66,30 @@ public class DoctorInfoController {
         // 获取医院信息
         HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalUserId));
         return R.ok(doctorInfoService.list(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getHospitalId, hospitalInfo.getId())));
+    }
+
+    /**
+     * 根据账户ID获取医生信息
+     *
+     * @param userId 医生账户ID
+     * @return 结果
+     */
+    @GetMapping("/user/detail/{userId}")
+    public R selectDoctorDetailByUserId(@PathVariable("userId") Integer userId) {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("doctor", null);
+                put("order", Collections.emptyList());
+            }
+        };
+        // 医生信息
+        DoctorInfo doctorInfo = doctorInfoService.getOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, userId));
+        result.put("doctor", doctorInfo);
+        // 排班信息
+        List<RegisterInfo> registerInfoList = registerInfoService.list(Wrappers.<RegisterInfo>lambdaQuery().eq(RegisterInfo::getStaffId, doctorInfo.getId()));
+        result.put("order", registerInfoList);
+        return R.ok(result);
     }
 
     /**
