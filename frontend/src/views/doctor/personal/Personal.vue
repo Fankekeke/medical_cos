@@ -29,32 +29,6 @@
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
-                  <a-form-item label='所属医院' v-bind="formItemLayout">
-                    <a-select
-                      show-search
-                      option-filter-prop="children"
-                      :filter-option="false"
-                      :not-found-content="fetching ? undefined : null"
-                      @search="fetchUser"
-                      @change="hospitalCheck" v-decorator="[
-              'hospitalId',
-              { rules: [{ required: true, message: '请输入所属医院!' }] }
-              ]">
-                      <a-select-option :value="item.id" v-for="(item, index) in hospitalList" :key="index">{{ item.hospitalName }}</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                  <a-form-item label='所属科室' v-bind="formItemLayout">
-                    <a-select @change="officesCheck" v-decorator="[
-                'officesId',
-                { rules: [{ required: true, message: '请输入所属科室!' }] }
-                ]">
-                      <a-select-option :value="item.id" v-for="(item, index) in officeList" :key="index">{{ item.officesName }}</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
                   <a-form-item label='医生照片' v-bind="formItemLayout">
                     <a-input v-decorator="[
             'doctorImg'
@@ -312,9 +286,9 @@ export default {
     dataInit () {
       this.dataLoading = true
       this.$get(`/cos/doctor-info/user/detail/${this.currentUser.userId}`).then((r) => {
-        console.log(r.data.hospital)
-        this.rowId = r.data.hospital.id
-        this.setFormValues(r.data.hospital)
+        console.log(r.data.doctor)
+        this.rowId = r.data.doctor.id
+        this.setFormValues(r.data.doctor)
         this.courseInfo = r.data.order
         this.dataLoading = false
       })

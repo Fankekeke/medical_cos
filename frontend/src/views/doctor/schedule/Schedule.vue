@@ -60,18 +60,18 @@
         </template>
       </a-table>
     </div>
-    <schedule-add
-      v-if="scheduleAdd.visiable"
-      @close="handlescheduleAddClose"
-      @success="handlescheduleAddSuccess"
-      :scheduleAddVisiable="scheduleAdd.visiable">
-    </schedule-add>
-    <schedule-edit
-      ref="scheduleEdit"
-      @close="handlescheduleEditClose"
-      @success="handlescheduleEditSuccess"
-      :scheduleEditVisiable="scheduleEdit.visiable">
-    </schedule-edit>
+<!--    <schedule-add-->
+<!--      v-if="scheduleAdd.visiable"-->
+<!--      @close="handlescheduleAddClose"-->
+<!--      @success="handlescheduleAddSuccess"-->
+<!--      :scheduleAddVisiable="scheduleAdd.visiable">-->
+<!--    </schedule-add>-->
+<!--    <schedule-edit-->
+<!--      ref="scheduleEdit"-->
+<!--      @close="handlescheduleEditClose"-->
+<!--      @success="handlescheduleEditSuccess"-->
+<!--      :scheduleEditVisiable="scheduleEdit.visiable">-->
+<!--    </schedule-edit>-->
     <schedule-view
       @close="handleViewClose"
       :scheduleShow="scheduleView.visiable"
