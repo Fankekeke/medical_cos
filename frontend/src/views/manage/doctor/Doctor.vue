@@ -138,7 +138,14 @@ export default {
     columns () {
       return [{
         title: '医生编号',
-        dataIndex: 'code'
+        dataIndex: 'code',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '医生姓名',
         dataIndex: 'doctorName'
