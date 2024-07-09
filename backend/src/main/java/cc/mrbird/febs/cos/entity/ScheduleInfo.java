@@ -73,4 +73,10 @@ public class ScheduleInfo implements Serializable {
      */
     @TableField(exist = false)
     private Integer hospitalId;
+
+    /**
+     * 所属医生
+     */
+    @TableField(exist = false)
+    private Integer staffId;
 }

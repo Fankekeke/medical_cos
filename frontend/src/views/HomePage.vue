@@ -4,8 +4,8 @@
       <a-card class="head-info-card">
         <a-col :span="12">
           <div class="head-info-avatar">
-            <img alt="头像" :src="userAvatar" v-if="userAvatar">
-            <img alt="头像" :src="avatar" v-else>
+<!--            <img alt="头像" :src="userAvatar" v-if="userAvatar">-->
+<!--            <img alt="头像" :src="avatar" v-else>-->
           </div>
           <div class="head-info-count">
             <div class="head-info-welcome">

@@ -1,27 +1,26 @@
 <template>
   <div>
     <a-row v-if="user.roleId == 75" style="width: 100%;margin-top: 30px;margin-bottom: 50px">
-      <div>
-        <a-col :span="22" v-if="newsList.length > 0">
-          <a-alert
-            banner
-            :message="newsContent"
-            type="info"
-          />
-        </a-col>
-        <a-col :span="2">
-          <a-button type="primary" style="margin-top: 2px;margin-left: 10px" @click="newsNext">下一页</a-button>
-        </a-col>
-      </div>
-      <br/>
-      <br/>
-      <a-col :span="24" style="padding-left: 30px">
-        <div style="font-size: 20px;font-family: SimHei;margin-top: 50px">我的消息</div>
+<!--      <div>-->
+<!--        <a-col :span="22" v-if="newsList.length > 0">-->
+<!--          <a-alert-->
+<!--            banner-->
+<!--            :message="newsContent"-->
+<!--            type="info"-->
+<!--          />-->
+<!--        </a-col>-->
+<!--        <a-col :span="2">-->
+<!--          <a-button type="primary" style="margin-top: 2px;margin-left: 10px" @click="newsNext">下一页</a-button>-->
+<!--        </a-col>-->
+<!--      </div>-->
+<!--      <br/>-->
+<!--      <br/>-->
+      <a-col :span="24" style="padding-left: 10px">
+        <div style="font-size: 20px;font-family: SimHei;margin-top: 10px">我的排班</div>
         <a-list item-layout="horizontal" :data-source="messageList">
           <a-list-item slot="renderItem" slot-scope="item, index">
             <a-list-item-meta
-              :description="item.content"
-            >
+              :description="item.content">
               <a slot="title" href="https://www.antdv.com/">{{ item.title }}</a>
               <a-avatar
                 slot="avatar"
@@ -33,7 +32,7 @@
       </a-col>
       <br/>
       <br/>
-      <a-col :span="24" style="padding-left: 30px">
+      <a-col :span="24" style="padding-left: 10px">
         <div style="font-size: 20px;font-family: SimHei;margin-top: 30px;margin-bottom: 18px">待挂号</div>
         <a-row>
           <a-col :span="6" v-for="(item, index) in oweBookList" :key="index">
@@ -127,7 +126,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">我的图书</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">排班量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.bookNum }}
@@ -139,7 +138,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">未挂号图书</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">总挂号</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.bookOweNum }}
@@ -151,7 +150,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">已挂号图书</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月处方金额</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.bookOwnNum }}
@@ -163,7 +162,7 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">欠缴金额</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月挂号金额</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ studentTitleData.owePrice }}

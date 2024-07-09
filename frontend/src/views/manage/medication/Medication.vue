@@ -78,8 +78,8 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-if="record.status == 0" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
-          <a-icon v-if="record.status == 1" type="cloud" @click="handleViewOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
+<!--          <a-icon v-if="record.status == 0" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>-->
+          <a-icon v-if="record.status == 1" type="cloud" @click="handleViewOpen(record)" title="详 情"></a-icon>
         </template>
       </a-table>
     </div>
