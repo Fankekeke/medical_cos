@@ -348,7 +348,7 @@ export default {
       if (params.type === undefined) {
         delete params.type
       }
-      this.$get('/cos/user-info/page', {
+      this.$get('/cos/user-info/page/list', {
         ...params
       }).then((r) => {
         let data = r.data.data

@@ -36,7 +36,7 @@ public class UserInfoController {
      * @param userInfo 员工信息
      * @return 结果
      */
-    @GetMapping("/page")
+    @GetMapping("/page/list")
     public R page(Page<UserInfo> page, UserInfo userInfo) {
         return R.ok(userInfoService.selectUserPage(page, userInfo));
     }

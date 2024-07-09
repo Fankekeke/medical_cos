@@ -181,7 +181,7 @@ export default {
         dataIndex: 'images',
         customRender: (text, record, index) => {
           if (!record.images) return <a-avatar shape="square" icon="user" />
-          if (record.images) <a-popover>
+          return <a-popover>
             <template slot="content">
               <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
             </template>

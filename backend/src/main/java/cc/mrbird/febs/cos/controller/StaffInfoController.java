@@ -6,6 +6,7 @@ import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.StaffInfo;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IStaffInfoService;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -96,6 +98,7 @@ public class StaffInfoController {
     @PostMapping
     public R save(StaffInfo staffInfo) {
         staffInfo.setCode("STA-" + System.currentTimeMillis());
+        staffInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(staffInfoService.save(staffInfo));
     }
 

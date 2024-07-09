@@ -3,7 +3,7 @@
     <a-col :span="10">
       <div style="background:#ECECEC; padding:30px;margin-top: 30px">
         <a-card :bordered="false">
-          <b style="font-size: 15px">我的信息</b>
+          <b style="font-size: 15px">医院信息</b>
         </a-card>
         <a-card :bordered="false">
           <a-form :form="form" layout="vertical">
