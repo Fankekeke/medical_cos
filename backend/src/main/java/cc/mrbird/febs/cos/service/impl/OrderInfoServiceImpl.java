@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -357,12 +359,24 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("scheduleNum", scheduleNum);
         // 挂号数量
         List<Integer> scheduleIds = scheduleList.stream().map(ScheduleInfo::getId).collect(Collectors.toList());
+        // 挂号信息
+        List<RegisterInfo> registerList = new ArrayList<>();
         if (CollectionUtil.isEmpty(scheduleIds)) {
             result.put("registerNum", 0);
         } else {
-            Integer registerNum = registerInfoService.count(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getScheduleId, scheduleIds));
+            registerList = registerInfoService.list(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getScheduleId, scheduleIds));
+            Integer registerNum = registerList.size();
             result.put("registerNum", registerNum);
         }
+
+        List<RegisterInfo> toMonthList = registerList.stream().filter(e -> DateUtil.parseDateTime(e.getRegisterDate()).isAfter(new Date())).collect(Collectors.toList());
+        // 本月处方金额
+        // 本月挂号金额
+
+        // 我的排班
+        result.put("scheduleList", scheduleList);
+        // 我的挂号【未过期】
+        result.put("registerList", registerList.stream().map(RegisterInfo::getRegisterDate).filter(e -> DateUtil.parseDateTime(e).isAfter(new Date())));
         return result;
     }
 
