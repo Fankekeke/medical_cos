@@ -17,18 +17,19 @@
 <!--      <br/>-->
       <a-col :span="24" style="padding-left: 10px">
         <div style="font-size: 20px;font-family: SimHei;margin-top: 10px">我的排班</div>
-        <a-list item-layout="horizontal" :data-source="messageList">
-          <a-list-item slot="renderItem" slot-scope="item, index">
-            <a-list-item-meta
-              :description="item.content">
-              <a slot="title" href="https://www.antdv.com/">{{ item.title }}</a>
-              <a-avatar
-                slot="avatar"
-                :src="'http://127.0.0.1:9527/imagesWeb/' + student.images"
-              />
-            </a-list-item-meta>
-          </a-list-item>
-        </a-list>
+        <div style="background:#ECECEC; padding:30px;margin-top: 30px">
+          <a-card :bordered="false">
+            <a-spin :spinning="dataLoading">
+              <a-calendar>
+                <ul slot="dateCellRender" slot-scope="value" class="events">
+                  <li v-for="item in getListData(value)" :key="item.content">
+                    <a-badge :status="item.type" :text="item.content" />
+                  </li>
+                </ul>
+              </a-calendar>
+            </a-spin>
+          </a-card>
+        </div>
       </a-col>
       <br/>
       <br/>
@@ -207,6 +208,7 @@
 
 <script>
 import {mapState} from 'vuex'
+import moment from "moment";
 export default {
   name: 'Home',
   computed: {
@@ -217,6 +219,8 @@ export default {
   },
   data () {
     return {
+      scheduleInfo: [],
+      dataLoading: false,
       newsPage: 0,
       newsContent: '',
       pagination: {
@@ -388,6 +392,15 @@ export default {
     }, 200)
   },
   methods: {
+    getListData (value) {
+      let listData = []
+      this.scheduleInfo.forEach(item => {
+        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.createDate).format('YYYY-MM-DD'))) {
+          listData.push({type: 'success', content: "✔"})
+        }
+      })
+      return listData || []
+    },
     newsNext () {
       if (this.newsPage + 1 === this.newsList.length) {
         this.newsPage = 0
