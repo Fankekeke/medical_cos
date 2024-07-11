@@ -371,8 +371,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         List<RegisterInfo> toMonthList = registerList.stream().filter(e -> DateUtil.parseDateTime(e.getRegisterDate()).isAfter(new Date())).collect(Collectors.toList());
         // 本月处方金额
+        BigDecimal totalCost = registerList.stream().map(RegisterInfo::getDrugPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("totalCost", totalCost);
         // 本月挂号金额
-
+        BigDecimal totalRegisterCost = registerList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("totalRegisterCost", totalRegisterCost);
         // 我的排班
         result.put("scheduleList", scheduleList);
         // 我的挂号【未过期】
