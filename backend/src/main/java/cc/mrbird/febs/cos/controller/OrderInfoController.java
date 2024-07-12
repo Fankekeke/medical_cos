@@ -21,7 +21,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/order-info")
+    @RequestMapping("/cos/order-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderInfoController {
 
@@ -257,5 +257,16 @@ public class OrderInfoController {
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(orderInfoService.removeByIds(ids));
+    }
+
+    /**
+     * 根据医院获取销售统计
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/selectOrderRateByHospital/{hospitalId}")
+    public R selectOrderRateByHospital(@PathVariable("hospitalId") Integer hospitalId) {
+        return R.ok(orderInfoService.selectOrderRateByHospital(hospitalId));
     }
 }

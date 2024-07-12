@@ -60,6 +60,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     private final ScheduleInfoMapper scheduleMapper;
 
+    private final IDrugInfoService drugInfoService;
+
 
     /**
      * 分页获取订单信息
@@ -153,6 +155,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return result;
     }
 
+    /**
+     * 设置数据
+     *
+     * @param type 类型
+     */
     @Override
     public void setData(String type) {
         List<DoctorInfo> doctorList = doctorInfoService.list();
@@ -191,6 +198,70 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         officeInfoService.updateBatchById(officeList);
 
+    }
+
+    /**
+     * 根据医院获取销售统计
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectOrderRateByHospital(Integer hospitalId) {
+        // 根据医院获取订单
+        List<OrderInfo> orderInfoList = this.list(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getPharmacyId, hospitalId));
+
+        List<DrugInfo> drugList = drugInfoService.list();
+
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("price", Collections.emptyList());
+                put("num", Collections.emptyList());
+            }
+        };
+        if (CollectionUtil.isEmpty(orderInfoList) || CollectionUtil.isEmpty(drugList)) {
+            return result;
+        }
+
+        // 根据订单获取订单详情
+        List<Integer> orderIds = orderInfoList.stream().map(OrderInfo::getId).collect(Collectors.toList());
+        List<OrderDetail> orderDetailList = orderDetailService.list(Wrappers.<OrderDetail>lambdaQuery().in(OrderDetail::getOrderId, orderIds));
+        Map<Integer, List<OrderDetail>> orderDetailMap = orderDetailList.stream().collect(Collectors.groupingBy(OrderDetail::getDrugId));
+        // 药物销量统计
+        List<LinkedHashMap<String, Object>> numList = new ArrayList<>();
+        List<LinkedHashMap<String, Object>> priceList = new ArrayList<>();
+
+        for (DrugInfo drugInfo : drugList) {
+            // 根据药品获取记录
+            List<OrderDetail> detailList = orderDetailMap.get(drugInfo.getId());
+            LinkedHashMap<String, Object> numItem = new LinkedHashMap<String, Object>() {
+                {
+                    put("name", drugInfo.getName());
+                    put("value", 0);
+                }
+            };
+
+            LinkedHashMap<String, Object> priceItem = new LinkedHashMap<String, Object>() {
+                {
+                    put("name", drugInfo.getName());
+                    put("value", BigDecimal.ZERO);
+                }
+            };
+
+            if (CollectionUtil.isEmpty(detailList)) {
+                numList.add(numItem);
+                priceList.add(priceItem);
+                continue;
+            }
+            numItem.put("value", detailList.stream().mapToInt(OrderDetail::getQuantity).sum());
+            priceItem.put("value", detailList.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+            numList.add(numItem);
+            priceList.add(priceItem);
+        }
+        result.put("price", priceList);
+        result.put("num", numList);
+        return result;
     }
 
     /**

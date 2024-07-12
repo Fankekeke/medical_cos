@@ -124,5 +124,18 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      */
     boolean orderSubmit(OrderDetailVo orderDetailVo) throws FebsException;
 
+    /**
+     * 设置数据
+     *
+     * @param type 类型
+     */
     void setData(String type);
+
+    /**
+     * 根据医院获取销售统计
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectOrderRateByHospital(Integer hospitalId);
 }
