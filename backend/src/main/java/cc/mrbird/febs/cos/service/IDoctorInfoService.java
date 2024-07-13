@@ -21,4 +21,12 @@ public interface IDoctorInfoService extends IService<DoctorInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectDoctorPage(Page<DoctorInfo> page, DoctorInfo doctorInfo);
+
+    /**
+     * 根据医生ID获取统计数据
+     *
+     * @param doctorId 医生ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectRateByDoctorId(Integer doctorId);
 }

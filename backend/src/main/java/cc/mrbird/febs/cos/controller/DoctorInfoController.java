@@ -93,6 +93,17 @@ public class DoctorInfoController {
     }
 
     /**
+     * 根据医生ID获取统计数据
+     *
+     * @param doctorId 医生ID
+     * @return 结果
+     */
+    @GetMapping("/selectRateByDoctorId/{doctorId}")
+    public R selectRateByDoctorId(@PathVariable("doctorId") Integer doctorId) {
+        return R.ok(doctorInfoService.selectRateByDoctorId(doctorId));
+    }
+
+    /**
      * 根据账户ID获取医生信息
      *
      * @param userId 医生账户ID

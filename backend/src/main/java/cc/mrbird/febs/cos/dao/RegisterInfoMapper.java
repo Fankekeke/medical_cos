@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -46,4 +47,42 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
      * @return 结果
      */
     List<RegisterInfo> selectRegisterByYear(@Param("hospitalId") Integer hospitalId);
+
+    /**
+     * 根据医生获取挂号信息
+     *
+     * @param doctorId 医生ID
+     * @param year     年度
+     * @param month    月度
+     * @return 结果
+     */
+    List<RegisterInfo> selectRegisterByMonthDoctor(@Param("doctorId") Integer doctorId, @Param("year") Integer year, @Param("month") Integer month);
+
+    /**
+     * 挂号数量统计
+     *
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectRegisterRateByDay();
+
+    /**
+     * 排班数量统计
+     *
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectScheduleRateByDay();
+
+    /**
+     * 挂号金额统计
+     *
+     * @return 结果
+     */
+    List<LinkedHashMap<String, BigDecimal>> selectRegisterPriceByDay();
+
+    /**
+     * 处方金额统计
+     *
+     * @return 结果
+     */
+    List<LinkedHashMap<String, BigDecimal>> selectDrugPriceByDay();
 }
