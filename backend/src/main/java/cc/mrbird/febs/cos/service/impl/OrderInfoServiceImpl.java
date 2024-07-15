@@ -265,6 +265,113 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     /**
+     * 获取药品销售统计
+     *
+     * @param date 统计日期
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> selectDrugRate(String date) {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("pieTypeNumRate", Collections.emptyList());
+                put("pieDrugNumRate", Collections.emptyList());
+                put("pieTypePriceRate", Collections.emptyList());
+                put("pieDrugPriceRate", Collections.emptyList());
+                put("saleNum", Collections.emptyList());
+                put("salePrice", Collections.emptyList());
+            }
+        };
+        // 获取统计年份与月份
+        int year = DateUtil.thisYear();
+        int month = DateUtil.thisMonth();
+
+        if (StrUtil.isNotEmpty(date)) {
+            year = DateUtil.year(DateUtil.parseDate(date));
+            month = DateUtil.month(DateUtil.parseDate(date)) + 1;
+        }
+
+        // 药品信息
+        List<DrugInfo> drugList = drugInfoService.list();
+        Map<Integer, DrugInfo> drugMap = drugList.stream().collect(Collectors.toMap(DrugInfo::getId, e -> e));
+        // 药品按类型分类
+        Map<Integer, List<DrugInfo>> drugTypeMap = drugList.stream().collect(Collectors.groupingBy(DrugInfo::getClassification));
+        // 本月订单
+        List<OrderInfo> orderInfoList = baseMapper.selectOrderByYearMonth(year, month);
+        if (CollectionUtil.isEmpty(orderInfoList)) {
+            return result;
+        }
+        List<Integer> orderIds = orderInfoList.stream().map(OrderInfo::getId).collect(Collectors.toList());
+        List<OrderDetail> detailList = orderDetailService.list(Wrappers.<OrderDetail>lambdaQuery().in(OrderDetail::getId, orderIds));
+        // 设置药品类型
+        for (OrderDetail orderDetail : detailList) {
+            if (orderDetail.getDrugId() == null || drugMap.get(orderDetail.getDrugId()) == null) {
+                continue;
+            }
+            orderDetail.setClassification(drugMap.get(orderDetail.getDrugId()).getClassification());
+        }
+        // 按药品ID分类
+        Map<Integer, List<OrderDetail>> detailMap = detailList.stream().collect(Collectors.groupingBy(OrderDetail::getDrugId));
+        // 按药品类型分类
+        Map<Integer, List<OrderDetail>> detailTypeMap = detailList.stream().collect(Collectors.groupingBy(OrderDetail::getClassification));
+
+        // 药品数量统计
+        List<LinkedHashMap<String, Object>> pieDrugNumRate = new ArrayList<>();
+        // 药品类型数量统计
+        List<LinkedHashMap<String, Object>> pieTypeNumRate = new ArrayList<>();
+        // 药品价格统计
+        List<LinkedHashMap<String, Object>> pieDrugPriceRate = new ArrayList<>();
+        // 药品类型价格统计
+        List<LinkedHashMap<String, Object>> pieTypePriceRate = new ArrayList<>();
+
+        detailMap.forEach((key, value) -> {
+            // 药品数量统计
+            pieDrugNumRate.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", drugMap.get(key).getName());
+                    put("value", value.stream().mapToInt(OrderDetail::getQuantity).sum());
+                }
+            });
+
+            // 药品价格统计
+            pieDrugPriceRate.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", drugMap.get(key).getName());
+                    put("value", value.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+                }
+            });
+        });
+
+        detailTypeMap.forEach((key, value) -> {
+            // 药品类型数量统计
+            pieTypeNumRate.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", key);
+                    put("value", value.stream().mapToInt(OrderDetail::getQuantity).sum());
+                }
+            });
+            // 药品类型价格统计
+            pieTypePriceRate.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", key);
+                    put("value", value.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+                }
+            });
+        });
+        result.put("pieTypeNumRate", pieTypeNumRate);
+        result.put("pieDrugNumRate", pieDrugNumRate);
+        result.put("pieTypePriceRate", pieTypePriceRate);
+        result.put("pieDrugPriceRate", pieDrugPriceRate);
+
+        // 药品销售量统计
+        result.put("saleNum", baseMapper.selectDrugNumSaleByMonth(year, month));
+        // 药品销售价格统计
+        result.put("salePrice", baseMapper.selectDrugPriceSaleByMonth(year, month));
+        return result;
+    }
+
+    /**
      * 根据用户月份获取绩效
      *
      * @param staffCode 员工编号

@@ -138,4 +138,12 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @return 结果
      */
     LinkedHashMap<String, Object> selectOrderRateByHospital(Integer hospitalId);
+
+    /**
+     * 获取药品销售统计
+     *
+     * @param date 统计日期
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectDrugRate(String date);
 }

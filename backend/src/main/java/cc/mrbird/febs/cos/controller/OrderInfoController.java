@@ -21,7 +21,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-    @RequestMapping("/cos/order-info")
+@RequestMapping("/cos/order-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderInfoController {
 
@@ -268,5 +268,15 @@ public class OrderInfoController {
     @GetMapping("/selectOrderRateByHospital/{hospitalId}")
     public R selectOrderRateByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(orderInfoService.selectOrderRateByHospital(hospitalId));
+    }
+
+    /**
+     * 获取药品销售统计
+     *
+     * @param date 统计日期
+     * @return 结果
+     */
+    public R selectDrugRate(String date) {
+        return R.ok(orderInfoService.selectDrugRate(date));
     }
 }
