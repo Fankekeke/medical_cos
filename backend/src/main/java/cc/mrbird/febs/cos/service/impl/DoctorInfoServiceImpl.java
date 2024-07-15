@@ -69,7 +69,7 @@ public class DoctorInfoServiceImpl extends ServiceImpl<DoctorInfoMapper, DoctorI
             }
         };
         Integer year = DateUtil.thisYear();
-        Integer month = DateUtil.thisMonth();
+        Integer month = DateUtil.thisMonth() + 1;
         // 本月挂号信息
         List<RegisterInfo> registerInfoList = registerInfoMapper.selectRegisterByMonthDoctor(doctorId, year, month);
         // 本月排班信息

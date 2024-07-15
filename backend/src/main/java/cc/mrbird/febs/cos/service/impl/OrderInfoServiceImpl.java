@@ -272,6 +272,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      */
     @Override
     public LinkedHashMap<String, Object> selectDrugRate(String date) {
+        date = date + "-01";
         // 返回数据
         LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
             {

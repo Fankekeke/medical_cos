@@ -313,7 +313,7 @@
     <!-- 获取药品销售金额统计 -->
     <select id="selectDrugPriceSaleByMonth" resultType="java.util.LinkedHashMap">
         SELECT dateTemp.date AS date,
-	        IFNULL( sum( od.allPrice ), 0 ) AS price
+	        IFNULL( sum( od.all_price ), 0 ) AS price
         FROM
             (
             SELECT

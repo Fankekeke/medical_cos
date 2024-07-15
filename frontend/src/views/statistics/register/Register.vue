@@ -246,6 +246,10 @@ export default {
     selectRateByDoctorId (doctorId) {
       this.chartLoading = true
       this.$get(`/cos/doctor-info/selectRateByDoctorId/${doctorId}`).then((r) => {
+        this.titleData.scheduleNum = r.data.scheduleNum
+        this.titleData.drugTotal = r.data.drugTotal
+        this.titleData.registerNum = r.data.registerNum
+        this.titleData.registerTotal = r.data.registerTotal
         let registerDay = r.data.series.registerDay
         let scheduleDay = r.data.series.scheduleDay
         this.series = [{

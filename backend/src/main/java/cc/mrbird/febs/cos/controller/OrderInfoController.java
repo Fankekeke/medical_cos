@@ -276,6 +276,7 @@ public class OrderInfoController {
      * @param date 统计日期
      * @return 结果
      */
+    @GetMapping("/selectDrugRate")
     public R selectDrugRate(String date) {
         return R.ok(orderInfoService.selectDrugRate(date));
     }
