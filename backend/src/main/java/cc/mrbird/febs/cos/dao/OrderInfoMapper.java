@@ -106,7 +106,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @param month 月份
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> selectDrugNumSaleByMonth(@Param("year") Integer year, @Param("month") Integer month);
+    List<LinkedHashMap<String, Object>> selectDrugNumSaleByMonth(@Param("year") Integer year, @Param("month") Integer month, @Param("drugId") Integer drugId);
 
     /**
      * 获取药品销售金额统计
@@ -115,5 +115,5 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @param month 月份
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> selectDrugPriceSaleByMonth(@Param("year") Integer year, @Param("month") Integer month);
+    List<LinkedHashMap<String, Object>> selectDrugPriceSaleByMonth(@Param("year") Integer year, @Param("month") Integer month, @Param("drugId") Integer drugId);
 }

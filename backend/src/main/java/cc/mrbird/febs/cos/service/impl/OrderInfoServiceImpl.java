@@ -293,11 +293,50 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             month = DateUtil.month(DateUtil.parseDate(date)) + 1;
         }
 
+        // 药品销售量统计
+        List<LinkedHashMap<String, Object>> saleNum = new ArrayList<>();
+        // 药品销售价格统计
+        List<LinkedHashMap<String, Object>> salePrice = new ArrayList<>();
+
         // 药品信息
         List<DrugInfo> drugList = drugInfoService.list();
         Map<Integer, DrugInfo> drugMap = drugList.stream().collect(Collectors.toMap(DrugInfo::getId, e -> e));
+
+        int finalYear = year;
+        int finalMonth = month;
+        drugMap.forEach((key, value) -> {
+            saleNum.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", value.getName());
+                    put("value", baseMapper.selectDrugNumSaleByMonth(finalYear, finalMonth, key));
+                }
+            });
+            salePrice.add(new LinkedHashMap<String, Object>() {
+                {
+                    put("name", value.getName());
+                    put("value", baseMapper.selectDrugPriceSaleByMonth(finalYear, finalMonth, key));
+                }
+            });
+        });
+        result.put("saleNum", saleNum);
+        result.put("salePrice", salePrice);
+
         // 药品按类型分类
-        Map<Integer, List<DrugInfo>> drugTypeMap = drugList.stream().collect(Collectors.groupingBy(DrugInfo::getClassification));
+        // Map<Integer, List<DrugInfo>> drugTypeMap = drugList.stream().collect(Collectors.groupingBy(DrugInfo::getClassification));
+        LinkedHashMap<Integer, String> drugTypeMap = new LinkedHashMap<Integer, String>() {
+            {
+                put(1, "中药材");
+                put(2, "中药饮片");
+                put(3, "中西成药");
+                put(4, "化学原料药");
+                put(5, "抗生素");
+                put(6, "生化药品");
+                put(7, "放射性药品");
+                put(8, "血清");
+                put(9, "诊断药品");
+            }
+        };
+
         // 本月订单
         List<OrderInfo> orderInfoList = baseMapper.selectOrderByYearMonth(year, month);
         if (CollectionUtil.isEmpty(orderInfoList)) {
@@ -348,14 +387,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             // 药品类型数量统计
             pieTypeNumRate.add(new LinkedHashMap<String, Object>() {
                 {
-                    put("name", key);
+                    put("name", drugTypeMap.get(key) == null ? "暂无类型" : drugTypeMap.get(key));
                     put("value", value.stream().mapToInt(OrderDetail::getQuantity).sum());
                 }
             });
             // 药品类型价格统计
             pieTypePriceRate.add(new LinkedHashMap<String, Object>() {
                 {
-                    put("name", key);
+                    put("name", drugTypeMap.get(key) == null ? "暂无类型" : drugTypeMap.get(key));
                     put("value", value.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
                 }
             });
@@ -365,10 +404,6 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("pieTypePriceRate", pieTypePriceRate);
         result.put("pieDrugPriceRate", pieDrugPriceRate);
 
-        // 药品销售量统计
-        result.put("saleNum", baseMapper.selectDrugNumSaleByMonth(year, month));
-        // 药品销售价格统计
-        result.put("salePrice", baseMapper.selectDrugPriceSaleByMonth(year, month));
         return result;
     }
 

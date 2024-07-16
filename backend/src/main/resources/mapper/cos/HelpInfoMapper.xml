@@ -27,6 +27,9 @@
         <if test="helpInfo.status != null and helpInfo.status != ''">
             AND hi.status = #{helpInfo.status}
         </if>
+        <if test="helpInfo.userId != null and helpInfo.userId != ''">
+            AND ui.user_id = #{helpInfo.userId}
+        </if>
         order by hi.create_date desc
     </select>
 </mapper>

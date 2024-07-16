@@ -28,6 +28,33 @@
         <if test="replyInfo.name != null and replyInfo.name != ''">
             AND ui.name LIKE CONCAT('%',#{replyInfo.name},'%')
         </if>
+        <if test="replyInfo.userId != null and replyInfo.userId != ''">
+            AND ui.user_id = #{replyInfo.userId}
+        </if>
+        order by
+        ri.create_date desc
+    </select>
+
+    <select id="selectReplyRecordByMedicalId" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.user_id,
+        ri.content,
+        ri.create_date,
+        ri.medical_id,
+        mi.title,
+        mi.publisher,
+        ui.name,
+        ui.images
+        from
+        reply_info ri
+        left join medical_info mi on
+        (mi.id = ri.medical_id)
+        left join user_info ui on
+        (ui.id = ri.user_id)
+        where
+        1 = 1
+        AND ri.medical_id = #{medicalId}
         order by
         ri.create_date desc
     </select>

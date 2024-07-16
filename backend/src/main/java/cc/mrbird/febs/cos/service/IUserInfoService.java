@@ -21,4 +21,12 @@ public interface IUserInfoService extends IService<UserInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectUserPage(Page<UserInfo> page, @Param("userInfo") UserInfo userInfo);
+
+    /**
+     * 根据用户ID获取统计数据
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> selectRateByUserId(Integer userId);
 }

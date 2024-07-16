@@ -303,9 +303,9 @@
             DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
             AND oi.order_status != '0'
             )
-            LEFT JOIN order_detail od ON ( od.order_id = oi.id )
+            LEFT JOIN order_detail od ON ( od.order_id = oi.id AND od.drug_id = #{drugId})
         GROUP BY
-            dateTemp.date, od.drug_id
+            dateTemp.date
         ORDER BY
             dateTemp.date ASC
     </select>
@@ -339,9 +339,9 @@
             DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
             AND oi.order_status != '0'
             )
-            LEFT JOIN order_detail od ON ( od.order_id = oi.id )
+            LEFT JOIN order_detail od ON ( od.order_id = oi.id AND od.drug_id = #{drugId})
         GROUP BY
-            dateTemp.date, od.drug_id
+            dateTemp.date
         ORDER BY
             dateTemp.date ASC
     </select>
