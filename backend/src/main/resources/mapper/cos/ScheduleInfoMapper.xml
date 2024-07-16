@@ -25,6 +25,7 @@
         left join hospital_info hi on (hi.id = di.hospital_id)
         where
         1 = 1
+        AND si.status = '0'
         <if test="scheduleInfo.code != null and scheduleInfo.code != ''">
             AND code LIKE CONCAT('%',#{scheduleInfo.code},'%')
         </if>
@@ -57,6 +58,7 @@
         schedule_info si
         where
         1 = 1
+        AND si.status = '0'
         <if test="year != null and year != ''">
             AND YEAR(si.task_date) = #{year}
         </if>
@@ -64,5 +66,38 @@
             AND MONTH(si.task_date) = #{month}
         </if>
         AND si.staff_ids = #{doctorId}
+    </select>
+
+    <!-- 获取今天14天的排班信息 -->
+    <select id="selectScheduleListByDay" resultType="cc.mrbird.febs.cos.entity.ScheduleInfo">
+        select
+        si.id,
+        si.code,
+        si.name,
+        si.task_date,
+        si.start_date,
+        si.end_date,
+        si.office_id,
+        si.staff_ids,
+        si.create_date,
+        di.images,
+        di.doctor_name,
+        oi.offices_name,
+        ri.id AS registerId
+        from
+        schedule_info si
+        LEFT JOIN office_info oi on (oi.id = si.office_id)
+        LEFT JOIN doctor_info di on (di.id = si.staff_ids)
+        LEFT JOIN register_info ri on (ri.schedule_id = si.id and ri.status != '0' and ri.status != '5')
+        where
+        1 = 1
+        AND si.status = '0'
+        <if test="doctorIds != null and doctorIds.size() != 0">
+            AND si.staff_ids IN
+            <foreach collection="doctorIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        AND si.task_date >= DATE_SUB(CURDATE(), INTERVAL -14 DAY)
     </select>
 </mapper>

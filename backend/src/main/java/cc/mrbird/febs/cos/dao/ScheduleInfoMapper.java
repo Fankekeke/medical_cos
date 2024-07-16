@@ -32,4 +32,12 @@ public interface ScheduleInfoMapper extends BaseMapper<ScheduleInfo> {
      * @return 结果
      */
     List<ScheduleInfo> selectScheduleListByMonth(@Param("doctorId") Integer doctorId, @Param("year") Integer year, @Param("month") Integer month);
+
+    /**
+     * 获取今天14天的排班信息
+     *
+     * @param doctorIds 医生ID
+     * @return 结果
+     */
+    List<ScheduleInfo> selectScheduleListByDay(@Param("doctorIds") List<Integer> doctorIds);
 }

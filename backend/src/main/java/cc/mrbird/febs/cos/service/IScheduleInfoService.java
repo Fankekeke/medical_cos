@@ -21,4 +21,12 @@ public interface IScheduleInfoService extends IService<ScheduleInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectSchedulePage(Page<ScheduleInfo> page, ScheduleInfo scheduleInfo);
+
+    /**
+     * 选择月份生成排班信息
+     *
+     * @param date 日期
+     * @return 结果
+     */
+    boolean saveBatchSchedule(String date);
 }

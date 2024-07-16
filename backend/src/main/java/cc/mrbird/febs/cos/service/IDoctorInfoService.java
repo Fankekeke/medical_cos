@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK
@@ -29,4 +30,12 @@ public interface IDoctorInfoService extends IService<DoctorInfo> {
      * @return 结果
      */
     LinkedHashMap<String, Object> selectRateByDoctorId(Integer doctorId);
+
+    /**
+     * 根据科室获取医生排班信息
+     *
+     * @param officeId 科室ID
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectDoctorByOfficeId(Integer officeId);
 }

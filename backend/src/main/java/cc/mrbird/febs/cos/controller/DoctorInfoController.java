@@ -69,6 +69,29 @@ public class DoctorInfoController {
     }
 
     /**
+     * 根据医院获取科室
+     *
+     * @param hospitalId 医院ID
+     * @return 结果
+     */
+    @GetMapping("/selectOfficeByHospitalId/{hospitalId}")
+    public R selectOfficeByHospitalId(@PathVariable("hospitalId") Integer hospitalId) {
+        List<OfficeInfo> officeInfoList = officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalId));
+        return R.ok(officeInfoList);
+    }
+
+    /**
+     * 根据科室获取医生排班信息
+     *
+     * @param officeId 科室ID
+     * @return 结果
+     */
+    @GetMapping("/selectDoctorByOfficeId/{officeId}")
+    public R selectDoctorByOfficeId(@PathVariable("officeId") Integer officeId) {
+        return R.ok(doctorInfoService.selectDoctorByOfficeId(officeId));
+    }
+
+    /**
      * 根据账户ID获取医生信息
      *
      * @param userId 医生账户ID

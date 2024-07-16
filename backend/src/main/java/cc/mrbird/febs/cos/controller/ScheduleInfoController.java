@@ -40,6 +40,17 @@ public class ScheduleInfoController {
     }
 
     /**
+     * 选择月份生成排班信息
+     *
+     * @param date 日期
+     * @return 结果
+     */
+    @PostMapping("/saveBatchSchedule")
+    public R saveBatchSchedule(String date) {
+        return R.ok(scheduleInfoService.saveBatchSchedule(date));
+    }
+
+    /**
      * 查询排班信息详情
      *
      * @param id 主键ID

@@ -12,6 +12,7 @@ import cc.mrbird.febs.cos.service.IRegisterInfoService;
 import cc.mrbird.febs.cos.service.IScheduleInfoService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -34,8 +33,6 @@ public class DoctorInfoServiceImpl extends ServiceImpl<DoctorInfoMapper, DoctorI
     private final RegisterInfoMapper registerInfoMapper;
 
     private final ScheduleInfoMapper scheduleInfoMapper;
-
-
 
     /**
      * 分页获取医生信息
@@ -104,6 +101,36 @@ public class DoctorInfoServiceImpl extends ServiceImpl<DoctorInfoMapper, DoctorI
                 put("registerPriceDay", registerPriceDay);
                 put("drugPriceDay", drugPriceDay);
             }
+        });
+        return result;
+    }
+
+    /**
+     * 根据科室获取医生排班信息
+     *
+     * @param officeId 科室ID
+     * @return 结果
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> selectDoctorByOfficeId(Integer officeId) {
+        // 返回数据
+        List<LinkedHashMap<String, Object>> result = new ArrayList<>();
+        // 获取医生信息
+        List<DoctorInfo> doctorInfoList = this.list(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getOfficesId, officeId));
+        List<Integer> doctorIds = doctorInfoList.stream().map(DoctorInfo::getId).collect(Collectors.toList());
+        Map<Integer, DoctorInfo> doctorMap = doctorInfoList.stream().collect(Collectors.toMap(DoctorInfo::getId, e -> e));
+        // 获取今天14天的排班信息
+        List<ScheduleInfo> scheduleInfoList = scheduleInfoMapper.selectScheduleListByDay(doctorIds);
+        // 根据医生ID分组
+        Map<String, List<ScheduleInfo>> scheduleMap = scheduleInfoList.stream().collect(Collectors.groupingBy(ScheduleInfo::getStaffIds));
+
+        scheduleMap.forEach((key, value) -> {
+           result.add(new LinkedHashMap<String, Object>() {
+               {
+                   put("doctor", doctorMap.get(Integer.parseInt(key)));
+                   put("schedule", value);
+               }
+           });
         });
         return result;
     }

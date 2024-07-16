@@ -69,6 +69,11 @@ public class ScheduleInfo implements Serializable {
     private Integer officeId;
 
     /**
+     * 是否为模板 0.否 1.是
+     */
+    private String status;
+
+    /**
      * 所属医院
      */
     @TableField(exist = false)
@@ -79,4 +84,22 @@ public class ScheduleInfo implements Serializable {
      */
     @TableField(exist = false)
     private Integer staffId;
+
+    /**
+     * 医生名称
+     */
+    @TableField(exist = false)
+    private String doctorName;
+
+    /**
+     * 照片
+     */
+    @TableField(exist = false)
+    private String images;
+
+    /**
+     * 挂号ID
+     */
+    @TableField(exist = false)
+    private Integer registerId;
 }
