@@ -9,7 +9,7 @@
                 <a-month-picker placeholder="选择月份" @change="onChange" v-model="queryDate" style="width: 100%"/>
               </a-col>
               <a-col :span="1">
-                <a-button type="primary" @click="selectHospitalRate">
+                <a-button type="primary" @click="selectRate">
                   查询
                 </a-button>
               </a-col>
@@ -27,13 +27,13 @@
             <a-col :span="6">
               <a-card hoverable :bordered="false" style="width: 100%">
                 <a-skeleton active v-if="chartLoading" />
-                <apexchart v-if="!chartLoading" type="pie" width="300" :options="chartOptions3" :series="series3"></apexchart>
+                <apexchart v-if="!chartLoading" type="donut" width="300" :options="chartOptions4" :series="series4"></apexchart>
               </a-card>
             </a-col>
             <a-col :span="6">
               <a-card hoverable :bordered="false" style="width: 100%">
                 <a-skeleton active v-if="chartLoading" />
-                <apexchart v-if="!chartLoading" type="donut" width="300" :options="chartOptions4" :series="series4"></apexchart>
+                <apexchart v-if="!chartLoading" type="pie" width="300" :options="chartOptions3" :series="series3"></apexchart>
               </a-card>
             </a-col>
             <a-col :span="6">
@@ -47,7 +47,13 @@
         <a-col :span="24">
           <a-card hoverable :bordered="false" style="width: 100%">
             <a-skeleton active v-if="chartLoading" />
-            <apexchart v-if="!chartLoading" type="area" height="300" :options="chartOptions1" :series="series1"></apexchart>
+            <apexchart v-if="!chartLoading" type="area" height="400" :options="chartOptions1" :series="series1"></apexchart>
+          </a-card>
+        </a-col>
+        <a-col :span="24">
+          <a-card hoverable :bordered="false" style="width: 100%">
+            <a-skeleton active v-if="chartLoading" />
+            <apexchart v-if="!chartLoading" type="area" height="400" :options="chartOptions6" :series="series6"></apexchart>
           </a-card>
         </a-col>
       </a-row>
@@ -198,13 +204,7 @@ export default {
           }
         }]
       },
-      series1: [{
-        name: "挂号金额",
-        data: []
-      }, {
-        name: "处方金额",
-        data: []
-      }],
+      series1: [],
       chartOptions1: {
         chart: {
           type: 'area',
@@ -220,7 +220,37 @@ export default {
           curve: 'straight'
         },
         title: {
-          text: '挂号金额与处方金额统计',
+          text: '药品销量统计',
+          align: 'left'
+        },
+        labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+        // xaxis: {
+        //   type: 'datetime',
+        // },
+        yaxis: {
+          opposite: true
+        },
+        legend: {
+          horizontalAlign: 'left'
+        }
+      },
+      series6: [],
+      chartOptions6: {
+        chart: {
+          type: 'area',
+          height: 350,
+          zoom: {
+            enabled: false
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        title: {
+          text: '药品销售价格统计',
           align: 'left'
         },
         labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
@@ -248,9 +278,7 @@ export default {
       this.queryDate = dateString
     },
     search () {
-      this.selectHospitalRate({
-        ...this.queryParams
-      })
+      this.selectRate()
     },
     selectRate () {
       let date = moment(this.queryDate).format('YYYY-MM')
@@ -258,6 +286,39 @@ export default {
       this.$get(`/cos/order-info/selectDrugRate`, {
         date
       }).then((r) => {
+        this.series1 = []
+        let pieDrugPriceRate = r.data.pieDrugPriceRate
+        let salePrice = r.data.salePrice
+        let saleNum = r.data.saleNum
+        let pieTypeNumRate = r.data.pieTypeNumRate
+        let pieDrugNumRate = r.data.pieDrugNumRate
+        let pieTypePriceRate = r.data.pieTypePriceRate
+
+        this.series2 = Array.from(pieDrugPriceRate, ({value}) => value)
+        this.chartOptions2.labels = Array.from(pieDrugPriceRate, ({name}) => name)
+        this.series4 = Array.from(pieTypePriceRate, ({value}) => value)
+        this.chartOptions4.labels = Array.from(pieTypePriceRate, ({name}) => name)
+        this.series3 = Array.from(pieDrugNumRate, ({value}) => value)
+        this.chartOptions3.labels = Array.from(pieDrugNumRate, ({name}) => name)
+        this.series5 = Array.from(pieTypeNumRate, ({value}) => value)
+        this.chartOptions5.labels = Array.from(pieTypeNumRate, ({name}) => name)
+
+        saleNum.forEach((item) => {
+          this.series1.push({
+            name: item.name,
+            data: Array.from(item.value, ({count}) => count)
+          })
+        })
+        this.chartOptions1.labels = Array.from(saleNum[0].value, ({date}) => date)
+
+        salePrice.forEach((item) => {
+          this.series6.push({
+            name: item.name,
+            data: Array.from(item.value, ({price}) => price)
+          })
+        })
+        this.chartOptions6.labels = Array.from(salePrice[0].value, ({date}) => date)
+
         // let registerDay = r.data.series.registerDay
         // let scheduleDay = r.data.series.scheduleDay
         // this.series = [{

@@ -343,7 +343,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             return result;
         }
         List<Integer> orderIds = orderInfoList.stream().map(OrderInfo::getId).collect(Collectors.toList());
-        List<OrderDetail> detailList = orderDetailService.list(Wrappers.<OrderDetail>lambdaQuery().in(OrderDetail::getId, orderIds));
+        List<OrderDetail> detailList = orderDetailService.list(Wrappers.<OrderDetail>lambdaQuery().in(OrderDetail::getOrderId, orderIds));
         // 设置药品类型
         for (OrderDetail orderDetail : detailList) {
             if (orderDetail.getDrugId() == null || drugMap.get(orderDetail.getDrugId()) == null) {
@@ -383,21 +383,25 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             });
         });
 
-        detailTypeMap.forEach((key, value) -> {
+        drugTypeMap.forEach((key, value) -> {
+            List<OrderDetail> orderDetailList = detailTypeMap.get(key);
             // 药品类型数量统计
             pieTypeNumRate.add(new LinkedHashMap<String, Object>() {
                 {
-                    put("name", drugTypeMap.get(key) == null ? "暂无类型" : drugTypeMap.get(key));
-                    put("value", value.stream().mapToInt(OrderDetail::getQuantity).sum());
+                    put("name", value);
+                    put("value", CollectionUtil.isEmpty(orderDetailList) ? 0 : orderDetailList.stream().mapToInt(OrderDetail::getQuantity).sum());
                 }
             });
             // 药品类型价格统计
             pieTypePriceRate.add(new LinkedHashMap<String, Object>() {
                 {
-                    put("name", drugTypeMap.get(key) == null ? "暂无类型" : drugTypeMap.get(key));
-                    put("value", value.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+                    put("name", value);
+                    put("value", CollectionUtil.isEmpty(orderDetailList) ? BigDecimal.ZERO : orderDetailList.stream().map(OrderDetail::getAllPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
                 }
             });
+        });
+        detailTypeMap.forEach((key, value) -> {
+
         });
         result.put("pieTypeNumRate", pieTypeNumRate);
         result.put("pieDrugNumRate", pieDrugNumRate);
