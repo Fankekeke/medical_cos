@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.StaffInfoMapper">
+
+    <!-- 分页获取员工信息 -->
+    <select id="selectStaffPage" resultType="java.util.LinkedHashMap">
+        select
+        si.id,
+        si.code,
+        si.name,
+        si.sex,
+        si.status,
+        si.dept_id,
+        si.images,
+        si.create_date,
+        si.user_id,
+        si.mail,
+        si.phone,
+        si.content,
+        si.`type`,
+        si.is_admin,
+        si.resign_date,
+        si.salary,
+        si.position,
+        hi.hospital_name,
+        hi.hospital_url,
+        hi.images as hospitalImages
+        from
+        staff_info si
+        left join hospital_info hi on
+        (hi.id = si.dept_id)
+        where
+        1 = 1
+        <if test="staffInfo.code != null and staffInfo.code != ''">
+            AND si.code LIKE CONCAT('%',#{staffInfo.code},'%')
+        </if>
+        <if test="staffInfo.name != null and staffInfo.name != ''">
+            AND si.name LIKE CONCAT('%',#{staffInfo.name},'%')
+        </if>
+        <if test="staffInfo.hospitalName != null and staffInfo.hospitalName != ''">
+            AND hi.hospital_name LIKE CONCAT('%',#{staffInfo.hospitalName},'%')
+        </if>
+        <if test="staffInfo.hospitalId != null">
+            AND hi.user_id = #{staffInfo.hospitalId}
+        </if>
+        order by
+        si.create_date desc
+    </select>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.ScheduleInfoMapper">
+
+    <!-- 分页获取排班信息 -->
+    <select id="selectSchedulePage" resultType="java.util.LinkedHashMap">
+        select
+        si.id,
+        si.code,
+        si.name,
+        si.task_date,
+        si.start_date,
+        si.end_date,
+        si.office_id,
+        si.staff_ids,
+        si.create_date,
+        oi.offices_name,
+        hi.hospital_name,
+        di.doctor_name,
+        di.images
+        from
+        schedule_info si
+        left join doctor_info di on (di.id = si.staff_ids)
+        left join office_info oi on (oi.id = si.office_id)
+        left join hospital_info hi on (hi.id = di.hospital_id)
+        where
+        1 = 1
+        <if test="scheduleInfo.code != null and scheduleInfo.code != ''">
+            AND code LIKE CONCAT('%',#{scheduleInfo.code},'%')
+        </if>
+        <if test="scheduleInfo.name != null and scheduleInfo.name != ''">
+            AND name LIKE CONCAT('%',#{scheduleInfo.name},'%')
+        </if>
+        <if test="scheduleInfo.hospitalId != null">
+            AND hi.user_id = #{scheduleInfo.hospitalId}
+        </if>
+        <if test="scheduleInfo.staffId != null">
+            AND di.user_id = #{scheduleInfo.staffId}
+        </if>
+        order by
+        code desc
+    </select>
+
+    <!-- 根据医生获取排班信息 -->
+    <select id="selectScheduleListByMonth" resultType="cc.mrbird.febs.cos.entity.ScheduleInfo">
+        select
+        si.id,
+        si.code,
+        si.name,
+        si.task_date,
+        si.start_date,
+        si.end_date,
+        si.office_id,
+        si.staff_ids,
+        si.create_date
+        from
+        schedule_info si
+        where
+        1 = 1
+        <if test="year != null and year != ''">
+            AND YEAR(si.task_date) = #{year}
+        </if>
+        <if test="month != null and month != ''">
+            AND MONTH(si.task_date) = #{month}
+        </if>
+        AND si.staff_ids = #{doctorId}
+    </select>
+</mapper>
