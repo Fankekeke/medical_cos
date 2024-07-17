@@ -6,7 +6,7 @@
           <div style="background: #ECECEC; padding: 30px;">
             <a-row :gutter="20">
               <a-col :span="8">
-                <a-month-picker placeholder="选择月份" @change="onChange" v-model="queryDate" style="width: 100%"/>
+                <a-month-picker placeholder="选择月份" v-model="queryDate" style="width: 100%"/>
               </a-col>
               <a-col :span="1">
                 <a-button type="primary" @click="selectRate">
@@ -274,9 +274,9 @@ export default {
     this.selectRate()
   },
   methods: {
-    onChange (date, dateString) {
-      this.queryDate = dateString
-    },
+    // onChange (date, dateString) {
+    //   this.queryDate = dateString
+    // },
     search () {
       this.selectRate()
     },
@@ -287,6 +287,7 @@ export default {
         date
       }).then((r) => {
         this.series1 = []
+        this.series6 = []
         let pieDrugPriceRate = r.data.pieDrugPriceRate
         let salePrice = r.data.salePrice
         let saleNum = r.data.saleNum

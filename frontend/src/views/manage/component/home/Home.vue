@@ -75,7 +75,10 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月订单量</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">
+                    <span v-if="user.roleId == 74">本月订单量</span>
+                    <span v-if="user.roleId == 77">本月挂号数量</span>
+                  </a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.monthOrderNum }}
@@ -99,7 +102,10 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年订单量</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">
+                    <span v-if="user.roleId == 74">本年订单量</span>
+                    <span v-if="user.roleId == 77">本年挂号数量</span>
+                  </a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.yearOrderNum }}
@@ -480,17 +486,17 @@ export default {
     },
     selectHomeByStudentData () {
       if (this.user.roleId == '75') {
-        this.$get(`/cos/pay-record/home/data/student/${this.user.userId}`).then((r) => {
-          let titleData = { bookNum: r.data.bookNum, bookOweNum: r.data.bookOweNum, bookOwnNum: r.data.bookOwnNum, owePrice: r.data.owePrice }
-          this.studentTitleData = titleData
-          this.newsList = r.data.bulletin
-          this.messageList = r.data.message
-          this.oweBookList = r.data.oweBook
-          this.student = r.data.student
-          if (this.newsList.length !== 0) {
-            this.newsContent = `《${this.newsList[0].title}》 ${this.newsList[0].content}`
-          }
-          this.$emit('imagesInit', this.student.images)
+        this.$get(`/cos/doctor-info/selectRateByDoctorId/${this.user.userId}`).then((r) => {
+          // let titleData = { bookNum: r.data.bookNum, bookOweNum: r.data.bookOweNum, bookOwnNum: r.data.bookOwnNum, owePrice: r.data.owePrice }
+          // this.studentTitleData = titleData
+          // this.newsList = r.data.bulletin
+          // this.messageList = r.data.message
+          // this.oweBookList = r.data.oweBook
+          // this.student = r.data.student
+          // if (this.newsList.length !== 0) {
+          //   this.newsContent = `《${this.newsList[0].title}》 ${this.newsList[0].content}`
+          // }
+          // this.$emit('imagesInit', this.student.images)
         })
       }
     }
