@@ -428,7 +428,6 @@ export default {
           let values = []
           if (r.data.orderNumWithinDays !== null && r.data.orderNumWithinDays.length !== 0) {
             if (this.chartOptions1.xaxis.categories.length === 0) {
-              console.log(r.data.orderNumWithinDays)
               this.chartOptions1.xaxis.categories = Array.from(r.data.orderNumWithinDays, ({days}) => days)
             }
             let itemData = { name: '订单数', data: Array.from(r.data.orderNumWithinDays, ({count}) => count) }
@@ -449,7 +448,7 @@ export default {
             console.log(this.chartOptions2.labels)
           }
         })
-      } else {
+      } else if (this.user.roleId.toString() === '77') {
         this.$get(`/cos/order-info/home/data/hospital/${this.user.userId}`).then((r) => {
           let titleData = { registerNum: r.data.registerNum, orderPrice: r.data.orderPrice, doctorNum: r.data.doctorNum, hospitalNum: r.data.hospitalNum }
           this.$emit('setTitle', titleData)

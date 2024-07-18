@@ -120,14 +120,7 @@ export default {
       const date = new Date()
       const hour = date.getHours()
       let time = hour < 6 ? '早上好' : (hour <= 11 ? '上午好' : (hour <= 13 ? '中午好' : (hour <= 18 ? '下午好' : '晚上好')))
-      if (this.user.roleId.toString() === '75') {
-        this.$get(`/cos/student-info/username/${this.user.userId}`).then((r) => {
-          console.log(`${time}，${r.data.msg}`)
-          this.welcomeMessage = `${time}，${r.data.msg}`
-        })
-      } else {
-        this.welcomeMessage = `${time}，${this.user.username}`
-      }
+      this.welcomeMessage = `${time}，${this.user.username}`
     },
     imagesInit (images) {
       this.userAvatar = 'http://127.0.0.1:9527/imagesWeb/' + images
