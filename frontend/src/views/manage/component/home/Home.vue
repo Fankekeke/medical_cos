@@ -486,7 +486,7 @@ export default {
     selectHomeByStudentData () {
       if (this.user.roleId == '75') {
         this.$get(`/cos/doctor-info/selectRateByDoctorId/${this.user.userId}`).then((r) => {
-          // let titleData = { bookNum: r.data.bookNum, bookOweNum: r.data.bookOweNum, bookOwnNum: r.data.bookOwnNum, owePrice: r.data.owePrice }
+          let titleData = { scheduleNum: r.data.scheduleNum, drugTotal: r.data.drugTotal, registerNum: r.data.registerNum, registerTotal: r.data.registerTotal }
           // this.studentTitleData = titleData
           // this.newsList = r.data.bulletin
           // this.messageList = r.data.message
