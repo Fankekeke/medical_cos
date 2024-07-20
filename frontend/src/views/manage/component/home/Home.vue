@@ -402,7 +402,7 @@ export default {
       let listData = []
       this.scheduleInfo.forEach(item => {
         if ((moment(value).format('YYYY-MM-DD')) === (moment(item.createDate).format('YYYY-MM-DD'))) {
-          listData.push({type: 'success', content: "✔"})
+          listData.push({type: 'success', content: item.name})
         }
       })
       return listData || []
@@ -485,8 +485,9 @@ export default {
     },
     selectHomeByStudentData () {
       if (this.user.roleId == '75') {
-        this.$get(`/cos/doctor-info/selectRateByDoctorId/${this.user.userId}`).then((r) => {
-          let titleData = { scheduleNum: r.data.scheduleNum, drugTotal: r.data.drugTotal, registerNum: r.data.registerNum, registerTotal: r.data.registerTotal }
+        this.$get(`/cos/order-info/home/data/doctor/${this.user.userId}`).then((r) => {
+          let titleData = { scheduleNum: r.data.scheduleNum, totalRegisterCost: r.data.totalRegisterCost, registerNum: r.data.registerNum, totalCost: r.data.totalCost }
+          this.scheduleInfo = r.data.scheduleList
           // this.studentTitleData = titleData
           // this.newsList = r.data.bulletin
           // this.messageList = r.data.message
