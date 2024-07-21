@@ -136,8 +136,8 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">排班量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ studentTitleData.bookNum }}
-                    <span style="font-size: 20px;margin-top: 3px">本</span>
+                    {{ studentTitleData.scheduleNum }}
+                    <span style="font-size: 20px;margin-top: 3px">次</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -148,8 +148,8 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">总挂号</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ studentTitleData.bookOweNum }}
-                    <span style="font-size: 20px;margin-top: 3px">本</span>
+                    {{ studentTitleData.registerNum }}
+                    <span style="font-size: 20px;margin-top: 3px">次</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -160,8 +160,8 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月处方金额</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ studentTitleData.bookOwnNum }}
-                    <span style="font-size: 20px;margin-top: 3px">本</span>
+                    {{ studentTitleData.totalCost }}
+                    <span style="font-size: 20px;margin-top: 3px">元</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -172,7 +172,7 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月挂号金额</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ studentTitleData.owePrice }}
+                    {{ studentTitleData.totalRegisterCost }}
                     <span style="font-size: 20px;margin-top: 3px">元</span>
                   </a-col>
                 </a-row>
@@ -487,6 +487,7 @@ export default {
       if (this.user.roleId == '75') {
         this.$get(`/cos/order-info/home/data/doctor/${this.user.userId}`).then((r) => {
           let titleData = { scheduleNum: r.data.scheduleNum, totalRegisterCost: r.data.totalRegisterCost, registerNum: r.data.registerNum, totalCost: r.data.totalCost }
+          this.titleData = titleData
           this.scheduleInfo = r.data.scheduleList
           // this.studentTitleData = titleData
           // this.newsList = r.data.bulletin
