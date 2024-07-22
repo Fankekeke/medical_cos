@@ -26,6 +26,14 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
     IPage<LinkedHashMap<String, Object>> selectRegisterPage(Page<RegisterInfo> page, @Param("registerInfo") RegisterInfo registerInfo);
 
     /**
+     * 获取挂号记录
+     *
+     * @param registerIds 挂号ID
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> selectRegisterList(@Param("registerIds") List<Integer> registerIds);
+
+    /**
      * 根据时间获取挂号信息
      *
      * @param year  年份

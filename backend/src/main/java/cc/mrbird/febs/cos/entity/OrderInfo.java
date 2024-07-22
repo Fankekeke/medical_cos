@@ -74,6 +74,11 @@ public class OrderInfo implements Serializable {
      */
     private Integer pharmacyId;
 
+    /**
+     * 挂号ID
+     */
+    private Integer registerId;
+
     @TableField(exist = false)
     private String userName;
 

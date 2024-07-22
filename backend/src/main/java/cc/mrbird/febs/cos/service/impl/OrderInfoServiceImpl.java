@@ -597,7 +597,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         // 我的排班
         result.put("scheduleList", scheduleList);
         // 我的挂号【未过期】
-        result.put("registerList", registerList.stream().map(RegisterInfo::getRegisterDate).filter(e -> DateUtil.parseDateTime(e).isAfter(new Date())));
+        List<Integer> registerIds = toMonthList.stream().map(RegisterInfo::getId).collect(Collectors.toList());
+        result.put("registerList", registerInfoMapper.selectRegisterList(registerIds));
         return result;
     }
 

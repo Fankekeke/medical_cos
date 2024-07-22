@@ -15,6 +15,21 @@
 <!--      </div>-->
 <!--      <br/>-->
 <!--      <br/>-->
+      <a-col :span="12" v-if="doctorInfo != null" style="margin-top: 30px">
+        <a-card :bordered="false">
+          <a-row>
+            <a-col :span="5">
+              <a-avatar :src="'http://127.0.0.1:9527/imagesWeb/' + doctorInfo.images" shape="square" style="width: 100px;height: 100px;"/>
+            </a-col>
+            <a-col :span="12">
+              <div style="font-size: 20px;font-family: SimHei">{{ doctorInfo.doctorName }}</div>
+              <p style="font-size: 13px;font-family: SimHei">{{ doctorInfo.hospitalName }}</p>
+              <p style="font-size: 13px;font-family: SimHei">{{ doctorInfo.officesName }}</p>
+              <p style="font-size: 13px;font-family: SimHei">{{ doctorInfo.doctorTitle }}</p>
+            </a-col>
+          </a-row>
+        </a-card>
+      </a-col>
       <a-col :span="24" style="padding-left: 10px">
         <div style="font-size: 20px;font-family: SimHei;margin-top: 10px">我的排班</div>
         <div style="background:#ECECEC; padding:30px;margin-top: 30px">
@@ -36,7 +51,7 @@
       <a-col :span="24" style="padding-left: 10px">
         <div style="font-size: 20px;font-family: SimHei;margin-top: 30px;margin-bottom: 18px">待挂号</div>
         <a-row>
-          <a-col :span="6" v-for="(item, index) in oweBookList" :key="index">
+          <a-col :span="6" v-for="(item, index) in registerList" :key="index">
             <a-card :bordered="false" hoverable>
               <a-carousel autoplay style="height: 150px;" v-if="item.images !== undefined && item.images !== ''">
                 <div style="width: 100%;height: 150px" v-for="(item, index) in item.images.split(',')" :key="index">
@@ -195,10 +210,10 @@
             <a-list item-layout="vertical" :pagination="pagination" :data-source="bulletinList">
               <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
                 <template slot="actions">
-              <span key="message">
-                <a-icon type="message" style="margin-right: 8px" />
-                {{ item.date }}
-              </span>
+                  <span key="message">
+                    <a-icon type="message" style="margin-right: 8px" />
+                    {{ item.date }}
+                  </span>
                 </template>
                 <a-list-item-meta :description="item.content" style="font-size: 14px">
                   <a slot="title">{{ item.title }}</a>
@@ -225,6 +240,8 @@ export default {
   },
   data () {
     return {
+      doctorInfo: null,
+      registerList: [],
       scheduleInfo: [],
       dataLoading: false,
       newsPage: 0,
@@ -487,8 +504,9 @@ export default {
       if (this.user.roleId == '75') {
         this.$get(`/cos/order-info/home/data/doctor/${this.user.userId}`).then((r) => {
           let titleData = { scheduleNum: r.data.scheduleNum, totalRegisterCost: r.data.totalRegisterCost, registerNum: r.data.registerNum, totalCost: r.data.totalCost }
-          this.titleData = titleData
+          this.studentTitleData = titleData
           this.scheduleInfo = r.data.scheduleList
+          this.registerList = r.data.registerList
           // this.studentTitleData = titleData
           // this.newsList = r.data.bulletin
           // this.messageList = r.data.message

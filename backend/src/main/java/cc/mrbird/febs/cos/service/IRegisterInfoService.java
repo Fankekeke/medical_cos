@@ -32,4 +32,12 @@ public interface IRegisterInfoService extends IService<RegisterInfo> {
      * @return 结果
      */
     List<DoctorInfo> selectRegisterByDoctorRank(String year, String month);
+
+    /**
+     * 添加挂号申请
+     *
+     * @param registerInfo 挂号信息
+     * @return 结果
+     */
+    Boolean registerOrderAdd(RegisterInfo registerInfo);
 }

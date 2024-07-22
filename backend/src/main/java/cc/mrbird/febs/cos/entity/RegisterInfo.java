@@ -109,7 +109,7 @@ public class RegisterInfo implements Serializable {
     /**
      * 班次ID
      */
-    private String scheduleId;
+    private Integer scheduleId;
 
     /**
      * 用户名称

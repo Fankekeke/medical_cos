@@ -61,6 +61,55 @@
         ri.create_date desc
     </select>
 
+    <!-- 获取挂号记录 -->
+    <select id="selectRegisterList" resultType="java.util.LinkedHashMap">
+        select
+        ri.id,
+        ri.user_id,
+        ri.price,
+        ri.register_date,
+        ri.dept_id,
+        ri.staff_id,
+        ri.start_date,
+        ri.end_date,
+        ri.status,
+        ri.pay_date,
+        ri.file,
+        ri.remark,
+        ri.code,
+        ri.drug_price,
+        ri.reference,
+        ri.create_date,
+        ri.schedule_id,
+        oi.offices_name,
+        hi.hospital_name,
+        hi.images as hospitalImages,
+        ui.name,
+        ui.phone,
+        ui.address as userAddress,
+        di.doctor_name,
+        di.images
+        from
+        register_info ri
+        left join office_info oi on
+        (oi.id = ri.dept_id)
+        left join hospital_info hi on
+        (hi.id = oi.hospital_id)
+        left join user_info ui on
+        (ui.id = ri.user_id)
+        left join doctor_info di on
+        (di.id = ri.staff_id)
+        where
+        1 = 1
+        <if test="registerIds != null and registerIds.size() != 0">
+            AND ri.id IN
+            <foreach collection="registerIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        order by
+        ri.create_date desc
+    </select>
     <!-- 根据时间获取挂号信息 -->
     <select id="selectRegisterByDate" resultType="cc.mrbird.febs.cos.entity.RegisterInfo">
         select
