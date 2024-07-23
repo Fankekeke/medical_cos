@@ -4,11 +4,13 @@ package cc.mrbird.febs.cos.controller;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.MedicationInfo;
 import cc.mrbird.febs.cos.service.IMedicationInfoService;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,9 @@ public class MedicationInfoController {
      */
     @PostMapping
     public R save(MedicationInfo medicationInfo) {
+        medicationInfo.setCode("MED-" + System.currentTimeMillis());
+        medicationInfo.setStatus(1);
+        medicationInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(medicationInfoService.save(medicationInfo));
     }
 

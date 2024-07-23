@@ -109,6 +109,14 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     void orderPaymentPlatform(String orderCode, String staffCode);
 
     /**
+     * 线上订单付款
+     *
+     * @param orderCode 订单编号
+     * @param staffCode 员工编号
+     */
+    void orderPaymentOnline(String orderCode, String staffCode);
+
+    /**
      * 获取用户订单统计
      *
      * @param userId 用户ID

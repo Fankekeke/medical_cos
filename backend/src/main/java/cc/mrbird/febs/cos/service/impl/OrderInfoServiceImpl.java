@@ -146,11 +146,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             orderInfo.setTotalCost(totalCost);
             orderDetailService.saveBatch(detailList);
         }
+        // 重新更新订单信息
         boolean result = this.updateById(orderInfo);
         if (flag) {
             this.orderPaymentPlatform(orderInfo.getCode(), null);
         }
-        // 重新更新订单信息
 
         return result;
     }
@@ -644,6 +644,44 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         inventoryStatisticsService.saveBatch(statisticsList);
         orderInfo.setOrderStatus(3);
         this.updateById(orderInfo);
+    }
+
+    /**
+     * 线上订单付款
+     *
+     * @param orderCode 订单编号
+     * @param staffCode 员工编号
+     */
+    @Override
+    public void orderPaymentOnline(String orderCode, String staffCode) {
+        if (StrUtil.isEmpty(orderCode)) {
+            return;
+        }
+        // 获取订单信息
+        OrderInfo orderInfo = this.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, orderCode));
+        // 订单详情
+        List<OrderDetail> detailList = orderDetailService.list(Wrappers.<OrderDetail>lambdaQuery().eq(OrderDetail::getOrderId, orderInfo.getId()));
+        Map<Integer, Integer> detailMap = detailList.stream().collect(Collectors.toMap(OrderDetail::getDrugId, OrderDetail::getQuantity));
+        // 根据药品ID获取库存信息
+        List<PharmacyInventory> inventoryList = pharmacyInventoryService.list(Wrappers.<PharmacyInventory>lambdaQuery().in(PharmacyInventory::getDrugId, detailMap.keySet()).eq(PharmacyInventory::getPharmacyId, orderInfo.getPharmacyId()));
+        List<InventoryStatistics> statisticsList = new ArrayList<>();
+
+        String finalStaffCode = staffCode;
+        inventoryList.forEach(e -> {
+            InventoryStatistics inventoryStatistics = new InventoryStatistics();
+            inventoryStatistics.setDrugId(e.getDrugId());
+            inventoryStatistics.setPharmacyId(e.getPharmacyId());
+            inventoryStatistics.setQuantity(detailMap.get(e.getDrugId()));
+            inventoryStatistics.setStorageType(1);
+            inventoryStatistics.setCustodian(finalStaffCode);
+            inventoryStatistics.setCreateDate(DateUtil.formatDateTime(new Date()));
+            statisticsList.add(inventoryStatistics);
+            e.setReserve(e.getReserve() - detailMap.get(e.getDrugId()));
+        });
+        // 修改库存信息
+        pharmacyInventoryService.updateBatchById(inventoryList);
+        // 添加库房统计
+        inventoryStatisticsService.saveBatch(statisticsList);
     }
 
     /**

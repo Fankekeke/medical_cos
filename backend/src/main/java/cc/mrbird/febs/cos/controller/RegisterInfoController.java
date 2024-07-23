@@ -69,16 +69,15 @@ public class RegisterInfoController {
     /**
      * 挂号添加订单
      *
-     * @param registerId 挂号ID
+     * @param orderInfo 订单信息
      * @return 结果
      */
     @PostMapping("/registerOrderAdd")
     @Transactional(rollbackFor = Exception.class)
-    public R registerOrderAdd(Integer registerId) {
+    public R registerOrderAdd(OrderInfo orderInfo) {
         // 获取挂号信息
-        RegisterInfo registerInfo = registerInfoService.getById(registerId);
+        RegisterInfo registerInfo = registerInfoService.getById(orderInfo.getRegisterId());
         // 订单信息
-        OrderInfo orderInfo = new OrderInfo();
         orderInfo.setCode("OR-" + System.currentTimeMillis());
         // 所属用户
         orderInfo.setUserId(registerInfo.getUserId());
@@ -105,7 +104,6 @@ public class RegisterInfoController {
         orderDetailService.saveBatch(orderDetailList);
 
         // 所属挂号
-        orderInfo.setRegisterId(registerId);
         orderInfo.setTotalCost(totalCost);
         // 更新挂号信息
         registerInfo.setDrugPrice(totalCost);
@@ -167,6 +165,25 @@ public class RegisterInfoController {
     @PutMapping("/updateRegisterByCode")
     public R updateRegisterByCode(RegisterInfo registerInfo) {
         return R.ok(registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, registerInfo.getStatus()).eq(RegisterInfo::getCode, registerInfo.getCode())));
+    }
+
+    /**
+     * 订单支付回调
+     *
+     * @param code 订单编号
+     * @return 结果
+     */
+    @GetMapping("/payRollBack")
+    public R payRollBack(@RequestParam("code") String code) {
+        // 判断编号未挂号还是订单
+        if (code.indexOf("REG") != -1) {
+            return R.ok(registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, "1").eq(RegisterInfo::getCode, code)));
+        } else {
+            OrderInfo orderInfo = orderInfoService.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, code));
+            DoctorInfo doctorInfo = doctorInfoMapper.selectById(orderInfo.getStaffId());
+            orderInfoService.orderPaymentOnline(code, doctorInfo != null ? doctorInfo.getCode() : null);
+            return R.ok(orderInfoService.update(Wrappers.<OrderInfo>lambdaUpdate().set(OrderInfo::getOrderStatus, "1").eq(OrderInfo::getCode, code)));
+        }
     }
 
     /**
