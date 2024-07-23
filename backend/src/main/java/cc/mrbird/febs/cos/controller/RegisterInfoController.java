@@ -72,7 +72,7 @@ public class RegisterInfoController {
      * @param orderInfo 订单信息
      * @return 结果
      */
-    @PostMapping("/registerOrderAdd")
+    @PostMapping("/register/order")
     @Transactional(rollbackFor = Exception.class)
     public R registerOrderAdd(OrderInfo orderInfo) {
         // 获取挂号信息
