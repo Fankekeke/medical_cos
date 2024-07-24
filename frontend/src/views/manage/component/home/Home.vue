@@ -264,10 +264,10 @@ export default {
         staffNum: 0
       },
       studentTitleData: {
-        bookNum: 0,
-        bookOweNum: 0,
-        bookOwnNum: 0,
-        owePrice: 0
+        scheduleNum: 2,
+        registerNum: 0,
+        totalCost: 0,
+        totalRegisterCost: 0
       },
       loading: false,
       series: [{
