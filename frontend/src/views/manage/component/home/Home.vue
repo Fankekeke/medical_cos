@@ -52,17 +52,17 @@
         <div style="font-size: 20px;font-family: SimHei;margin-top: 30px;margin-bottom: 18px">待挂号</div>
         <a-row>
           <a-col :span="6" v-for="(item, index) in registerList" :key="index">
-            <a-card :bordered="false" hoverable>
-              <a-carousel autoplay style="height: 150px;" v-if="item.images !== undefined && item.images !== ''">
-                <div style="width: 100%;height: 150px" v-for="(item, index) in item.images.split(',')" :key="index">
-                  <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 250px">
-                </div>
-              </a-carousel>
-              <a-card-meta :title="item.bookName" :description="item.bookName.slice(0, 18)+'...'" style="margin-top: 10px"></a-card-meta>
+            <a-card :bordered="true" hoverable>
+<!--              <a-carousel autoplay style="height: 150px;" v-if="item.images !== undefined && item.images">-->
+<!--                <div style="width: 100%;height: 150px" v-for="(item, index) in item.images.split(',')" :key="index">-->
+<!--                  <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 250px">-->
+<!--                </div>-->
+<!--              </a-carousel>-->
+              <a-card-meta :title="item.name + ' - ' + item.registerDate" :description="item.hospitalName + ' - ' + item.officesName" style="margin-top: 10px"></a-card-meta>
               <div style="font-size: 12px;font-family: SimHei;margin-top: 8px">
-                <span>{{ item.auther }}</span> |
-                <span>{{ item.press }}</span> |
-                <span style="color: #f5222d; font-size: 13px;">￥{{ item.price }}</span>
+                <span>{{ item.startDate }} ~ {{ item.endDate }} </span> |
+                <span>联系方式 - {{ item.phone }}</span> |
+                <span style="color: #f5222d; font-size: 13px;">{{ item.doctorName }}</span>
               </div>
             </a-card>
           </a-col>
@@ -264,7 +264,7 @@ export default {
         staffNum: 0
       },
       studentTitleData: {
-        scheduleNum: 2,
+        scheduleNum: 0,
         registerNum: 0,
         totalCost: 0,
         totalRegisterCost: 0
@@ -409,7 +409,6 @@ export default {
     console.log(this.user)
     this.loading = true
     this.selectHomeData()
-    this.selectHomeByStudentData()
     setTimeout(() => {
       this.loading = false
     }, 200)
@@ -418,7 +417,7 @@ export default {
     getListData (value) {
       let listData = []
       this.scheduleInfo.forEach(item => {
-        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.createDate).format('YYYY-MM-DD'))) {
+        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.taskDate).format('YYYY-MM-DD'))) {
           listData.push({type: 'success', content: item.name})
         }
       })
@@ -498,13 +497,13 @@ export default {
             console.log(this.chartOptions2.labels)
           }
         })
-      }
-    },
-    selectHomeByStudentData () {
-      if (this.user.roleId == '75') {
+      } else if (this.user.roleId.toString() === '75') {
         this.$get(`/cos/order-info/home/data/doctor/${this.user.userId}`).then((r) => {
-          let titleData = { scheduleNum: r.data.scheduleNum, totalRegisterCost: r.data.totalRegisterCost, registerNum: r.data.registerNum, totalCost: r.data.totalCost }
-          this.studentTitleData = titleData
+          this.studentTitleData.scheduleNum = r.data.scheduleNum
+          this.studentTitleData.totalRegisterCost = r.data.totalRegisterCost
+          this.studentTitleData.registerNum = r.data.registerNum
+          this.studentTitleData.totalCost = r.data.totalCost
+          console.log(JSON.stringify(this.studentTitleData))
           this.scheduleInfo = r.data.scheduleList
           this.registerList = r.data.registerList
           // this.studentTitleData = titleData

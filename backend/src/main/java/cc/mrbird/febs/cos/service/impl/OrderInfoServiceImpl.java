@@ -572,7 +572,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         result.put("officesName", doctorInfo.getOfficesName());
 
         // 排班数量
-        List<ScheduleInfo> scheduleList = scheduleMapper.selectList(Wrappers.<ScheduleInfo>lambdaQuery().eq(ScheduleInfo::getStaffIds, doctorInfo.getId()));
+        List<ScheduleInfo> scheduleList = scheduleMapper.selectList(Wrappers.<ScheduleInfo>lambdaQuery().eq(ScheduleInfo::getStaffIds, doctorInfo.getId()).eq(ScheduleInfo::getStatus, 0));
         Integer scheduleNum = scheduleList.size();
         result.put("scheduleNum", scheduleNum);
         // 挂号数量
@@ -582,23 +582,28 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (CollectionUtil.isEmpty(scheduleIds)) {
             result.put("registerNum", 0);
         } else {
-            registerList = registerInfoService.list(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getScheduleId, scheduleIds));
+            List<String> status = Arrays.asList("1", "2", "3", "4");
+            registerList = registerInfoService.list(Wrappers.<RegisterInfo>lambdaQuery().in(RegisterInfo::getScheduleId, scheduleIds).in(RegisterInfo::getStatus, status));
             Integer registerNum = registerList.size();
             result.put("registerNum", registerNum);
         }
 
-        List<RegisterInfo> toMonthList = registerList.stream().filter(e -> DateUtil.parseDateTime(e.getRegisterDate()).isAfter(new Date())).collect(Collectors.toList());
+        List<RegisterInfo> toMonthList = registerList.stream().filter(e -> DateUtil.parseDate(e.getRegisterDate()).isAfter(new Date())).collect(Collectors.toList());
         // 本月处方金额
-        BigDecimal totalCost = registerList.stream().map(RegisterInfo::getDrugPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalCost = registerList.stream().map(RegisterInfo::getDrugPrice).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         result.put("totalCost", totalCost);
         // 本月挂号金额
-        BigDecimal totalRegisterCost = registerList.stream().map(RegisterInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalRegisterCost = registerList.stream().map(RegisterInfo::getPrice).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         result.put("totalRegisterCost", totalRegisterCost);
         // 我的排班
         result.put("scheduleList", scheduleList);
         // 我的挂号【未过期】
         List<Integer> registerIds = toMonthList.stream().map(RegisterInfo::getId).collect(Collectors.toList());
-        result.put("registerList", registerInfoMapper.selectRegisterList(registerIds));
+        if (CollectionUtil.isNotEmpty(registerIds)) {
+            result.put("registerList", registerInfoMapper.selectRegisterList(registerIds));
+        } else {
+            result.put("registerList", Collections.emptyList());
+        }
         return result;
     }
 
