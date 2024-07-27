@@ -9,40 +9,29 @@
           <a-form :form="form" layout="vertical">
             <a-row :gutter="20">
               <a-col :span="12">
-                <a-form-item label='学生姓名' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'studentName',
-            { rules: [{ required: true, message: '请输入学生姓名!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='学号' v-bind="formItemLayout">
+                <a-form-item label='用户姓名' v-bind="formItemLayout">
                   <a-input disabled v-decorator="[
-            'code',
-            { rules: [{ required: true, message: '请输入学号!' }] }
+            'name',
+            { rules: [{ required: true, message: '请输入用户姓名!' }] }
             ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='所属班级' v-bind="formItemLayout">
-                  <a-select disabled v-decorator="[
-              'classId',
-              { rules: [{ required: true, message: '请输入所属班级!' }] }
-              ]">
-                    <a-select-option :value="item.id" v-for="(item, index) in classList" :key="index">{{ item.className }}</a-select-option>
-                  </a-select>
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label='性别' v-bind="formItemLayout">
                   <a-select v-decorator="[
-              'sex',
-              { rules: [{ required: true, message: '请输入性别!' }] }
-              ]">
+                  'sex',
+                  ]">
                     <a-select-option value="1">男</a-select-option>
                     <a-select-option value="2">女</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='联系方式' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'phone',
+            { rules: [{ required: true, message: '请输入联系方式!' }] }
+            ]"/>
                 </a-form-item>
               </a-col>
               <a-col :span="12">
@@ -70,6 +59,46 @@
                 </a-form-item>
               </a-col>
               <a-col :span="12">
+                <a-form-item label='邮箱地址' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'mail',
+            { rules: [{ required: true, message: '请输入邮箱地址!' }] }
+            ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='身高' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'height',
+            { rules: [{ required: true, message: '请输入身高!' }] }
+            ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='体重' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'weight',
+            { rules: [{ required: true, message: '请输入体重!' }] }
+            ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='身高' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'height',
+            { rules: [{ required: true, message: '请输入身高!' }] }
+            ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='身份证号码' v-bind="formItemLayout">
+                  <a-input v-decorator="[
+            'idCard',
+            { rules: [{ required: true, message: '请输入身份证号码!' }] }
+            ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
                 <a-form-item label='出生日期' v-bind="formItemLayout">
                   <a-date-picker style="width: 100%;" v-decorator="[
             'birthday',
@@ -77,32 +106,16 @@
             ]"/>
                 </a-form-item>
               </a-col>
-              <a-col :span="12">
-                <a-form-item label='联系方式' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'phone',
-            { rules: [{ required: true, message: '请输入联系方式!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='所属专业' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'major',
-            { rules: [{ required: true, message: '请输入所属专业!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
               <a-col :span="24">
-                <a-form-item label='详细地址' v-bind="formItemLayout">
+                <a-form-item label='收货地址' v-bind="formItemLayout">
                   <a-textarea :rows="4" v-decorator="[
             'address',
-             { rules: [{ required: true, message: '请输入详细地址!' }] }
+            { rules: [{ required: true, message: '请输入详细地址!' }] }
             ]"/>
                 </a-form-item>
               </a-col>
               <a-col :span="24">
-                <a-form-item label='照片' v-bind="formItemLayout">
+                <a-form-item label='头像' v-bind="formItemLayout">
                   <a-upload
                     name="avatar"
                     action="http://127.0.0.1:9527/file/fileUpload/"
@@ -125,6 +138,9 @@
               </a-col>
             </a-row>
           </a-form>
+          <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
+            修改
+          </a-button>
         </a-card>
       </div>
     </a-col>
@@ -177,7 +193,6 @@ export default {
   },
   mounted () {
     this.dataInit()
-    this.selectClassList()
   },
   methods: {
     moment,
@@ -193,11 +208,6 @@ export default {
     },
     picHandleChange ({ fileList }) {
       this.fileList = fileList
-    },
-    selectClassList () {
-      this.$get('/cos/class-info/list').then((r) => {
-        this.classList = r.data.data
-      })
     },
     imagesInit (images) {
       if (images !== null && images !== '') {
@@ -220,7 +230,7 @@ export default {
     getListData (value) {
       let listData = []
       this.courseInfo.forEach(item => {
-        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.createDate).format('YYYY-MM-DD'))) {
+        if ((moment(value).format('YYYY-MM-DD')) === (moment(item.registerDate).format('YYYY-MM-DD'))) {
           listData.push({type: 'success', content: "✔"})
         }
       })
@@ -228,17 +238,16 @@ export default {
     },
     dataInit () {
       this.dataLoading = true
-      this.$get(`/cos/student-info/detail/${this.currentUser.userId}`).then((r) => {
-        console.log(r.data.user)
+      this.$get(`/cos/user-info/selectRateByUserId/${this.currentUser.userId}`).then((r) => {
         this.rowId = r.data.user.id
         this.setFormValues(r.data.user)
-        this.courseInfo = r.data.order
+        this.courseInfo = r.data.register
         this.dataLoading = false
       })
     },
     setFormValues ({...user}) {
       this.rowId = user.id
-      let fields = ['studentName', 'code', 'phone', 'province', 'city', 'area', 'address', 'classId', 'sex', 'birthday', 'major']
+      let fields = ['name', 'mail', 'phone', 'province', 'city', 'area', 'address', 'sex', 'birthday', 'height', 'weight', 'idCard']
       let obj = {}
       Object.keys(user).forEach((key) => {
         if (key === 'images') {
@@ -273,7 +282,7 @@ export default {
         values.birthday = moment(values.birthday).format('YYYY-MM-DD')
         if (!err) {
           this.loading = true
-          this.$put('/cos/student-info', {
+          this.$put('/cos/user-info', {
             ...values
           }).then((r) => {
             this.$message.success('修改信息成功')

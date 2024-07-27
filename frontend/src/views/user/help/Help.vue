@@ -7,18 +7,29 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="订单编号"
+                label="问题类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
+                <a-input v-model="queryParams.questionType"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医院名称"
+                label="问题内容"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.pharmacyName"/>
+                <a-input v-model="queryParams.question"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="问题类型"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.status">
+                  <a-select-option value="0">未处理</a-select-option>
+                  <a-select-option value="1">已处理</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -31,6 +42,7 @@
     </div>
     <div>
       <div class="operator">
+        <a-button type="primary" ghost @click="add">新增</a-button>
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -45,6 +57,8 @@
                @change="handleTableChange">
         <template slot="titleShow" slot-scope="text, record">
           <template>
+            <a-badge status="processing" v-if="record.rackUp === 1"/>
+            <a-badge status="error" v-if="record.rackUp === 0"/>
             <a-tooltip>
               <template slot="title">
                 {{ record.title }}
@@ -53,57 +67,64 @@
             </a-tooltip>
           </template>
         </template>
+        <template slot="contentShow" slot-scope="text, record">
+          <template>
+            <a-tooltip>
+              <template slot="title">
+                {{ record.question }}
+              </template>
+              {{ record.question.slice(0, 30) }} ...
+            </a-tooltip>
+          </template>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="file-search" @click="orderViewOpen(record)" title="详 情"></a-icon>
-          <a-icon v-if="record.orderStatus ==  0" type="alipay" @click="orderPay(record)" title="支 付" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="record.orderStatus ==  2" type="shopping" theme="twoTone" twoToneColor="#4a9ff5" @click="orderReceive(record)" title="收 货" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="!record.evaluateFlag && record.orderStatus ==  3" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="orderEvaluateOpen(record)" title="评 价" style="margin-left: 15px"></a-icon>
+          <a-icon type="cloud" @click="handlehelpViewOpen(record)" title="详 情"></a-icon>
+<!--          <a-icon type="bulb" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-left: 15px" v-if="record.status === '0'"></a-icon>-->
         </template>
       </a-table>
     </div>
-    <order-view
-      @close="handleorderViewClose"
-      :orderShow="orderView.visiable"
-      :orderData="orderView.data">
-    </order-view>
-    <order-evaluate
-      @close="handleorderAddClose"
-      @success="handleorderAddSuccess"
-      :evaluateAddVisiable="orderEvaluateView.visiable"
-      :orderData="orderEvaluateView.data">
-    </order-evaluate>
+    <help-add
+      v-if="helpAdd.visiable"
+      @close="handlehelpAddClose"
+      @success="handlehelpAddSuccess"
+      :helpAddVisiable="helpAdd.visiable">
+    </help-add>
+    <help-edit
+      ref="helpEdit"
+      @close="handlehelpEditClose"
+      @success="handlehelpEditSuccess"
+      :helpEditVisiable="helpEdit.visiable">
+    </help-edit>
+    <help-view
+      @close="handlehelpViewClose"
+      :helpShow="helpView.visiable"
+      :helpData="helpView.data">
+    </help-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
+import helpAdd from './HelpAdd.vue'
+import helpEdit from './HelpEdit.vue'
+import helpView from './HelpView.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
-import OrderEvaluate from './OrderEvaluate'
-import OrderView from './OrderView'
 moment.locale('zh-cn')
 
 export default {
-  name: 'order',
-  components: {OrderView, RangeDate, OrderEvaluate},
+  name: 'help',
+  components: {helpAdd, helpEdit, helpView, RangeDate},
   data () {
     return {
       advanced: false,
-      orderAdd: {
+      helpAdd: {
         visiable: false
       },
-      orderEdit: {
+      helpEdit: {
         visiable: false
       },
-      orderView: {
-        visiable: false,
-        data: null
-      },
-      orderStatusView: {
-        visiable: false,
-        data: null
-      },
-      orderEvaluateView: {
+      helpView: {
         visiable: false,
         data: null
       },
@@ -122,10 +143,6 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      orderAuditView: {
-        visiable: false,
-        data: null
-      },
       userList: []
     }
   },
@@ -135,78 +152,54 @@ export default {
     }),
     columns () {
       return [{
-        title: '订单编号',
-        dataIndex: 'code'
+        title: '用户姓名',
+        dataIndex: 'userName'
       }, {
-        title: '客户名称',
-        dataIndex: 'name',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return <a-tag>平台内下单</a-tag>
-          }
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
         }
       }, {
-        title: '联系方式',
-        dataIndex: 'phone',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
+        title: '问题类型',
+        dataIndex: 'questionType'
       }, {
-        title: '订单总额',
-        dataIndex: 'totalCost',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
+        title: '问题内容',
+        dataIndex: 'question',
+        scopedSlots: { customRender: 'contentShow' },
+        width: 500
       }, {
-        title: '收获地址',
-        dataIndex: 'userAddress',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '所属医院',
-        dataIndex: 'pharmacyName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '订单状态',
-        dataIndex: 'orderStatus',
+        title: '问题状态',
+        dataIndex: 'status',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
-              return <a-tag>待付款</a-tag>
-            case 1:
-              return <a-tag>已下单</a-tag>
-            case 2:
-              return <a-tag>配送中</a-tag>
-            case 3:
-              return <a-tag>已收货</a-tag>
+            case '0':
+              return <a-tag>未处理</a-tag>
+            case '1':
+              return <a-tag color="green">已处理</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '下单时间',
+        title: '发布时间',
         dataIndex: 'createDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '处理时间',
+        dataIndex: 'replyDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -225,63 +218,12 @@ export default {
     this.fetch()
   },
   methods: {
-    orderReceive (record) {
-      this.$get('/cos/order-info/edit/status', {orderId: record.id, status: 3}).then(() => {
-        this.$message.success('收货成功')
-        this.search()
-      })
+    handlehelpViewOpen (row) {
+      this.helpView.data = row
+      this.helpView.visiable = true
     },
-    orderPay (record) {
-      let data = { outTradeNo: record.code, subject: `${record.createDate}缴费信息`, totalAmount: record.totalCost, body: '' }
-      this.$post('/cos/pay/alipay', data).then((r) => {
-        // console.log(r.data.msg)
-        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
-        const divForm = document.getElementsByTagName('div')
-        if (divForm.length) {
-          document.body.removeChild(divForm[0])
-        }
-        const div = document.createElement('div')
-        div.innerHTML = r.data.msg // data就是接口返回的form 表单字符串
-        // console.log(div.innerHTML)
-        document.body.appendChild(div)
-        document.forms[0].setAttribute('target', '_self') // 新开窗口跳转
-        document.forms[0].submit()
-      })
-    },
-    orderEvaluateOpen (row) {
-      this.orderEvaluateView.data = row
-      this.orderEvaluateView.visiable = true
-    },
-    orderStatusOpen (row) {
-      this.orderStatusView.data = row
-      this.orderStatusView.visiable = true
-    },
-    orderAuditOpen (row) {
-      this.orderAuditView.data = row
-      this.orderAuditView.visiable = true
-    },
-    orderViewOpen (row) {
-      this.orderView.data = row
-      this.orderView.visiable = true
-    },
-    handleorderViewClose () {
-      this.orderView.visiable = false
-    },
-    handleorderStatusViewClose () {
-      this.orderStatusView.visiable = false
-    },
-    handleorderStatusViewSuccess () {
-      this.orderStatusView.visiable = false
-      this.$message.success('修改成功')
-      this.fetch()
-    },
-    handleorderAuditViewClose () {
-      this.orderAuditView.visiable = false
-    },
-    handleorderAuditViewSuccess () {
-      this.orderAuditView.visiable = false
-      this.$message.success('审核成功')
-      this.fetch()
+    handlehelpViewClose () {
+      this.helpView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -290,26 +232,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.orderAdd.visiable = true
+      this.helpAdd.visiable = true
     },
-    handleorderAddClose () {
-      this.orderEvaluateView.visiable = false
+    handlehelpAddClose () {
+      this.helpAdd.visiable = false
     },
-    handleorderAddSuccess () {
-      this.orderEvaluateView.visiable = false
-      this.$message.success('订单评价成功！')
+    handlehelpAddSuccess () {
+      this.helpAdd.visiable = false
+      this.$message.success('新增问题求助成功')
       this.search()
     },
     edit (record) {
-      this.$refs.orderEdit.setFormValues(record)
-      this.orderEdit.visiable = true
+      this.$refs.helpEdit.setFormValues(record)
+      this.helpEdit.visiable = true
     },
-    handleorderEditClose () {
-      this.orderEdit.visiable = false
+    handlehelpEditClose () {
+      this.helpEdit.visiable = false
     },
-    handleorderEditSuccess () {
-      this.orderEdit.visiable = false
-      this.$message.success('修改产品成功')
+    handlehelpEditSuccess () {
+      this.helpEdit.visiable = false
+      this.$message.success('修改问题求助成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -327,7 +269,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/order-info/' + ids).then(() => {
+          that.$delete('/cos/help-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -401,7 +343,7 @@ export default {
         delete params.status
       }
       params.userId = this.currentUser.userId
-      this.$get('/cos/order-info/page', {
+      this.$get('/cos/help-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

@@ -7,18 +7,25 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="订单编号"
+                label="所属科室"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
+                <a-input v-model="queryParams.officesName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医院名称"
+                label="状态"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.pharmacyName"/>
+                <a-select v-model="queryParams.status" allowClear>
+                  <a-select-option value="0">未支付</a-select-option>
+                  <a-select-option value="1">进行中</a-select-option>
+                  <a-select-option value="2">填写处方</a-select-option>
+                  <a-select-option value="3">待支付</a-select-option>
+                  <a-select-option value="4">已完成</a-select-option>
+                  <a-select-option value="4">已退号</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -31,6 +38,7 @@
     </div>
     <div>
       <div class="operator">
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -54,56 +62,53 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="file-search" @click="orderViewOpen(record)" title="详 情"></a-icon>
-          <a-icon v-if="record.orderStatus ==  0" type="alipay" @click="orderPay(record)" title="支 付" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="record.orderStatus ==  2" type="shopping" theme="twoTone" twoToneColor="#4a9ff5" @click="orderReceive(record)" title="收 货" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="!record.evaluateFlag && record.orderStatus ==  3" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="orderEvaluateOpen(record)" title="评 价" style="margin-left: 15px"></a-icon>
+          <a-icon type="cloud" @click="handleViewOpen(record)" title="详 情"></a-icon>
+<!--          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>-->
         </template>
       </a-table>
     </div>
-    <order-view
-      @close="handleorderViewClose"
-      :orderShow="orderView.visiable"
-      :orderData="orderView.data">
-    </order-view>
-    <order-evaluate
-      @close="handleorderAddClose"
-      @success="handleorderAddSuccess"
-      :evaluateAddVisiable="orderEvaluateView.visiable"
-      :orderData="orderEvaluateView.data">
-    </order-evaluate>
+    <register-add
+      v-if="registerAdd.visiable"
+      @close="handleregisterAddClose"
+      @success="handleregisterAddSuccess"
+      :registerAddVisiable="registerAdd.visiable">
+    </register-add>
+    <register-edit
+      ref="registerEdit"
+      @close="handleregisterEditClose"
+      @success="handleregisterEditSuccess"
+      :registerEditVisiable="registerEdit.visiable">
+    </register-edit>
+    <register-view
+      @close="handleViewClose"
+      :registerShow="registerView.visiable"
+      :registerData="registerView.data">
+    </register-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
+import registerAdd from './RegisterAdd.vue'
+import registerEdit from './RegisterEdit.vue'
+import registerView from './RegisterView.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
-import OrderEvaluate from './OrderEvaluate'
-import OrderView from './OrderView'
 moment.locale('zh-cn')
 
 export default {
-  name: 'order',
-  components: {OrderView, RangeDate, OrderEvaluate},
+  name: 'register',
+  components: {registerAdd, registerEdit, registerView, RangeDate},
   data () {
     return {
       advanced: false,
-      orderAdd: {
+      registerAdd: {
         visiable: false
       },
-      orderEdit: {
+      registerEdit: {
         visiable: false
       },
-      orderView: {
-        visiable: false,
-        data: null
-      },
-      orderStatusView: {
-        visiable: false,
-        data: null
-      },
-      orderEvaluateView: {
+      registerView: {
         visiable: false,
         data: null
       },
@@ -122,10 +127,6 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      orderAuditView: {
-        visiable: false,
-        data: null
-      },
       userList: []
     }
   },
@@ -135,18 +136,8 @@ export default {
     }),
     columns () {
       return [{
-        title: '订单编号',
-        dataIndex: 'code'
-      }, {
-        title: '客户名称',
-        dataIndex: 'name',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return <a-tag>平台内下单</a-tag>
-          }
-        }
+        title: '用户姓名',
+        dataIndex: 'name'
       }, {
         title: '联系方式',
         dataIndex: 'phone',
@@ -158,8 +149,50 @@ export default {
           }
         }
       }, {
-        title: '订单总额',
-        dataIndex: 'totalCost',
+        title: '所属医院',
+        dataIndex: 'hospitalName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '医生姓名',
+        dataIndex: 'doctorName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '医生头像',
+        dataIndex: 'images',
+        customRender: (text, record, index) => {
+          if (!record.images) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '科室名称',
+        dataIndex: 'officesName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '挂号金额',
+        dataIndex: 'price',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text + '元'
@@ -168,48 +201,42 @@ export default {
           }
         }
       }, {
-        title: '收获地址',
-        dataIndex: 'userAddress',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '所属医院',
-        dataIndex: 'pharmacyName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '订单状态',
-        dataIndex: 'orderStatus',
+        title: '状态',
+        dataIndex: 'status',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
-              return <a-tag>待付款</a-tag>
-            case 1:
-              return <a-tag>已下单</a-tag>
-            case 2:
-              return <a-tag>配送中</a-tag>
-            case 3:
-              return <a-tag>已收货</a-tag>
+            case '0':
+              return <a-tag>未支付</a-tag>
+            case '1':
+              return <a-tag>进行中</a-tag>
+            case '2':
+              return <a-tag>填写处方</a-tag>
+            case '3':
+              return <a-tag>待支付</a-tag>
+            case '4':
+              return <a-tag>已完成</a-tag>
+            case '5':
+              return <a-tag>已退号</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '下单时间',
-        dataIndex: 'createDate',
+        title: '预约时间',
+        dataIndex: 'registerDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '挂号时间',
+        dataIndex: 'startDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return row.startDate + '~' + row.endDate
           } else {
             return '- -'
           }
@@ -225,63 +252,18 @@ export default {
     this.fetch()
   },
   methods: {
-    orderReceive (record) {
-      this.$get('/cos/order-info/edit/status', {orderId: record.id, status: 3}).then(() => {
-        this.$message.success('收货成功')
-        this.search()
+    handleViewOpen (row) {
+      this.registerView.data = row
+      this.registerView.visiable = true
+    },
+    handleViewClose () {
+      this.registerView.visiable = false
+    },
+    editStatus (row, status) {
+      this.$post('/cos/register-info/account/status', { registerId: row.id, status }).then((r) => {
+        this.$message.success('修改成功')
+        this.fetch()
       })
-    },
-    orderPay (record) {
-      let data = { outTradeNo: record.code, subject: `${record.createDate}缴费信息`, totalAmount: record.totalCost, body: '' }
-      this.$post('/cos/pay/alipay', data).then((r) => {
-        // console.log(r.data.msg)
-        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
-        const divForm = document.getElementsByTagName('div')
-        if (divForm.length) {
-          document.body.removeChild(divForm[0])
-        }
-        const div = document.createElement('div')
-        div.innerHTML = r.data.msg // data就是接口返回的form 表单字符串
-        // console.log(div.innerHTML)
-        document.body.appendChild(div)
-        document.forms[0].setAttribute('target', '_self') // 新开窗口跳转
-        document.forms[0].submit()
-      })
-    },
-    orderEvaluateOpen (row) {
-      this.orderEvaluateView.data = row
-      this.orderEvaluateView.visiable = true
-    },
-    orderStatusOpen (row) {
-      this.orderStatusView.data = row
-      this.orderStatusView.visiable = true
-    },
-    orderAuditOpen (row) {
-      this.orderAuditView.data = row
-      this.orderAuditView.visiable = true
-    },
-    orderViewOpen (row) {
-      this.orderView.data = row
-      this.orderView.visiable = true
-    },
-    handleorderViewClose () {
-      this.orderView.visiable = false
-    },
-    handleorderStatusViewClose () {
-      this.orderStatusView.visiable = false
-    },
-    handleorderStatusViewSuccess () {
-      this.orderStatusView.visiable = false
-      this.$message.success('修改成功')
-      this.fetch()
-    },
-    handleorderAuditViewClose () {
-      this.orderAuditView.visiable = false
-    },
-    handleorderAuditViewSuccess () {
-      this.orderAuditView.visiable = false
-      this.$message.success('审核成功')
-      this.fetch()
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -290,26 +272,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.orderAdd.visiable = true
+      this.registerAdd.visiable = true
     },
-    handleorderAddClose () {
-      this.orderEvaluateView.visiable = false
+    handleregisterAddClose () {
+      this.registerAdd.visiable = false
     },
-    handleorderAddSuccess () {
-      this.orderEvaluateView.visiable = false
-      this.$message.success('订单评价成功！')
+    handleregisterAddSuccess () {
+      this.registerAdd.visiable = false
+      this.$message.success('新增挂号成功')
       this.search()
     },
     edit (record) {
-      this.$refs.orderEdit.setFormValues(record)
-      this.orderEdit.visiable = true
+      this.$refs.registerEdit.setFormValues(record)
+      this.registerEdit.visiable = true
     },
-    handleorderEditClose () {
-      this.orderEdit.visiable = false
+    handleregisterEditClose () {
+      this.registerEdit.visiable = false
     },
-    handleorderEditSuccess () {
-      this.orderEdit.visiable = false
-      this.$message.success('修改产品成功')
+    handleregisterEditSuccess () {
+      this.registerEdit.visiable = false
+      this.$message.success('修改挂号成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -327,7 +309,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/order-info/' + ids).then(() => {
+          that.$delete('/cos/register-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -401,7 +383,7 @@ export default {
         delete params.status
       }
       params.userId = this.currentUser.userId
-      this.$get('/cos/order-info/page', {
+      this.$get('/cos/register-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

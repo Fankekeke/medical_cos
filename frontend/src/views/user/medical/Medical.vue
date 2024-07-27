@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="订单编号"
+                label="标题"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
+                <a-input v-model="queryParams.title"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="医院名称"
+                label="发布人"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.pharmacyName"/>
+                <a-input v-model="queryParams.publisher"/>
               </a-form-item>
             </a-col>
           </div>
@@ -31,6 +31,7 @@
     </div>
     <div>
       <div class="operator">
+        <a-button type="primary" ghost @click="add">新增</a-button>
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -45,6 +46,8 @@
                @change="handleTableChange">
         <template slot="titleShow" slot-scope="text, record">
           <template>
+            <a-badge status="processing" v-if="record.rackUp === 1"/>
+            <a-badge status="error" v-if="record.rackUp === 0"/>
             <a-tooltip>
               <template slot="title">
                 {{ record.title }}
@@ -53,57 +56,64 @@
             </a-tooltip>
           </template>
         </template>
+        <template slot="contentShow" slot-scope="text, record">
+          <template>
+            <a-tooltip>
+              <template slot="title">
+                {{ record.content }}
+              </template>
+              {{ record.content.slice(0, 20) }} ...
+            </a-tooltip>
+          </template>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="file-search" @click="orderViewOpen(record)" title="详 情"></a-icon>
-          <a-icon v-if="record.orderStatus ==  0" type="alipay" @click="orderPay(record)" title="支 付" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="record.orderStatus ==  2" type="shopping" theme="twoTone" twoToneColor="#4a9ff5" @click="orderReceive(record)" title="收 货" style="margin-left: 15px"></a-icon>
-          <a-icon v-if="!record.evaluateFlag && record.orderStatus ==  3" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="orderEvaluateOpen(record)" title="评 价" style="margin-left: 15px"></a-icon>
+          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="file-search" @click="medicalViewOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
-    <order-view
-      @close="handleorderViewClose"
-      :orderShow="orderView.visiable"
-      :orderData="orderView.data">
-    </order-view>
-    <order-evaluate
-      @close="handleorderAddClose"
-      @success="handleorderAddSuccess"
-      :evaluateAddVisiable="orderEvaluateView.visiable"
-      :orderData="orderEvaluateView.data">
-    </order-evaluate>
+    <medical-add
+      v-if="medicalAdd.visiable"
+      @close="handlemedicalAddClose"
+      @success="handlemedicalAddSuccess"
+      :medicalAddVisiable="medicalAdd.visiable">
+    </medical-add>
+    <medical-edit
+      ref="medicalEdit"
+      @close="handlemedicalEditClose"
+      @success="handlemedicalEditSuccess"
+      :medicalEditVisiable="medicalEdit.visiable">
+    </medical-edit>
+    <medical-view
+      @close="handlemedicalViewClose"
+      :medicalShow="medicalView.visiable"
+      :medicalData="medicalView.data">
+    </medical-view>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
+import medicalView from './MedicalView.vue'
+import medicalAdd from './MedicalAdd.vue'
+import medicalEdit from './MedicalEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
-import OrderEvaluate from './OrderEvaluate'
-import OrderView from './OrderView'
 moment.locale('zh-cn')
 
 export default {
-  name: 'order',
-  components: {OrderView, RangeDate, OrderEvaluate},
+  name: 'medical',
+  components: {medicalAdd, medicalEdit, RangeDate, medicalView},
   data () {
     return {
       advanced: false,
-      orderAdd: {
+      medicalAdd: {
         visiable: false
       },
-      orderEdit: {
+      medicalEdit: {
         visiable: false
       },
-      orderView: {
-        visiable: false,
-        data: null
-      },
-      orderStatusView: {
-        visiable: false,
-        data: null
-      },
-      orderEvaluateView: {
+      medicalView: {
         visiable: false,
         data: null
       },
@@ -122,10 +132,6 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      orderAuditView: {
-        visiable: false,
-        data: null
-      },
       userList: []
     }
   },
@@ -135,78 +141,44 @@ export default {
     }),
     columns () {
       return [{
-        title: '订单编号',
-        dataIndex: 'code'
+        title: '标题',
+        dataIndex: 'title'
       }, {
-        title: '客户名称',
-        dataIndex: 'name',
+        title: '浏览量',
+        dataIndex: 'views',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
-            return <a-tag>平台内下单</a-tag>
+            return '0'
           }
         }
       }, {
-        title: '联系方式',
-        dataIndex: 'phone',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '订单总额',
-        dataIndex: 'totalCost',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '收获地址',
-        dataIndex: 'userAddress',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '所属医院',
-        dataIndex: 'pharmacyName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '订单状态',
-        dataIndex: 'orderStatus',
+        title: '状态',
+        dataIndex: 'rackUp',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
-              return <a-tag>待付款</a-tag>
-            case 1:
-              return <a-tag>已下单</a-tag>
-            case 2:
-              return <a-tag>配送中</a-tag>
-            case 3:
-              return <a-tag>已收货</a-tag>
+            case '0':
+              return <a-tag color="red">下架</a-tag>
+            case '1':
+              return <a-tag color="green">发布</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '下单时间',
-        dataIndex: 'createDate',
+        title: '公告时间',
+        dataIndex: 'date',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '0'
+          }
+        }
+      }, {
+        title: '发布人',
+        dataIndex: 'publisher',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -214,6 +186,9 @@ export default {
             return '- -'
           }
         }
+      }, {
+        title: '消息类型',
+        dataIndex: 'type'
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -225,63 +200,12 @@ export default {
     this.fetch()
   },
   methods: {
-    orderReceive (record) {
-      this.$get('/cos/order-info/edit/status', {orderId: record.id, status: 3}).then(() => {
-        this.$message.success('收货成功')
-        this.search()
-      })
+    medicalViewOpen (row) {
+      this.medicalView.data = row
+      this.medicalView.visiable = true
     },
-    orderPay (record) {
-      let data = { outTradeNo: record.code, subject: `${record.createDate}缴费信息`, totalAmount: record.totalCost, body: '' }
-      this.$post('/cos/pay/alipay', data).then((r) => {
-        // console.log(r.data.msg)
-        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
-        const divForm = document.getElementsByTagName('div')
-        if (divForm.length) {
-          document.body.removeChild(divForm[0])
-        }
-        const div = document.createElement('div')
-        div.innerHTML = r.data.msg // data就是接口返回的form 表单字符串
-        // console.log(div.innerHTML)
-        document.body.appendChild(div)
-        document.forms[0].setAttribute('target', '_self') // 新开窗口跳转
-        document.forms[0].submit()
-      })
-    },
-    orderEvaluateOpen (row) {
-      this.orderEvaluateView.data = row
-      this.orderEvaluateView.visiable = true
-    },
-    orderStatusOpen (row) {
-      this.orderStatusView.data = row
-      this.orderStatusView.visiable = true
-    },
-    orderAuditOpen (row) {
-      this.orderAuditView.data = row
-      this.orderAuditView.visiable = true
-    },
-    orderViewOpen (row) {
-      this.orderView.data = row
-      this.orderView.visiable = true
-    },
-    handleorderViewClose () {
-      this.orderView.visiable = false
-    },
-    handleorderStatusViewClose () {
-      this.orderStatusView.visiable = false
-    },
-    handleorderStatusViewSuccess () {
-      this.orderStatusView.visiable = false
-      this.$message.success('修改成功')
-      this.fetch()
-    },
-    handleorderAuditViewClose () {
-      this.orderAuditView.visiable = false
-    },
-    handleorderAuditViewSuccess () {
-      this.orderAuditView.visiable = false
-      this.$message.success('审核成功')
-      this.fetch()
+    handlemedicalViewClose () {
+      this.medicalView.visiable = false
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -290,26 +214,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.orderAdd.visiable = true
+      this.medicalAdd.visiable = true
     },
-    handleorderAddClose () {
-      this.orderEvaluateView.visiable = false
+    handlemedicalAddClose () {
+      this.medicalAdd.visiable = false
     },
-    handleorderAddSuccess () {
-      this.orderEvaluateView.visiable = false
-      this.$message.success('订单评价成功！')
+    handlemedicalAddSuccess () {
+      this.medicalAdd.visiable = false
+      this.$message.success('新增医疗咨询成功')
       this.search()
     },
     edit (record) {
-      this.$refs.orderEdit.setFormValues(record)
-      this.orderEdit.visiable = true
+      this.$refs.medicalEdit.setFormValues(record)
+      this.medicalEdit.visiable = true
     },
-    handleorderEditClose () {
-      this.orderEdit.visiable = false
+    handlemedicalEditClose () {
+      this.medicalEdit.visiable = false
     },
-    handleorderEditSuccess () {
-      this.orderEdit.visiable = false
-      this.$message.success('修改产品成功')
+    handlemedicalEditSuccess () {
+      this.medicalEdit.visiable = false
+      this.$message.success('修改医疗咨询成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -327,7 +251,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/order-info/' + ids).then(() => {
+          that.$delete('/cos/medical-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -397,11 +321,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      if (params.status === undefined) {
-        delete params.status
-      }
-      params.userId = this.currentUser.userId
-      this.$get('/cos/order-info/page', {
+      this.$get('/cos/medical-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
