@@ -1,342 +1,402 @@
 <template>
   <a-card :bordered="false" class="card-area">
-    <div :class="advanced ? 'search' : null">
-      <!-- 搜索区域 -->
-      <a-form layout="horizontal">
-        <a-row :gutter="15">
-          <div :class="advanced ? null: 'fold'">
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="标题"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="发布人"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.publisher"/>
-              </a-form-item>
-            </a-col>
+<!--    <div style="width: 100%">-->
+<!--      <a-col :span="22" v-if="newsList.length > 0">-->
+<!--        <a-alert-->
+<!--          banner-->
+<!--          :message="newsContent"-->
+<!--          type="info"-->
+<!--        />-->
+<!--      </a-col>-->
+<!--      <a-col :span="2">-->
+<!--        <a-button type="primary" style="margin-top: 2px;margin-left: 10px" @click="newsNext">下一页</a-button>-->
+<!--      </a-col>-->
+<!--    </div>-->
+    <br/>
+    <br/>
+    <a-row :gutter="8" class="count-info">
+      <a-card class="head-info-card" style="width: 100%;margin: 0 auto;margin-top: 50px">
+<!--        <a-row>-->
+<!--          <a-col :span="24">-->
+<!--            <a-input-search placeholder="搜索贴子" v-show="!postDetailShow" style="width: 200px;margin-top: 10px;float: right" @search="onSearch" />-->
+<!--          </a-col>-->
+<!--        </a-row>-->
+        <a-tabs :activeKey="tabKey" tab-position="top" @change="tabChange" v-show="!postDetailShow">
+          <a-tab-pane v-for="item in tagList" :key="item.id" :tab="item.name">
+            <a-skeleton active v-if="loading" />
+            <div v-if="!loading" style="padding: 25px 80px">
+              <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="postList">
+                <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                  <template slot="actions">
+                    <span key="message">
+                      <a-icon type="message" style="margin-right: 8px;margin-left: 8px" />
+                      <span>{{ item.publisher }}</span>
+                       <a-icon type="desktop" style="margin-right: 8px;margin-left: 8px" />
+                      <span>{{ item.views }}</span>
+                       <a-icon type="to-top" style="margin-right: 8px;margin-left: 8px" />
+                      <span>{{ timeFormat(item.date) }}</span>
+                    </span>
+
+                  </template>
+                  <a-list-item-meta>
+                    <a slot="title" @click="postReplyDetail(item)">{{ item.title }}</a>
+<!--                    <a-avatar shape="square" slot="avatar" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + item.userImages" />-->
+                  </a-list-item-meta>
+                </a-list-item>
+              </a-list>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
+        <div v-if="postDetailShow && postDetail !== null" style="margin: 18px">
+          <div style="margin-bottom: 10px">
+            <a-breadcrumb>
+              <a-breadcrumb-item><a @click="postDetailShow = false">返回</a></a-breadcrumb-item>
+              <a-breadcrumb-item>{{ tabName }}</a-breadcrumb-item>
+            </a-breadcrumb>
           </div>
-          <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-          </span>
-        </a-row>
-      </a-form>
-    </div>
-    <div>
-      <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
-        <a-button @click="batchDelete">删除</a-button>
-      </div>
-      <!-- 表格区域 -->
-      <a-table ref="TableInfo"
-               :columns="columns"
-               :rowKey="record => record.id"
-               :dataSource="dataSource"
-               :pagination="pagination"
-               :loading="loading"
-               :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-               :scroll="{ x: 900 }"
-               @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
-        </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 20) }} ...
-            </a-tooltip>
-          </template>
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
-          <a-icon type="file-search" @click="medicalViewOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
-        </template>
-      </a-table>
-    </div>
-    <medical-add
-      v-if="medicalAdd.visiable"
-      @close="handlemedicalAddClose"
-      @success="handlemedicalAddSuccess"
-      :medicalAddVisiable="medicalAdd.visiable">
-    </medical-add>
-    <medical-edit
-      ref="medicalEdit"
-      @close="handlemedicalEditClose"
-      @success="handlemedicalEditSuccess"
-      :medicalEditVisiable="medicalEdit.visiable">
-    </medical-edit>
-    <medical-view
-      @close="handlemedicalViewClose"
-      :medicalShow="medicalView.visiable"
-      :medicalData="medicalView.data">
-    </medical-view>
+          <p style="font-size: 22px;color: black;font-weight: 500;line-height: 150%;margin: 25px 50px;margin-top: 50px">
+            {{ postDetail.title }}
+          </p>
+          <div style="margin: 25px 50px;font-size: 13px">
+            {{ postDetail.publisher }}
+            <a-divider type="vertical" />
+            <a-icon type="eye" style="margin-right: 10px;margin-left: 40px" />
+            {{ postDetail.views }} 访问
+            <a-divider type="vertical" />
+            <a-icon type="message" style="margin-right: 10px" />
+            <span>{{ postDetail.reply }}</span> 回复
+            <a-divider type="vertical" />
+            <a-divider type="vertical" />
+            {{ postDetail.date }}
+          </div>
+          <div style="margin: 25px 50px;font-size: 15px;line-height: 1.6;word-break: break-word;letter-spacing: 1px;text-indent: 30px">
+            <p v-html="postDetail.content"></p>
+          </div>
+          <div style="margin: 25px 50px;height: 100px">
+            <a-upload
+              name="avatar"
+              action="http://127.0.0.1:9527/file/fileUpload/"
+              list-type="picture-card"
+              :file-list="fileList"
+              @preview="handlePreview"
+            >
+            </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
+          </div>
+          <div style="margin: 25px 50px;">
+            <a-list
+              class="comment-list"
+              :pagination="pagination"
+              :header="`${replyList.length} 回复`"
+              item-layout="horizontal"
+              :data-source="replyList"
+            >
+              <a-list-item slot="renderItem" slot-scope="item, index">
+                <a-comment :author="item.name" shape="square" :avatar="'http://127.0.0.1:9527/imagesWeb/' + item.images">
+                  <template slot="actions">
+                    <span @click="replyUserAdd(item)">回复</span>
+                  </template>
+                  <p slot="content" style="white-space: pre-line;">
+                    {{ item.content }}
+                  </p>
+                  <a-tooltip slot="datetime" :title="item.createDate">
+                    <span>{{ item.createDate }}</span>
+                  </a-tooltip>
+                </a-comment>
+              </a-list-item>
+            </a-list>
+            <div style="margin-bottom: 200px;margin-top: 50px">
+              <a-textarea
+                v-model="replyContent"
+                placeholder="Controlled autosize"
+                :rows="5"
+              />
+              <a-button type="primary" style="float: right;margin-top: 15px" @click="commit">
+                提交
+              </a-button>
+            </div>
+          </div>
+        </div>
+      </a-card>
+    </a-row>
   </a-card>
 </template>
 
 <script>
-import RangeDate from '@/components/datetime/RangeDate'
-import medicalView from './MedicalView.vue'
-import medicalAdd from './MedicalAdd.vue'
-import medicalEdit from './MedicalEdit.vue'
 import {mapState} from 'vuex'
-import moment from 'moment'
-moment.locale('zh-cn')
 
+function getBase64 (file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+  })
+}
+const formItemLayout = {
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 }
+}
 export default {
-  name: 'medical',
-  components: {medicalAdd, medicalEdit, RangeDate, medicalView},
+  name: 'Work',
   data () {
     return {
-      advanced: false,
-      medicalAdd: {
-        visiable: false
-      },
-      medicalEdit: {
-        visiable: false
-      },
-      medicalView: {
-        visiable: false,
-        data: null
-      },
-      queryParams: {},
-      filteredInfo: null,
-      sortedInfo: null,
-      paginationInfo: null,
-      dataSource: [],
-      selectedRowKeys: [],
+      form: this.$form.createForm(this),
+      formItemLayout,
+      visible: false,
+      newsContent: '',
+      statusList: [],
+      vehicleList: [],
       loading: false,
+      userInfo: null,
+      memberInfo: null,
+      spaceInfo: null,
+      newsPage: 0,
+      newsList: [],
+      tagListData: [],
+      postList: [],
+      replyList: [],
+      postDetail: null,
+      tabName: '',
+      tabKey: '',
+      postDetailShow: false,
       pagination: {
-        pageSizeOptions: ['10', '20', '30', '40', '100'],
-        defaultCurrent: 1,
-        defaultPageSize: 10,
-        showQuickJumper: true,
-        showSizeChanger: true,
-        showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
+        pageSize: 20
       },
-      userList: []
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
+      replyContent: '',
+      replyUser: null,
+      collectPost: 0,
+      collectUser: 0
+    }
+  },
+  watch: {
+    replyContent: function (value) {
+      if (value === '') {
+        this.replyUser = null
+      }
     }
   },
   computed: {
     ...mapState({
       currentUser: state => state.account.user
-    }),
-    columns () {
-      return [{
-        title: '标题',
-        dataIndex: 'title'
-      }, {
-        title: '浏览量',
-        dataIndex: 'views',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '0'
-          }
-        }
-      }, {
-        title: '状态',
-        dataIndex: 'rackUp',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return <a-tag color="red">下架</a-tag>
-            case '1':
-              return <a-tag color="green">发布</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '公告时间',
-        dataIndex: 'date',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '0'
-          }
-        }
-      }, {
-        title: '发布人',
-        dataIndex: 'publisher',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '消息类型',
-        dataIndex: 'type'
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
-      }]
-    }
+    })
   },
   mounted () {
-    this.fetch()
+    this.getTagList()
+    this.getBulletinList()
   },
   methods: {
-    medicalViewOpen (row) {
-      this.medicalView.data = row
-      this.medicalView.visiable = true
-    },
-    handlemedicalViewClose () {
-      this.medicalView.visiable = false
-    },
-    onSelectChange (selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
-    },
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    add () {
-      this.medicalAdd.visiable = true
-    },
-    handlemedicalAddClose () {
-      this.medicalAdd.visiable = false
-    },
-    handlemedicalAddSuccess () {
-      this.medicalAdd.visiable = false
-      this.$message.success('新增医疗咨询成功')
-      this.search()
-    },
-    edit (record) {
-      this.$refs.medicalEdit.setFormValues(record)
-      this.medicalEdit.visiable = true
-    },
-    handlemedicalEditClose () {
-      this.medicalEdit.visiable = false
-    },
-    handlemedicalEditSuccess () {
-      this.medicalEdit.visiable = false
-      this.$message.success('修改医疗咨询成功')
-      this.search()
-    },
-    handleDeptChange (value) {
-      this.queryParams.deptId = value || ''
-    },
-    batchDelete () {
-      if (!this.selectedRowKeys.length) {
-        this.$message.warning('请选择需要删除的记录')
-        return
+    timeFormat (time) {
+      var nowTime = new Date()
+      var day = nowTime.getDate()
+      var hours = parseInt(nowTime.getHours())
+      var minutes = nowTime.getMinutes()
+      // 开始分解付入的时间
+      var timeday = time.substring(8, 10)
+      var timehours = parseInt(time.substring(11, 13))
+      var timeminutes = time.substring(14, 16)
+      // eslint-disable-next-line camelcase
+      var d_day = Math.abs(day - timeday)
+      // eslint-disable-next-line camelcase
+      var d_hours = hours - timehours
+      // eslint-disable-next-line camelcase
+      var d_minutes = Math.abs(minutes - timeminutes)
+      // eslint-disable-next-line camelcase
+      if (d_day <= 1) {
+        // eslint-disable-next-line camelcase
+        switch (d_day) {
+          case 0:
+            // eslint-disable-next-line camelcase
+            if (d_hours === 0 && d_minutes > 0) {
+              // eslint-disable-next-line camelcase
+              return d_minutes + '分钟前'
+              // eslint-disable-next-line camelcase
+            } else if (d_hours === 0 && d_minutes === 0) {
+              return '1分钟前'
+            } else {
+              // eslint-disable-next-line camelcase
+              return Math.abs(d_hours) + '小时前'
+            }
+            // eslint-disable-next-line no-unreachable
+            break
+          case 1:
+            // eslint-disable-next-line camelcase
+            if (d_hours < 0) {
+              // eslint-disable-next-line camelcase
+              return (24 + d_hours) + '小时前'
+            } else {
+              // eslint-disable-next-line camelcase
+              return d_day + '天前'
+            }
+            // eslint-disable-next-line no-unreachable
+            break
+        }
+        // eslint-disable-next-line camelcase
+      } else if (d_day > 1 && d_day < 10) {
+        // eslint-disable-next-line camelcase
+        return d_day + '天前'
+      } else {
+        return time
       }
-      let that = this
-      this.$confirm({
-        title: '确定删除所选中的记录?',
-        content: '当您点击确定按钮后，这些记录将会被彻底删除',
-        centered: true,
-        onOk () {
-          let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/medical-info/' + ids).then(() => {
-            that.$message.success('删除成功')
-            that.selectedRowKeys = []
-            that.search()
-          })
-        },
-        onCancel () {
-          that.selectedRowKeys = []
+    },
+    commit () {
+      if (this.replyContent !== '') {
+        let data = {userId: this.currentUser.userId, content: this.replyContent, postId: this.postDetail.id, replyUserId: this.replyUser}
+        this.$post(`/cos/reply-info`, data).then((r) => {
+          if (r.data.code === 500) {
+            this.$message.error(r.data.msg)
+          } else {
+            this.postReplyDetail(this.postDetail)
+            this.replyContent = ''
+          }
+        })
+      } else {
+        this.$message.error('请填写评论！')
+      }
+    },
+    replyUserAdd (reply) {
+      this.replyUser = reply.userId
+      this.replyContent = this.replyContent + '@' + reply.username
+    },
+    postReplyDetail (post) {
+      this.postInfoDetail(post.id)
+      this.replyUser = []
+      this.fileList = []
+      this.$get(`/cos/reply-info/record/${post.id}`).then((r) => {
+        this.replyList = r.data.data
+        this.postDetailShow = true
+      })
+    },
+    postInfoDetail (postId) {
+      this.$get(`/cos/medical-info/${postId}`).then((r) => {
+        this.postDetail = r.data.data
+        this.imagesInit(this.postDetail.images)
+      })
+    },
+    tabChange (key) {
+      this.tabName = this.tagList.find(o => o.id === key).name
+      this.tabKey = key
+      if (key !== 9999 && key !== -1) {
+        this.getPostList(key)
+        if (this.tagList[this.tagList.length - 1].id === 9999) {
+          this.tagList.pop()
+        }
+      }
+    },
+    imagesInit (images) {
+      if (images) {
+        let imageList = []
+        images.split(',').forEach((image, index) => {
+          imageList.push({uid: index, name: image, status: 'done', url: 'http://127.0.0.1:9527/imagesWeb/' + image})
+        })
+        this.fileList = imageList
+      }
+    },
+    async handlePreview (file) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+    handleCancel () {
+      this.previewVisible = false
+    },
+    getPostList (tagId) {
+      this.loading = true
+      this.$get(`/cos/medical-info/list/tag/${tagId}`).then((r) => {
+        this.postList = r.data.data
+        setTimeout(() => {
+          this.loading = false
+        }, 500)
+      })
+    },
+    getTagList () {
+      this.$get('/cos/medical-info/tag/list').then((r) => {
+        this.tagList = []
+        this.tagList.push.apply(this.tagList, r.data.data)
+        console.log(this.tagList)
+        if (this.tagList.length !== 0) {
+          this.tabChange(this.tagList[0].id)
+        }
+        let tagListData = []
+        r.data.data.forEach(item => {
+          tagListData.push({label: item.name, value: item.id})
+        })
+        this.tagListData = tagListData
+      })
+    },
+    getBulletinList () {
+      this.$get('/cos/bulletin-info/list').then((r) => {
+        this.newsList = r.data.data
+        if (this.newsList.length !== 0) {
+          this.newsContent = `《${this.newsList[0].title}》 ${this.newsList[0].content}`
         }
       })
     },
-    search () {
-      let {sortedInfo, filteredInfo} = this
-      let sortField, sortOrder
-      // 获取当前列的排序和列的过滤规则
-      if (sortedInfo) {
-        sortField = sortedInfo.field
-        sortOrder = sortedInfo.order
-      }
-      this.fetch({
-        sortField: sortField,
-        sortOrder: sortOrder,
-        ...this.queryParams,
-        ...filteredInfo
-      })
-    },
-    reset () {
-      // 取消选中
-      this.selectedRowKeys = []
-      // 重置分页
-      this.$refs.TableInfo.pagination.current = this.pagination.defaultCurrent
-      if (this.paginationInfo) {
-        this.paginationInfo.current = this.pagination.defaultCurrent
-        this.paginationInfo.pageSize = this.pagination.defaultPageSize
-      }
-      // 重置列过滤器规则
-      this.filteredInfo = null
-      // 重置列排序规则
-      this.sortedInfo = null
-      // 重置查询参数
-      this.queryParams = {}
-      this.fetch()
-    },
-    handleTableChange (pagination, filters, sorter) {
-      // 将这三个参数赋值给Vue data，用于后续使用
-      this.paginationInfo = pagination
-      this.filteredInfo = filters
-      this.sortedInfo = sorter
-
-      this.fetch({
-        sortField: sorter.field,
-        sortOrder: sorter.order,
-        ...this.queryParams,
-        ...filters
-      })
-    },
-    fetch (params = {}) {
-      // 显示loading
-      this.loading = true
-      if (this.paginationInfo) {
-        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
-        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
-        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
-        params.size = this.paginationInfo.pageSize
-        params.current = this.paginationInfo.current
+    newsNext () {
+      if (this.newsPage + 1 === this.newsList.length) {
+        this.newsPage = 0
       } else {
-        // 如果分页信息为空，则设置为默认值
-        params.size = this.pagination.defaultPageSize
-        params.current = this.pagination.defaultCurrent
+        this.newsPage += 1
       }
-      this.$get('/cos/medical-info/page', {
-        ...params
-      }).then((r) => {
-        let data = r.data.data
-        const pagination = {...this.pagination}
-        pagination.total = data.total
-        this.dataSource = data.records
-        this.pagination = pagination
-        // 数据加载完毕，关闭loading
-        this.loading = false
-      })
+      this.newsContent = `《${this.newsList[this.newsPage].title}》 ${this.newsList[this.newsPage].content}`
+    },
+    onSearch (key) {
+      if (key !== '') {
+        this.loading = true
+        if (this.tagList[this.tagList.length - 1].id !== 9999) {
+          this.tagList.push({id: 9999, name: '搜索'})
+        }
+        this.tabKey = 9999
+        this.tabName = '搜索'
+        this.$get(`/cos/post-info/list/${key}`).then((r) => {
+          this.postList = r.data.data
+          setTimeout(() => {
+            this.loading = false
+          }, 500)
+        })
+      }
+    },
+    showModal (row) {
+      this.spaceInfo = row
+      this.visible = true
     }
-  },
-  watch: {}
+  }
 }
 </script>
-<style lang="less" scoped>
-@import "../../../../static/less/Common";
+
+<style scoped>
+>>> .ant-card-meta-title {
+  font-size: 13px;
+  font-family: SimHei;
+}
+>>> .ant-card-meta-description {
+  font-size: 12px;
+  font-family: SimHei;
+}
+>>> .ant-divider-with-text-left {
+  margin: 0;
+}
+
+>>> .ant-card-head-title {
+  font-size: 13px;
+  font-family: SimHei;
+}
+>>> .ant-card-extra {
+  font-size: 13px;
+  font-family: SimHei;
+}
+.ant-carousel >>> .slick-slide {
+  text-align: center;
+  height: 250px;
+  line-height: 250px;
+  overflow: hidden;
+}
+
 </style>
