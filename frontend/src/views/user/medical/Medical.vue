@@ -246,7 +246,7 @@ export default {
     },
     commit () {
       if (this.replyContent !== '') {
-        let data = {userId: this.currentUser.userId, content: this.replyContent, postId: this.postDetail.id, replyUserId: this.replyUser}
+        let data = {userId: this.currentUser.userId, content: this.replyContent, medicalId: this.postDetail.id, replyUserId: this.replyUser}
         this.$post(`/cos/reply-info`, data).then((r) => {
           if (r.data.code === 500) {
             this.$message.error(r.data.msg)

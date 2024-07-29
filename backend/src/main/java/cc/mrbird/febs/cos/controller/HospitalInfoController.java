@@ -82,6 +82,17 @@ public class HospitalInfoController {
     }
 
     /**
+     * 医院信息列表
+     *
+     * @param key 关键词
+     * @return 结果
+     */
+    @GetMapping(("/query/like/list"))
+    public R selectHospitalByKey(@RequestParam(value = "key", required = false) String key) {
+        return R.ok(hospitalInfoService.list(Wrappers.<HospitalInfo>lambdaQuery().like(StrUtil.isNotEmpty(key), HospitalInfo::getHospitalName, key)));
+    }
+
+    /**
      * 根据用户ID获取医院信息
      *
      * @param userId 用户ID

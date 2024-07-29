@@ -92,7 +92,11 @@ public class MedicalInfoController {
      */
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
-        return R.ok(medicalInfoService.getById(id));
+        // 更新浏览量
+        MedicalInfo result = medicalInfoService.getById(id);
+        result.setViews(result.getViews() + 1);
+        medicalInfoService.updateById(result);
+        return R.ok(result);
     }
 
     /**

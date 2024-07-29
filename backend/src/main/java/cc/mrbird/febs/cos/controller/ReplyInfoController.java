@@ -6,12 +6,14 @@ import cc.mrbird.febs.cos.entity.ReplyInfo;
 import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IReplyInfoService;
 import cc.mrbird.febs.cos.service.IUserInfoService;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -85,6 +87,7 @@ public class ReplyInfoController {
                 replyInfo.setUserId(userInfo.getId());
             }
         }
+        replyInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(replyInfoService.save(replyInfo));
     }
 
