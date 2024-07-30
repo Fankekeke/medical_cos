@@ -134,4 +134,20 @@ public class DoctorInfoServiceImpl extends ServiceImpl<DoctorInfoMapper, DoctorI
         });
         return result;
     }
+
+    /**
+     * 根据科室获取医生排班信息
+     *
+     * @param officeId 科室ID
+     * @return 结果
+     */
+    @Override
+    public List<ScheduleInfo> selectDoctorByOfficeIdFix(Integer officeId) {
+        // 获取医生信息
+        List<DoctorInfo> doctorInfoList = this.list(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getOfficesId, officeId));
+        List<Integer> doctorIds = doctorInfoList.stream().map(DoctorInfo::getId).collect(Collectors.toList());
+        Map<Integer, DoctorInfo> doctorMap = doctorInfoList.stream().collect(Collectors.toMap(DoctorInfo::getId, e -> e));
+        // 获取今天14天的排班信息
+        return scheduleInfoMapper.selectScheduleListByDay(doctorIds);
+    }
 }

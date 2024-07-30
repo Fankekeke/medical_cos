@@ -24,20 +24,59 @@
           <a-card :bordered="false" hoverable style="box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);color:#fff;margin-top: 100px">
             <a-row style="padding: 50px;margin: 0 auto">
               <a-col :span="24" style="font-size: 15px;font-family: SimHei">
-                <div style="margin-top: 30px">
-                  <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="hospitalList">
-                    <div slot="footer"><b>ant design vue</b> footer part</div>
+                <a-breadcrumb style="margin-bottom: 15px">
+                  <a-breadcrumb-item v-for="(item, index) in menuList" :key="index" @click.native="changeMenu(item.type)">{{ item.name }}</a-breadcrumb-item>
+                </a-breadcrumb>
+                <div v-if="checkStage == 1">
+                  <a-list :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 4 }" :pagination="pagination" :data-source="hospitalList">
                     <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
-                      <a-list-item-meta :description="item.hospitalAddress">
-                        <a-carousel autoplay style="height: 200px;" v-if="item.images">
-                          <div style="width: 100%;height: 150px" v-for="(item, index) in item.images.split(',')" :key="index">
-                            <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 200px">
-                          </div>
-                        </a-carousel>
-                        <a slot="title" >{{ item.hospitalName }}</a>
-                        <a-avatar slot="avatar" :src="item.avatar" />
-                      </a-list-item-meta>
-                      {{ item.hospitalNature }} | {{ item.hospitalGrade }}
+                      <a-card hoverable>
+                        <img
+                          v-if="item.images"
+                          height="150"
+                          slot="cover"
+                          alt="example"
+                          :src="'http://127.0.0.1:9527/imagesWeb/' + item.images.split(',')[0]"
+                        />
+                        <img
+                          v-else
+                          height="150"
+                          slot="cover"
+                          alt="example"
+                          src="/static/img/9370437.png"
+                        />
+                        <template slot="actions" class="ant-card-actions">
+                          <a-icon key="apartment" type="apartment" @click="selectOfficeList(item)"/>
+                          <a-icon key="ellipsis" type="ellipsis" @click="handlehospitalViewOpen(item)"/>
+                        </template>
+                        <a-card-meta :title="item.hospitalName" :description="item.hospitalAddress"></a-card-meta>
+                        <div style="margin-top: 10px;font-size: 14px;font-family: SimHei">{{ item.hospitalNature }} | {{ item.hospitalGrade }}</div>
+                      </a-card>
+                    </a-list-item>
+                  </a-list>
+                </div>
+                <div v-if="checkStage == 2">
+                  <a-list :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 4 }" :pagination="pagination" :data-source="officeList">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                      <a-card hoverable>
+                        <template slot="actions" class="ant-card-actions">
+                          <a-icon key="apartment" type="apartment" @click="selectScheduleList(item)"/>
+                        </template>
+                        <a-card-meta :title="item.officesName" :description="item.officesDiagnosisScope"></a-card-meta>
+                      </a-card>
+                    </a-list-item>
+                  </a-list>
+                </div>
+                <div v-if="checkStage == 3">
+                  <a-list :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 4 }" :pagination="pagination" :data-source="scheduleList">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                      <a-card hoverable>
+                        <template slot="actions" class="ant-card-actions">
+                          <a-icon key="apartment" type="apartment" />
+                        </template>
+                        <a-card-meta :title="item.doctorName + ' - ' + item.taskDate" :description="item.name"></a-card-meta>
+                        <div style="margin-top: 10px;font-size: 14px;font-family: SimHei">{{ item.startDate }} ~ {{ item.endDate }}</div>
+                      </a-card>
                     </a-list-item>
                   </a-list>
                 </div>
@@ -47,29 +86,43 @@
         </div>
       </div>
     </div>
+    <hospital-view
+      @close="handlehospitalViewClose"
+      :hospitalShow="hospitalView.visiable"
+      :hospitalData="hospitalView.data">
+    </hospital-view>
   </div>
 </template>
 
 <script>
 
 import {mapState} from 'vuex'
+import hospitalView from './HospitalView.vue'
 export default {
   name: 'Work',
+  components: {hospitalView},
   data () {
     return {
+      menuList: [],
+      scheduleList: [],
+      checkStage: 1,
       orderMapView: {
         merchantInfo: null,
         visiable: false
+      },
+      hospitalView: {
+        visiable: false,
+        data: null
       },
       pagination: {
         onChange: page => {
           console.log(page);
         },
-        pageSize: 10,
+        pageSize: 12,
       },
       key: '',
       hospitalList: [],
-      roomTypeList: [],
+      officeList: [],
       loading: false,
       rentView: {
         visiable: false,
@@ -88,6 +141,33 @@ export default {
     this.getWorkStatusList()
   },
   methods: {
+    changeMenu (type) {
+      if (type === 2) {
+        this.menuList.pop()
+      }
+      this.checkStage = type
+    },
+    selectScheduleList (office) {
+      this.$get(`/cos/doctor-info/selectDoctorByOfficeId/${office.id}`).then((r) => {
+        this.scheduleList = r.data.data
+        this.menuList.push({name: office.officesName, type: 2})
+        this.checkStage = 3
+      })
+    },
+    selectOfficeList (hospital) {
+      this.$get(`/cos/office-info/list/byhospital/${hospital.id}`).then((r) => {
+        this.officeList = r.data.data
+        this.menuList = [{name: hospital.hospitalName, type: 1}]
+        this.checkStage = 2
+      })
+    },
+    handlehospitalViewOpen (row) {
+      this.hospitalView.data = row
+      this.hospitalView.visiable = true
+    },
+    handlehospitalViewClose () {
+      this.hospitalView.visiable = false
+    },
     handlevehicleViewClose () {
       this.vehicleView.visiable = false
     },
@@ -126,11 +206,12 @@ export default {
 
 <style scoped>
 >>> .ant-card-meta-title {
-  font-size: 13px;
+  font-size: 14px;
   font-family: SimHei;
+  margin-top: 8px;
 }
 >>> .ant-card-meta-description {
-  font-size: 12px;
+  font-size: 14px;
   font-family: SimHei;
 }
 >>> .ant-divider-with-text-left {

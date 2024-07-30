@@ -98,6 +98,6 @@
                 #{id}
             </foreach>
         </if>
-        AND si.task_date >= DATE_SUB(CURDATE(), INTERVAL -14 DAY)
+        AND si.task_date BETWEEN CURDATE() and DATE_SUB( CURDATE(), INTERVAL - 14 DAY )
     </select>
 </mapper>

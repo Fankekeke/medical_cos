@@ -88,7 +88,7 @@ public class DoctorInfoController {
      */
     @GetMapping("/selectDoctorByOfficeId/{officeId}")
     public R selectDoctorByOfficeId(@PathVariable("officeId") Integer officeId) {
-        return R.ok(doctorInfoService.selectDoctorByOfficeId(officeId));
+        return R.ok(doctorInfoService.selectDoctorByOfficeIdFix(officeId));
     }
 
     /**

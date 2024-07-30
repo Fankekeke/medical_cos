@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.service;
 
 import cc.mrbird.febs.cos.entity.DoctorInfo;
+import cc.mrbird.febs.cos.entity.ScheduleInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -38,4 +39,12 @@ public interface IDoctorInfoService extends IService<DoctorInfo> {
      * @return 结果
      */
     List<LinkedHashMap<String, Object>> selectDoctorByOfficeId(Integer officeId);
+
+    /**
+     * 根据科室获取医生排班信息
+     *
+     * @param officeId 科室ID
+     * @return 结果
+     */
+    List<ScheduleInfo> selectDoctorByOfficeIdFix(Integer officeId);
 }
