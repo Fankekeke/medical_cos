@@ -72,9 +72,15 @@
                     <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
                       <a-card hoverable>
                         <template slot="actions" class="ant-card-actions">
-                          <a-icon key="apartment" type="apartment" />
+                          <div style="font-size: 13px;font-family: SimHei" v-if="item.registerId == null" @click="reserveDoctor(item)">预约</div>
+                          <div style="font-size: 13px;font-family: SimHei;cursor:not-allowed" v-else>已被预约</div>
                         </template>
-                        <a-card-meta :title="item.doctorName + ' - ' + item.taskDate" :description="item.name"></a-card-meta>
+                        <a-card-meta :description="item.name">
+                          <template slot="title">
+                            <div style="font-size: 15px;margin-bottom: 5px;text-align: center;margin-top: 5px"><a-icon type="schedule" /> {{ item.taskDate }}</div>
+                            <div><a-icon type="user" /> {{ item.doctorName }}</div>
+                          </template>
+                        </a-card-meta>
                         <div style="margin-top: 10px;font-size: 14px;font-family: SimHei">{{ item.startDate }} ~ {{ item.endDate }}</div>
                       </a-card>
                     </a-list-item>
@@ -141,6 +147,41 @@ export default {
     this.getWorkStatusList()
   },
   methods: {
+    reserveDoctor (item) {
+      console.log(item)
+      let data = {
+        userId: this.currentUser.userId,
+        scheduleId: item.id,
+
+      }
+      this.$post(`/cos/register-info/registerOrderAdd`, data).then((r) => {
+        let resultData = r.data.data
+        console.log(JSON.stringify(resultData))
+        let payData = {
+          outTradeNo: resultData.code,
+          subject: resultData.code,
+          totalPrice: resultData.price
+        }
+        this.pay(payData)
+      })
+    },
+    pay (row) {
+      let data = { outTradeNo: row.outTradeNo, subject: `${row.subject}`, totalAmount: row.totalPrice, body: '' }
+      this.$post('/cos/pay/alipay', data).then((r) => {
+        // console.log(r.data.msg)
+        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
+        const divForm = document.getElementsByTagName('div')
+        if (divForm.length) {
+          document.body.removeChild(divForm[0])
+        }
+        const div = document.createElement('div')
+        div.innerHTML = r.data.msg // data就是接口返回的form 表单字符串
+        // console.log(div.innerHTML)
+        document.body.appendChild(div)
+        document.forms[0].setAttribute('target', '_self') // 新开窗口跳转
+        document.forms[0].submit()
+      })
+    },
     changeMenu (type) {
       if (type === 2) {
         this.menuList.pop()

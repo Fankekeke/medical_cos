@@ -77,7 +77,7 @@ public class RegisterInfoServiceImpl extends ServiceImpl<RegisterInfoMapper, Reg
      * @return 结果
      */
     @Override
-    public Boolean registerOrderAdd(RegisterInfo registerInfo) {
+    public RegisterInfo registerOrderAdd(RegisterInfo registerInfo) {
         // 所属用户
         UserInfo user = userInfoMapper.selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, registerInfo.getUserId()));
         if (user != null) {
@@ -93,13 +93,13 @@ public class RegisterInfoServiceImpl extends ServiceImpl<RegisterInfoMapper, Reg
         // 所属科室
         registerInfo.setDeptId(schedule.getOfficeId());
         // 医生信息
-        DoctorInfo doctorInfo = doctorInfoService.getById(schedule.getStaffId());
+        DoctorInfo doctorInfo = doctorInfoService.getById(schedule.getStaffIds());
         if (doctorInfo != null) {
             // 所属医院
             registerInfo.setHospitalId(doctorInfo.getHospitalId());
         }
         // 员工ID
-        registerInfo.setStaffId(schedule.getStaffId());
+        registerInfo.setStaffId(Integer.valueOf(schedule.getStaffIds()));
         // 开始时间
         registerInfo.setStartDate(schedule.getStartDate());
         // 结束时间
@@ -110,6 +110,7 @@ public class RegisterInfoServiceImpl extends ServiceImpl<RegisterInfoMapper, Reg
         registerInfo.setCode("REG-" + System.currentTimeMillis());
         registerInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         registerInfo.setScheduleId(schedule.getId());
-        return this.save(registerInfo);
+        this.save(registerInfo);
+        return registerInfo;
     }
 }

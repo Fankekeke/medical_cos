@@ -39,5 +39,5 @@ public interface IRegisterInfoService extends IService<RegisterInfo> {
      * @param registerInfo 挂号信息
      * @return 结果
      */
-    Boolean registerOrderAdd(RegisterInfo registerInfo);
+    RegisterInfo registerOrderAdd(RegisterInfo registerInfo);
 }

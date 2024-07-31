@@ -177,7 +177,7 @@ public class RegisterInfoController {
     public R payRollBack(@RequestParam("code") String code) {
         // 判断编号未挂号还是订单
         if (code.indexOf("REG") != -1) {
-            return R.ok(registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, "1").eq(RegisterInfo::getCode, code)));
+            return R.ok(registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, "1").set(RegisterInfo::getPayDate, DateUtil.formatDateTime(new Date())).eq(RegisterInfo::getCode, code)));
         } else {
             OrderInfo orderInfo = orderInfoService.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, code));
             DoctorInfo doctorInfo = doctorInfoMapper.selectById(orderInfo.getStaffId());
