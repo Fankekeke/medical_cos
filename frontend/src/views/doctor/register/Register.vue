@@ -390,7 +390,7 @@ export default {
       if (params.status === undefined) {
         delete params.status
       }
-      params.hospitalId = this.currentUser.userId
+      params.staffId = this.currentUser.userId
       this.$get('/cos/register-info/page', {
         ...params
       }).then((r) => {

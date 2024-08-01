@@ -57,6 +57,12 @@
         <if test="registerInfo.hospitalId != null">
             AND hi.user_id = #{registerInfo.hospitalId}
         </if>
+        <if test="registerInfo.userId != null">
+            AND ui.user_id = #{registerInfo.userId}
+        </if>
+        <if test="registerInfo.staffId != null">
+            AND di.user_id = #{registerInfo.staffId}
+        </if>
         order by
         ri.create_date desc
     </select>
