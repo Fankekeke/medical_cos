@@ -87,12 +87,12 @@ public class RegisterInfoController {
         // 订单状态
         orderInfo.setOrderStatus(0);
         // 医生信息
+//        DoctorInfo doctorInfo = doctorInfoMapper.selectOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, orderInfo.getStaffId()));
         DoctorInfo doctorInfo = doctorInfoMapper.selectById(registerInfo.getStaffId());
         if (doctorInfo != null) {
             // 所属医院
-            orderInfo.setHospitalId(doctorInfo.getHospitalId());
+            orderInfo.setPharmacyId(doctorInfo.getHospitalId());
         }
-        orderInfo.setPharmacyId(registerInfo.getHospitalId());
         // 添加订单详情
         List<OrderDetail> orderDetailList = JSONUtil.toList(orderInfo.getOrderItem(), OrderDetail.class);
         // 计算药品总价格
@@ -101,14 +101,19 @@ public class RegisterInfoController {
             orderDetail.setAllPrice(NumberUtil.mul(orderDetail.getUnitPrice(), orderDetail.getQuantity()));
             totalCost = NumberUtil.add(totalCost, orderDetail.getAllPrice());
         }
-        orderDetailService.saveBatch(orderDetailList);
 
         // 所属挂号
         orderInfo.setTotalCost(totalCost);
+        orderInfoService.save(orderInfo);
+        for (OrderDetail orderDetail : orderDetailList) {
+            orderDetail.setOrderId(orderInfo.getId());
+        }
+        orderDetailService.saveBatch(orderDetailList);
+
         // 更新挂号信息
+        registerInfo.setStatus("3");
         registerInfo.setDrugPrice(totalCost);
-        registerInfoService.updateById(registerInfo);
-        return R.ok(orderInfoService.save(orderInfo));
+        return R.ok(registerInfoService.updateById(registerInfo));
     }
 
     /**

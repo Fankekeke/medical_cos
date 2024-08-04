@@ -2,8 +2,10 @@ package cc.mrbird.febs.cos.controller;
 
 
 import cc.mrbird.febs.common.utils.R;
+import cc.mrbird.febs.cos.entity.DoctorInfo;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.PharmacyInventory;
+import cc.mrbird.febs.cos.service.IDoctorInfoService;
 import cc.mrbird.febs.cos.service.IHospitalInfoService;
 import cc.mrbird.febs.cos.service.IPharmacyInventoryService;
 import cn.hutool.core.date.DateUnit;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +30,8 @@ import java.util.List;
 public class PharmacyInventoryController {
 
     private final IPharmacyInventoryService pharmacyInventoryService;
+
+    private final IDoctorInfoService doctorInfoService;
 
     private final IHospitalInfoService hospitalInfoService;
 
@@ -88,6 +93,21 @@ public class PharmacyInventoryController {
     @GetMapping("/detail/pharmacy/{pharmacyId}")
     public R selectInventoryByPharmacy(@PathVariable("pharmacyId") Integer pharmacyId) {
         return R.ok(pharmacyInventoryService.selectInventoryByPharmacy(pharmacyId));
+    }
+
+    /**
+     * 根据医生获取医院库存
+     *
+     * @param doctorId 医生Id
+     * @return 结果
+     */
+    @GetMapping("/detail/doctor/{doctorId}")
+    public R selectInventoryByDoctor(@PathVariable("doctorId") Integer doctorId) {
+        DoctorInfo doctorInfo = doctorInfoService.getOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, doctorId));
+        if (doctorInfo.getHospitalId() == null) {
+            return R.ok(Collections.emptyList());
+        }
+        return R.ok(pharmacyInventoryService.selectInventoryByPharmacy(doctorInfo.getHospitalId()));
     }
 
     /**

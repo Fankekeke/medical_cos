@@ -1,6 +1,9 @@
 <template>
   <a-modal v-model="show" title="挂号详情" @cancel="onClose" :width="1200">
     <template slot="footer">
+      <a-button key="back1" @click="commit">
+        提交
+      </a-button>
       <a-button key="back" @click="onClose" type="danger">
         关闭
       </a-button>
@@ -74,6 +77,41 @@
             :auto-size="{ minRows: 5, maxRows: 5 }"
           />
         </a-col>
+        <a-col :span="24">
+          <a-table :columns="columns" :rowKey="record => record.id" :data-source="dataList" :pagination="false">
+            <template slot="nameShow" slot-scope="text, record">
+              <a-select style="width: 100%" @change="handleChange($event, record)">
+                <a-select-option v-for="(item, index) in drugList" :key="index" :value="item.id">{{ item.drugName }}</a-select-option>
+              </a-select>
+            </template>
+            <template slot="brandShow" slot-scope="text, record">
+              <span>{{ record.brand }}</span>
+            </template>
+            <template slot="typeIdShow" slot-scope="text, record">
+              <span v-if="record.classification == 1">中药材</span>
+              <span v-if="record.classification == 2">中药饮片</span>
+              <span v-if="record.classification == 3">中西成药</span>
+              <span v-if="record.classification == 4">化学原料药</span>
+              <span v-if="record.classification == 5">抗生素</span>
+              <span v-if="record.classification == 6">生化药品</span>
+              <span v-if="record.classification == 7">放射性药品</span>
+              <span v-if="record.classification == 8">血清</span>
+              <span v-if="record.classification == 9">诊断药品</span>
+            </template>
+            <template slot="dosageFormShow" slot-scope="text, record">
+              <span>{{ record.dosageForm }}</span>
+            </template>
+            <template slot="reserveShow" slot-scope="text, record">
+              <a-input-number v-model="record.reserve" :min="1" :max="record.reserveAll" :step="1"/>
+            </template>
+            <template slot="priceShow" slot-scope="text, record">
+              <span>{{ record.unitPrice }}元</span>
+            </template>
+          </a-table>
+          <a-button @click="dataAdd" type="primary" ghost style="margin-top: 10px;width: 100%">
+            新增物品
+          </a-button>
+        </a-col>
       </a-row>
       <br/>
     </div>
@@ -83,6 +121,7 @@
 <script>
 import moment from 'moment'
 import baiduMap from '@/utils/map/baiduMap'
+import {mapState} from "vuex";
 moment.locale('zh-cn')
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -104,12 +143,42 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
     show: {
       get: function () {
         return this.registerShow
       },
       set: function () {
       }
+    },
+    columns () {
+      return [{
+        title: '药品名称',
+        dataIndex: 'drugName',
+        scopedSlots: {customRender: 'nameShow'}
+      }, {
+        title: '数量',
+        dataIndex: 'reserve',
+        scopedSlots: {customRender: 'reserveShow'}
+      }, {
+        title: '所属品牌',
+        dataIndex: 'brand',
+        scopedSlots: {customRender: 'brandShow'}
+      }, {
+        title: '药品类别',
+        dataIndex: 'classification',
+        scopedSlots: {customRender: 'typeIdShow'}
+      }, {
+        title: '剂型',
+        dataIndex: 'dosageForm',
+        scopedSlots: {customRender: 'dosageFormShow'}
+      }, {
+        title: '单价',
+        dataIndex: 'unitPrice',
+        scopedSlots: {customRender: 'priceShow'}
+      }]
     }
   },
   data () {
@@ -119,25 +188,76 @@ export default {
       loading: false,
       fileList: [],
       previewVisible: false,
-      previewImage: ''
+      previewImage: '',
+      dataList: [],
+      drugList: []
     }
   },
   watch: {
     registerShow: function (value) {
       if (value) {
-        if (this.registerData.images !== null && this.registerData.images !== '') {
-          this.imagesInit(this.registerData.images)
-        }
-        setTimeout(() => {
-          baiduMap.initMap('areas')
-          setTimeout(() => {
-            this.local(this.registerData)
-          }, 500)
-        }, 200)
       }
     }
   },
+  mounted () {
+    this.getDrug()
+  },
   methods: {
+    commit () {
+      if (!this.reference) {
+        this.$message.error('请填写用药参考')
+        return false
+      }
+      if (!this.remark) {
+        this.$message.error('请填写备注')
+        return false
+      }
+      if (this.dataList.length === 0) {
+        this.$message.error('请填写用药')
+        return false
+      }
+      let orderItem = []
+      this.dataList.forEach(e => {
+        orderItem.push({
+          drugId: e.drugId,
+          quantity: e.reserve,
+          unitPrice: e.unitPrice
+        })
+      })
+      let data = {
+        userId: this.registerData.userId,
+        staffId: this.currentUser.userId,
+        registerId: this.registerData.id,
+        orderItem: JSON.stringify(orderItem)
+      }
+      this.$post('/cos/register-info/register/order', data).then((r) => {
+        this.$emit('success')
+      })
+    },
+    dataAdd () {
+      this.dataList.push({drugId: null, reserve: 1, brand: '', classification: '', dosageForm: '', unitPrice: ''})
+    },
+    getDrug () {
+      this.$get(`/cos/pharmacy-inventory/detail/doctor/${this.currentUser.userId}`).then((r) => {
+        this.drugList = r.data.data
+        console.log(this.drugList)
+      })
+    },
+    handleChange (value, record) {
+      if (value) {
+        this.drugList.forEach(e => {
+          if (e.id === value) {
+            record.reserveAll = e.reserve
+            record.brand = e.brand
+            record.classification = e.classification
+            record.dosageForm = e.dosageForm
+            record.unitPrice = e.unitPrice
+            record.drugId = e.id
+            console.log(record)
+          }
+        })
+      }
+    },
     local (register) {
       baiduMap.clearOverlays()
       baiduMap.rMap().enableScrollWheelZoom(true)

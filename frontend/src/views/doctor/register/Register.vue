@@ -70,7 +70,7 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="cloud" @click="handleViewOpen(record)" title="详 情"></a-icon>
+          <a-icon v-if="record.status == 1" type="cloud" @click="handleViewOpen(record)" title="详 情"></a-icon>
 <!--          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>-->
         </template>
       </a-table>
@@ -89,6 +89,7 @@
     </register-edit>
     <register-view
       @close="handleViewClose"
+      @success="handleViewSuccess"
       :registerShow="registerView.visiable"
       :registerData="registerView.data">
     </register-view>
@@ -266,6 +267,11 @@ export default {
     },
     handleViewClose () {
       this.registerView.visiable = false
+    },
+    handleViewSuccess () {
+      this.registerView.visiable = false
+      this.$message.success('提交成功')
+      this.fetch()
     },
     editStatus (row, status) {
       this.$post('/cos/register-info/account/status', { registerId: row.id, status }).then((r) => {
