@@ -171,12 +171,13 @@
             oi.schedule_id
         from
             register_info oi
+        left join office_info ofi on (ofi.id = oi.dept_id)
         where
                 DATE_FORMAT( oi.create_date, '%Y%m' ) = DATE_FORMAT(
                     CURDATE(),
                     '%Y%m')
         <if test="hospitalId != null">
-            AND oi.dept_id = #{hospitalId}
+            AND ofi.hospital_id = #{hospitalId}
         </if>
     </select>
 
@@ -200,11 +201,12 @@
         oi.create_date,
         oi.schedule_id
         from register_info oi
+        left join office_info ofi on (ofi.id = oi.dept_id)
         where DATE_FORMAT(oi.create_date, '%Y') = DATE_FORMAT(
         CURDATE(),
         '%Y')
         <if test="hospitalId != null">
-            AND oi.dept_id = #{hospitalId}
+            AND ofi.hospital_id = #{hospitalId}
         </if>
     </select>
 

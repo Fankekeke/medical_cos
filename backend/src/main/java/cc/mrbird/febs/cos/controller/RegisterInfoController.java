@@ -185,6 +185,9 @@ public class RegisterInfoController {
             return R.ok(registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, "1").set(RegisterInfo::getPayDate, DateUtil.formatDateTime(new Date())).eq(RegisterInfo::getCode, code)));
         } else {
             OrderInfo orderInfo = orderInfoService.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, code));
+            if (orderInfo.getRegisterId() != null) {
+                registerInfoService.update(Wrappers.<RegisterInfo>lambdaUpdate().set(RegisterInfo::getStatus, "4").set(RegisterInfo::getPayDate, DateUtil.formatDateTime(new Date())).eq(RegisterInfo::getId, orderInfo.getRegisterId()));
+            }
             DoctorInfo doctorInfo = doctorInfoMapper.selectById(orderInfo.getStaffId());
             orderInfoService.orderPaymentOnline(code, doctorInfo != null ? doctorInfo.getCode() : null);
             return R.ok(orderInfoService.update(Wrappers.<OrderInfo>lambdaUpdate().set(OrderInfo::getOrderStatus, "1").eq(OrderInfo::getCode, code)));

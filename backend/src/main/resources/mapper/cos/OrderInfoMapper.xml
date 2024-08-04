@@ -30,6 +30,7 @@
         (ui.id = oi.user_id)
         left join order_evaluate oe on
         (oe.order_id = oi.id)
+        left join doctor_info di on (di.id = oi.staff_id)
         where
         1 = 1
         <if test="orderInfo.code != null and orderInfo.code != ''">
@@ -46,6 +47,9 @@
         </if>
         <if test="orderInfo.hospitalId != null">
             AND phi.user_id = #{orderInfo.hospitalId}
+        </if>
+        <if test="orderInfo.doctorId != null">
+            AND di.user_id = #{orderInfo.doctorId}
         </if>
         order by
         oi.create_date desc
