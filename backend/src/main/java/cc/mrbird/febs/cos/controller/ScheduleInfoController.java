@@ -85,6 +85,7 @@ public class ScheduleInfoController {
         // 医生信息
         DoctorInfo doctorInfo = doctorInfoService.getById(scheduleInfo.getStaffIds());
         scheduleInfo.setOfficeId(doctorInfo.getOfficesId());
+        scheduleInfo.setStatus("0");
         return R.ok(scheduleInfoService.save(scheduleInfo));
     }
 

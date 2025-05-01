@@ -91,7 +91,7 @@
               <a-card hoverable>
                 <a-row>
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">
-                    <span v-if="user.roleId == 74">本月订单量</span>
+                    <span v-if="user.roleId == 74">本月挂号量</span>
                     <span v-if="user.roleId == 77">本月挂号数量</span>
                   </a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
@@ -118,7 +118,7 @@
               <a-card hoverable>
                 <a-row>
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">
-                    <span v-if="user.roleId == 74">本年订单量</span>
+                    <span v-if="user.roleId == 74">本年挂号量</span>
                     <span v-if="user.roleId == 77">本年挂号数量</span>
                   </a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>

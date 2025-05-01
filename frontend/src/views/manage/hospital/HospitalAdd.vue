@@ -437,6 +437,7 @@ export default {
       })
       this.form.validateFields((err, values) => {
         values.images = images.length > 0 ? images.join(',') : null
+        values.isOpen = this.checked ? 1 : 0
         if (!err) {
           this.loading = true
           this.$post('/cos/hospital-info', {
