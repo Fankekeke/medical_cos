@@ -71,26 +71,26 @@ public interface RegisterInfoMapper extends BaseMapper<RegisterInfo> {
      *
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> selectRegisterRateByDay();
+    List<LinkedHashMap<String, Object>> selectRegisterRateByDay(@Param("doctorId") Integer doctorId);
 
     /**
      * 排班数量统计
      *
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> selectScheduleRateByDay();
+    List<LinkedHashMap<String, Object>> selectScheduleRateByDay(@Param("doctorId") Integer doctorId);
 
     /**
      * 挂号金额统计
      *
      * @return 结果
      */
-    List<LinkedHashMap<String, BigDecimal>> selectRegisterPriceByDay();
+    List<LinkedHashMap<String, BigDecimal>> selectRegisterPriceByDay(@Param("doctorId") Integer doctorId);
 
     /**
      * 处方金额统计
      *
      * @return 结果
      */
-    List<LinkedHashMap<String, BigDecimal>> selectDrugPriceByDay();
+    List<LinkedHashMap<String, BigDecimal>> selectDrugPriceByDay(@Param("doctorId") Integer doctorId);
 }

@@ -84,11 +84,11 @@ public class DoctorInfoServiceImpl extends ServiceImpl<DoctorInfoMapper, DoctorI
         result.put("registerTotal", registerTotal);
 
         // 挂号数量统计
-        List<LinkedHashMap<String, Object>> registerDay = registerInfoMapper.selectRegisterRateByDay();
-        List<LinkedHashMap<String, Object>> scheduleDay = registerInfoMapper.selectScheduleRateByDay();
+        List<LinkedHashMap<String, Object>> registerDay = registerInfoMapper.selectRegisterRateByDay(doctorId);
+        List<LinkedHashMap<String, Object>> scheduleDay = registerInfoMapper.selectScheduleRateByDay(doctorId);
         // 金额统计
-        List<LinkedHashMap<String, BigDecimal>> registerPriceDay = registerInfoMapper.selectRegisterPriceByDay();
-        List<LinkedHashMap<String, BigDecimal>> drugPriceDay = registerInfoMapper.selectDrugPriceByDay();
+        List<LinkedHashMap<String, BigDecimal>> registerPriceDay = registerInfoMapper.selectRegisterPriceByDay(doctorId);
+        List<LinkedHashMap<String, BigDecimal>> drugPriceDay = registerInfoMapper.selectDrugPriceByDay(doctorId);
 
         result.put("series", new LinkedHashMap<String, Object>() {
             {

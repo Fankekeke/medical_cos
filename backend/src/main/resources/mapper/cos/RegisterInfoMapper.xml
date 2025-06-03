@@ -275,6 +275,7 @@
             DATE_FORMAT( ri.register_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
             AND ri.STATUS != '0'
             AND ri.STATUS != '5'
+            AND ri.staff_id = #{doctorId}
             )
         GROUP BY
             dateTemp.date
@@ -308,7 +309,9 @@
             SELECT
             date_add( curdate(), INTERVAL - DAY ( curdate())+ 1 DAY ))) AS dateTemp
             LEFT JOIN schedule_info si ON (
-            DATE_FORMAT( si.task_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' ))
+            DATE_FORMAT( si.task_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
+            AND ri.staff_ids = #{doctorId}
+            )
         GROUP BY
             dateTemp.date
     </select>
@@ -344,6 +347,7 @@
             DATE_FORMAT( ri.register_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
             AND ri.STATUS != '0'
             AND ri.STATUS != '5'
+            AND ri.staff_id = #{doctorId}
             )
         GROUP BY
             dateTemp.date
@@ -378,6 +382,7 @@
             DATE_FORMAT( ri.register_date, '%Y-%m-%d' ) = DATE_FORMAT( dateTemp.date, '%Y-%m-%d' )
             AND ri.STATUS != '0'
             AND ri.STATUS != '5'
+            AND ri.staff_id = #{doctorId}
             )
         GROUP BY
             dateTemp.date
