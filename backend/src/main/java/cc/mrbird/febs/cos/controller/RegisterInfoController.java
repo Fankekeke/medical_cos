@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -54,6 +55,17 @@ public class RegisterInfoController {
         return R.ok(registerInfoService.selectRegisterPage(page, registerInfo));
     }
 
+    /**
+     * 按用户查询挂号记录
+     *
+     * @param userId 用户ID
+     * @return 挂号记录
+     */
+    @GetMapping("/selectRegisterListByUserId")
+    public R selectRegisterListByUserId(@RequestParam("userId") Integer userId) {
+        List<LinkedHashMap<String, Object>> registerInfoList = registerInfoService.selectRegisterListByUserId(userId);
+        return R.ok(registerInfoList);
+    }
     /**
      * 按月统计医生挂号记录
      *
@@ -113,6 +125,8 @@ public class RegisterInfoController {
         // 更新挂号信息
         registerInfo.setStatus("3");
         registerInfo.setDrugPrice(totalCost);
+        registerInfo.setRemark(orderInfo.getRemark());
+        registerInfo.setReference(orderInfo.getReference());
         return R.ok(registerInfoService.updateById(registerInfo));
     }
 

@@ -97,4 +97,10 @@ public class OrderInfo implements Serializable {
     @TableField(exist = false)
     private Integer doctorId;
 
+    @TableField(exist = false)
+    private String remark;
+
+    @TableField(exist = false)
+    private String reference;
+
 }

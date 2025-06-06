@@ -228,7 +228,9 @@ export default {
         userId: this.registerData.userId,
         staffId: this.currentUser.userId,
         registerId: this.registerData.id,
-        orderItem: JSON.stringify(orderItem)
+        orderItem: JSON.stringify(orderItem),
+        remark: this.remark,
+        reference: this.reference
       }
       this.$post('/cos/register-info/register/order', data).then((r) => {
         this.$emit('success')

@@ -49,6 +49,17 @@ public class RegisterInfoServiceImpl extends ServiceImpl<RegisterInfoMapper, Reg
     }
 
     /**
+     * 根据用户ID获取挂号记录
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> selectRegisterListByUserId(Integer userId) {
+        return baseMapper.selectRegisterListByUserId(userId);
+    }
+
+    /**
      * 获取挂号排名
      *
      * @param year  年份

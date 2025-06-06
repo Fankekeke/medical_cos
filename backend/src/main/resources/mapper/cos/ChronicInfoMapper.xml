@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.ChronicInfoMapper">
+
+    <!-- 分页获取慢性病信息 -->
+    <select id="queryChronicPage" resultType="java.util.LinkedHashMap">
+        select *
+        from chronic_info
+        where 1 = 1
+        <if test="chronicInfo.name != null and chronicInfo.name != ''">
+            AND name LIKE CONCAT('%',#{chronicInfo.name},'%')
+        </if>
+        <if test="chronicInfo.parentName != null and chronicInfo.parentName != ''">
+            AND parent_name LIKE CONCAT('%',#{chronicInfo.parentName},'%')
+        </if>
+        order by create_date desc
+    </select>
+</mapper>
