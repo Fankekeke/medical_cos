@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -51,6 +52,21 @@ public class ChronicInfo implements Serializable {
      * 创建时间
      */
     private String createDate;
+    private String userName;
+    private String sex;
+    private String birthdayDate;
+    private String idCard;
+    private String phone;
+    private String hypertensionFlag;
+    private String diabetesFlag;
+    private String mentalDisordersFlag;
+    private String copdFlag;
+    private String serivceDept;
+    private String serviceDoctor;
+    private String address;
+    private BigDecimal fastingBloodSugar;
+    private BigDecimal postprandialBloodSuga;
+    private BigDecimal bloodPressure;
 
 
 }

@@ -7,11 +7,11 @@
         select *
         from chronic_info
         where 1 = 1
-        <if test="chronicInfo.name != null and chronicInfo.name != ''">
-            AND name LIKE CONCAT('%',#{chronicInfo.name},'%')
+        <if test="chronicInfo.userName != null and chronicInfo.userName != ''">
+            AND user_name LIKE CONCAT('%',#{chronicInfo.userName},'%')
         </if>
-        <if test="chronicInfo.parentName != null and chronicInfo.parentName != ''">
-            AND parent_name LIKE CONCAT('%',#{chronicInfo.parentName},'%')
+        <if test="chronicInfo.idCard != null and chronicInfo.idCard != ''">
+            AND id_card LIKE CONCAT('%',#{chronicInfo.idCard},'%')
         </if>
         order by create_date desc
     </select>

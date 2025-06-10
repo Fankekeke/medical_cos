@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="病例名称"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.name"/>
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="所属病项"
+                label="身份证号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.parentName"/>
+                <a-input v-model="queryParams.idCard"/>
               </a-form-item>
             </a-col>
           </div>
@@ -108,12 +108,12 @@ export default {
     }),
     columns () {
       return [{
-        title: '病例编号',
-        dataIndex: 'code',
+        title: '用户名称',
+        dataIndex: 'userName',
         ellipsis: true
       }, {
-        title: '病例名称',
-        dataIndex: 'name',
+        title: '性别',
+        dataIndex: 'sex',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -123,8 +123,8 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '慢性病内容',
-        dataIndex: 'content',
+        title: '出生日期',
+        dataIndex: 'birthdayDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -134,17 +134,80 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '创建时间',
-        dataIndex: 'createDate',
-        ellipsis: true
-      }, {
-        title: '所属病项',
-        dataIndex: 'parentName',
+        title: '身份证号',
+        dataIndex: 'idCard',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
+        title: '联系方式',
+        dataIndex: 'phone',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
+        title: '高血压',
+        dataIndex: 'hypertensionFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="green">无</a-tag>
+            case '1':
+              return <a-tag color="red">有</a-tag>
+            default:
+              return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
+        title: '是否糖尿病',
+        dataIndex: 'diabetesFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="green">无</a-tag>
+            case '1':
+              return <a-tag color="red">有</a-tag>
+            default:
+              return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
+        title: '精神疾病',
+        dataIndex: 'mentalDisordersFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="green">无</a-tag>
+            case '1':
+              return <a-tag color="red">有</a-tag>
+            default:
+              return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
+        title: '慢阻肺',
+        dataIndex: 'copdFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="green">无</a-tag>
+            case '1':
+              return <a-tag color="red">有</a-tag>
+            default:
+              return '- -'
           }
         },
         ellipsis: true
