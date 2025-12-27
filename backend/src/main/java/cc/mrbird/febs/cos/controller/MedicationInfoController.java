@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.MedicationInfo;
 import cc.mrbird.febs.cos.service.IMedicationInfoService;
@@ -31,6 +32,7 @@ public class MedicationInfoController {
      * @param medicationInfo 电子处方信息
      * @return 结果
      */
+    @Log("分页获取电子处方信息")
     @GetMapping("/page")
     public R page(Page<MedicationInfo> page, MedicationInfo medicationInfo) {
         return R.ok(medicationInfoService.selectMedicationPage(page, medicationInfo));
@@ -44,6 +46,7 @@ public class MedicationInfoController {
      * @param id 主键ID
      * @return 结果
      */
+    @Log("查询电子处方信息详情")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(medicationInfoService.getById(id));
@@ -54,6 +57,7 @@ public class MedicationInfoController {
      *
      * @return 结果
      */
+    @Log("查询电子处方信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(medicationInfoService.list());
@@ -64,6 +68,7 @@ public class MedicationInfoController {
      *
      * @return 结果
      */
+    @Log("查询电子处方信息列表")
     @GetMapping("/list/byUser/{userId}")
     public R byUserList(@PathVariable Integer userId) {
         return R.ok(medicationInfoService.list(Wrappers.<MedicationInfo>lambdaQuery().eq(MedicationInfo::getUserId, userId)));
@@ -75,6 +80,7 @@ public class MedicationInfoController {
      * @param medicationInfo 电子处方信息
      * @return 结果
      */
+    @Log("新增电子处方信息")
     @PostMapping
     public R save(MedicationInfo medicationInfo) {
         medicationInfo.setCode("MED-" + System.currentTimeMillis());
@@ -89,6 +95,7 @@ public class MedicationInfoController {
      * @param medicationInfo 电子处方信息
      * @return 结果
      */
+    @Log("修改电子处方信息")
     @PutMapping
     public R edit(MedicationInfo medicationInfo) {
         return R.ok(medicationInfoService.updateById(medicationInfo));
@@ -100,6 +107,7 @@ public class MedicationInfoController {
      * @param ids ids
      * @return 电子处方信息
      */
+    @Log("删除电子处方信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(medicationInfoService.removeByIds(ids));

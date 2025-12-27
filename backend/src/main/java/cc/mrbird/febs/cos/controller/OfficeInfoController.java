@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
 import cc.mrbird.febs.cos.entity.OfficeInfo;
@@ -41,6 +42,7 @@ public class OfficeInfoController {
      * @param officeInfo 科室信息
      * @return 结果
      */
+    @Log("分页获取科室信息")
     @GetMapping("/page")
     public R page(Page<OfficeInfo> page, OfficeInfo officeInfo) {
         return R.ok(officeInfoService.selectOffocePage(page, officeInfo));
@@ -52,6 +54,7 @@ public class OfficeInfoController {
      * @param hospitalId 医院ID
      * @return 结果
      */
+    @Log("根据医院ID获取科室信息")
     @GetMapping("/list/byhospital/{hospitalId}")
     public R selectListByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(officeInfoService.list(Wrappers.<OfficeInfo>lambdaQuery().eq(OfficeInfo::getHospitalId, hospitalId)));
@@ -63,6 +66,7 @@ public class OfficeInfoController {
      * @param hospitalId 医院ID
      * @return 结果
      */
+    @Log("根据医院ID获取科室信息")
     @GetMapping("/list/byhospital/user/{hospitalId}")
     public R selectListByHospitalUser(@PathVariable("hospitalId") Integer hospitalId) {
         HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, hospitalId));
@@ -78,6 +82,7 @@ public class OfficeInfoController {
      *
      * @return 结果
      */
+    @Log("设置科室所属医院")
     @Async
     @GetMapping("/setOfficeHospital")
     @Transactional(rollbackFor = Exception.class)
@@ -112,6 +117,7 @@ public class OfficeInfoController {
      * @param id 主键ID
      * @return 结果
      */
+    @Log("查询科室信息详情")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(officeInfoService.getById(id));
@@ -122,6 +128,7 @@ public class OfficeInfoController {
      *
      * @return 结果
      */
+    @Log("查询科室信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(officeInfoService.list());
@@ -133,6 +140,7 @@ public class OfficeInfoController {
      * @param officeInfo 科室信息
      * @return 结果
      */
+    @Log("新增科室信息")
     @PostMapping
     public R save(OfficeInfo officeInfo) {
         return R.ok(officeInfoService.save(officeInfo));
@@ -144,6 +152,7 @@ public class OfficeInfoController {
      * @param officeInfo 科室信息
      * @return 结果
      */
+    @Log("新增科室信息")
     @PostMapping("/user")
     public R saveByHospital(OfficeInfo officeInfo) {
         // 医院信息
@@ -161,6 +170,7 @@ public class OfficeInfoController {
      * @param officeInfo 科室信息
      * @return 结果
      */
+    @Log("修改科室信息")
     @PutMapping
     public R edit(OfficeInfo officeInfo) {
         return R.ok(officeInfoService.updateById(officeInfo));
@@ -172,6 +182,7 @@ public class OfficeInfoController {
      * @param ids ids
      * @return 科室信息
      */
+    @Log("删除科室信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(officeInfoService.removeByIds(ids));

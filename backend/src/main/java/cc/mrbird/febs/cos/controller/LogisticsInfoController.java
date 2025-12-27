@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.LogisticsInfo;
 import cc.mrbird.febs.cos.service.ILogisticsInfoService;
@@ -28,6 +29,7 @@ public class LogisticsInfoController {
      * @param logisticsInfo 配送物流信息
      * @return 结果
      */
+    @Log("分页获取库存统计信息")
     @GetMapping("/page")
     public R page(Page<LogisticsInfo> page, LogisticsInfo logisticsInfo) {
         return R.ok(logisticsInfoService.selectLogisticsPage(page, logisticsInfo));

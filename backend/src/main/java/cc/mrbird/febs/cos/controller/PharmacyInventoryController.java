@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DoctorInfo;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
@@ -41,6 +42,7 @@ public class PharmacyInventoryController {
      * @param key key
      * @return 结果
      */
+    @Log("获取药品信息")
     @GetMapping("/drug/list")
     public R selectPharmacyDrugList(@RequestParam(value = "key", required = false) String key) {
         return R.ok(pharmacyInventoryService.selectPharmacyDrugList(key));
@@ -53,6 +55,7 @@ public class PharmacyInventoryController {
      * @param status 状态
      * @return 结果
      */
+    @Log("药品上下架")
     @GetMapping("/audit")
     public R audit(Integer id, Integer status, @RequestParam(value = "remark", required = false) String remark) {
         return R.ok(pharmacyInventoryService.update(Wrappers.<PharmacyInventory>lambdaUpdate().set(PharmacyInventory::getShelfStatus, status)
@@ -66,6 +69,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
+    @Log("分页获取医院库存信息")
     @GetMapping("/page")
     public R page(Page<PharmacyInventory> page, PharmacyInventory pharmacyInventory) {
         return R.ok(pharmacyInventoryService.selectPharmacyInventoryPage(page, pharmacyInventory));
@@ -79,6 +83,7 @@ public class PharmacyInventoryController {
      * @return 结果
      * @throws Exception 异常
      */
+    @Log("批量设置库房库存")
     @PostMapping("/batch/put")
     public R batchPutInventory(@RequestParam("pharmacyId") Integer pharmacyId, @RequestParam("pharmacyInventoryList") String pharmacyInventoryList) throws Exception {
         return R.ok(pharmacyInventoryService.batchPutInventory(pharmacyId, pharmacyInventoryList));
@@ -90,6 +95,7 @@ public class PharmacyInventoryController {
      * @param pharmacyId 医院ID
      * @return 结果
      */
+    @Log("根据医院ID获取库存信息")
     @GetMapping("/detail/pharmacy/{pharmacyId}")
     public R selectInventoryByPharmacy(@PathVariable("pharmacyId") Integer pharmacyId) {
         return R.ok(pharmacyInventoryService.selectInventoryByPharmacy(pharmacyId));
@@ -101,6 +107,7 @@ public class PharmacyInventoryController {
      * @param doctorId 医生Id
      * @return 结果
      */
+    @Log("根据医生获取医院库存")
     @GetMapping("/detail/doctor/{doctorId}")
     public R selectInventoryByDoctor(@PathVariable("doctorId") Integer doctorId) {
         DoctorInfo doctorInfo = doctorInfoService.getOne(Wrappers.<DoctorInfo>lambdaQuery().eq(DoctorInfo::getUserId, doctorId));
@@ -116,6 +123,7 @@ public class PharmacyInventoryController {
      * @param pharmacyId 医院ID
      * @return 结果
      */
+    @Log("根据医院ID获取库存信息")
     @GetMapping("/detail/pharmacy/user/{pharmacyId}")
     public R selectInventoryByPharmacyUser(@PathVariable("pharmacyId") Integer pharmacyId) {
         HospitalInfo hospitalInfo = hospitalInfoService.getOne(Wrappers.<HospitalInfo>lambdaQuery().eq(HospitalInfo::getUserId, pharmacyId));
@@ -128,6 +136,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
+    @Log("设置库存")
     @PostMapping("/put/reserve")
     public R putInventory(PharmacyInventory pharmacyInventory) {
         return R.ok(pharmacyInventoryService.putInventory(pharmacyInventory));
@@ -139,6 +148,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
+    @Log("设置库存")
     @PostMapping("/out/reserve")
     public R outInventory(PharmacyInventory pharmacyInventory) {
         return R.ok(pharmacyInventoryService.outInventory(pharmacyInventory));
@@ -150,6 +160,7 @@ public class PharmacyInventoryController {
      * @param id id
      * @return 结果
      */
+    @Log("获取详情信息")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(pharmacyInventoryService.getById(id));
@@ -160,6 +171,7 @@ public class PharmacyInventoryController {
      *
      * @return 结果
      */
+    @Log("获取信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(pharmacyInventoryService.list());
@@ -171,6 +183,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
+    @Log("新增医院库存信息")
     @PostMapping
     public R save(PharmacyInventory pharmacyInventory) {
         return R.ok(pharmacyInventoryService.save(pharmacyInventory));
@@ -182,6 +195,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory xx
      * @return 结果
      */
+    @Log("修改保质期时间")
     @PutMapping("/date/put")
     public R updateDate(PharmacyInventory pharmacyInventory) {
         // 判断结束日期是否小于今天
@@ -195,6 +209,7 @@ public class PharmacyInventoryController {
      * @param pharmacyInventory 医院库存信息
      * @return 结果
      */
+    @Log("修改医院库存信息")
     @PutMapping
     public R edit(PharmacyInventory pharmacyInventory) {
         return R.ok(pharmacyInventoryService.updateById(pharmacyInventory));
@@ -206,6 +221,7 @@ public class PharmacyInventoryController {
      * @param ids ids
      * @return 医院库存信息
      */
+    @Log("删除医院库存信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(pharmacyInventoryService.removeByIds(ids));

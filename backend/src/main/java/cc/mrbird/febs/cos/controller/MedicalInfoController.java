@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.MedicalInfo;
 import cc.mrbird.febs.cos.service.IMedicalInfoService;
@@ -30,6 +31,7 @@ public class MedicalInfoController {
      * @param medicalInfo 医疗资讯信息
      * @return 结果
      */
+    @Log("分页获取医疗资讯信息")
     @GetMapping("/page")
     public R page(Page<MedicalInfo> page, MedicalInfo medicalInfo) {
         return R.ok(medicalInfoService.selectMedicalPage(page, medicalInfo));
@@ -41,6 +43,7 @@ public class MedicalInfoController {
      * @param typeId 类型ID
      * @return 结果
      */
+    @Log("根据类型获取资讯信息")
     @GetMapping("/list/tag/{typeId}")
     public R selectMedicalListByType(@PathVariable("typeId") Integer typeId) {
         switch (typeId) {
@@ -60,6 +63,7 @@ public class MedicalInfoController {
      *
      * @return 结果
      */
+    @Log("资讯类型")
     @GetMapping("/tag/list")
     public R selectTagList() {
         List<LinkedHashMap<String, Object>> result = new ArrayList<>();
@@ -90,6 +94,7 @@ public class MedicalInfoController {
      * @param id 主键ID
      * @return 结果
      */
+    @Log("查询医疗资讯信息详情")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         // 更新浏览量
@@ -104,6 +109,7 @@ public class MedicalInfoController {
      *
      * @return 结果
      */
+    @Log("查询医疗资讯信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(medicalInfoService.list());
@@ -115,6 +121,7 @@ public class MedicalInfoController {
      * @param medicalInfo 医疗资讯信息
      * @return 结果
      */
+    @Log("新增医疗资讯信息")
     @PostMapping
     public R save(MedicalInfo medicalInfo) {
         medicalInfo.setDate(DateUtil.formatDateTime(new Date()));
@@ -127,6 +134,7 @@ public class MedicalInfoController {
      * @param medicalInfo 医疗资讯信息
      * @return 结果
      */
+    @Log("修改医疗资讯信息")
     @PutMapping
     public R edit(MedicalInfo medicalInfo) {
         return R.ok(medicalInfoService.updateById(medicalInfo));
@@ -138,6 +146,7 @@ public class MedicalInfoController {
      * @param ids ids
      * @return 医疗资讯信息
      */
+    @Log("删除医疗资讯信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(medicalInfoService.removeByIds(ids));

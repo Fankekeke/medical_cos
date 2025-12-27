@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.OrderDetail;
 import cc.mrbird.febs.cos.service.IOrderDetailService;
@@ -28,6 +29,7 @@ public class OrderDetailController {
      * @param orderDetail 订单详情信息
      * @return 结果
      */
+    @Log("分页获取订单详情信息")
     @GetMapping("/page")
     public R page(Page<OrderDetail> page, OrderDetail orderDetail) {
         return R.ok(orderDetailService.selectOrderDetailPage(page, orderDetail));
@@ -39,6 +41,7 @@ public class OrderDetailController {
      * @param orderId 订单ID
      * @return 结果
      */
+    @Log("根据订单ID获取购买详细物品")
     @GetMapping("/detail/{orderId}")
     public R selectDetailByOrder(@PathVariable("orderId") Integer orderId) {
         return R.ok(orderDetailService.selectDetailByOrder(orderId));
@@ -50,6 +53,7 @@ public class OrderDetailController {
      * @param id 主键ID
      * @return 结果
      */
+    @Log("查询订单详情信息详情")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(orderDetailService.getById(id));
@@ -60,6 +64,7 @@ public class OrderDetailController {
      *
      * @return 结果
      */
+    @Log("查询订单详情信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(orderDetailService.list());
@@ -71,6 +76,7 @@ public class OrderDetailController {
      * @param orderDetail 订单详情信息
      * @return 结果
      */
+    @Log("新增订单详情信息")
     @PostMapping
     public R save(OrderDetail orderDetail) {
         return R.ok(orderDetailService.save(orderDetail));
@@ -82,6 +88,7 @@ public class OrderDetailController {
      * @param orderDetail 订单详情信息
      * @return 结果
      */
+    @Log("修改订单详情信息")
     @PutMapping
     public R edit(OrderDetail orderDetail) {
         return R.ok(orderDetailService.updateById(orderDetail));
@@ -93,6 +100,7 @@ public class OrderDetailController {
      * @param ids ids
      * @return 订单详情信息
      */
+    @Log("删除订单详情信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(orderDetailService.removeByIds(ids));

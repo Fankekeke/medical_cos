@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.HospitalInfo;
@@ -36,6 +37,7 @@ public class OrderInfoController {
      * @param orderInfo 订单信息
      * @return 结果
      */
+    @Log("分页获取订单信息")
     @GetMapping("/page")
     public R page(Page<OrderInfo> page, OrderInfo orderInfo) {
         return R.ok(orderInfoService.selectOrderPage(page, orderInfo));
@@ -48,6 +50,7 @@ public class OrderInfoController {
      * @param month 月份
      * @return 结果
      */
+    @Log("医院销售排行")
     @GetMapping("/selectSaleRank")
     public R selectSaleRank(@RequestParam("year") String year, @RequestParam("month") String month) {
         return R.ok(orderInfoService.selectSaleRank(year, month));
@@ -59,6 +62,7 @@ public class OrderInfoController {
      * @param orderDetailVo 订单信息
      * @return 结果
      */
+    @Log("用户提交订单")
     @PostMapping("/orderSubmit")
     public R orderSubmit(OrderDetailVo orderDetailVo) throws FebsException {
         return R.ok(orderInfoService.orderSubmit(orderDetailVo));
@@ -70,6 +74,7 @@ public class OrderInfoController {
      * @param orderInfoVo 订单信息
      * @return 结果
      */
+    @Log("平台内添加订单")
     @PostMapping("/platform")
     public R saveOrderByPlatform(OrderInfoVo orderInfoVo) {
         return R.ok(orderInfoService.orderAdd(orderInfoVo, true));
@@ -81,6 +86,7 @@ public class OrderInfoController {
      * @param orderInfoVo 订单信息
      * @return 结果
      */
+    @Log("平台内添加订单")
     @PostMapping("/platform/user")
     public R saveOrderByPlatformHospital(OrderInfoVo orderInfoVo) {
         // 获取医院信息
@@ -99,6 +105,7 @@ public class OrderInfoController {
      * @param month     月份
      * @return 结果
      */
+    @Log("根据用户月份获取绩效")
     @GetMapping("/performance")
     public R selectPerformanceByStaffCodeMonth(@RequestParam("staffCode") String staffCode, @RequestParam(value = "year", required = false) String year, @RequestParam(value = "month", required = false) String month) {
         return R.ok(orderInfoService.selectPerformanceByStaffCodeMonth(staffCode, year, month));
@@ -109,6 +116,7 @@ public class OrderInfoController {
      *
      * @return 结果
      */
+    @Log("统计数据")
     @GetMapping("/home/data")
     public R selectHomeData() {
         return R.ok(orderInfoService.homeData());
@@ -119,6 +127,7 @@ public class OrderInfoController {
      *
      * @return 结果
      */
+    @Log("统计数据")
     @GetMapping("/home/data/hospital/{hospitalId}")
     public R selectHomeDataByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(orderInfoService.homeDataHospital(hospitalId));
@@ -130,6 +139,7 @@ public class OrderInfoController {
      * @param doctorId 医生ID
      * @return 结果
      */
+    @Log("医生数据统计")
     @GetMapping("/home/data/doctor/{doctorId}")
     public R selectHomeDataByDoctor(@PathVariable("doctorId") Integer doctorId) {
         return R.ok(orderInfoService.selectHomeDataByDoctor(doctorId));
@@ -141,6 +151,7 @@ public class OrderInfoController {
      * @param orderInfoVo 订单信息
      * @return 结果
      */
+    @Log("添加订单")
     @PostMapping("/order")
     public R saveOrder(OrderInfoVo orderInfoVo) {
         return R.ok(orderInfoService.orderAdd(orderInfoVo, false));
@@ -153,6 +164,7 @@ public class OrderInfoController {
      * @param staffCode 员工编号
      * @return 结果
      */
+    @Log("订单付款")
     @GetMapping("/payment")
     public R orderPaymentPlatform(@RequestParam("orderCode") String orderCode, @RequestParam(value = "staffCode", required = false) String staffCode) {
         orderInfoService.orderPaymentPlatform(orderCode, staffCode);
@@ -165,6 +177,7 @@ public class OrderInfoController {
      * @param orderId 订单ID
      * @return 结果
      */
+    @Log("订单打印小票")
     @GetMapping("/receipt/export/{orderId}")
     public R receipt(@PathVariable("orderId") Integer orderId) {
         return R.ok(orderInfoService.receipt(orderId));
@@ -177,6 +190,7 @@ public class OrderInfoController {
      * @param status  状态
      * @return 结果
      */
+    @Log("更新订单状态")
     @GetMapping("/edit/status")
     public R setOrderStatus(@RequestParam("orderId") Integer orderId, @RequestParam("status") Integer status) {
         return R.ok(orderInfoService.update(Wrappers.<OrderInfo>lambdaUpdate().set(OrderInfo::getOrderStatus, status).eq(OrderInfo::getId, orderId)));
@@ -189,6 +203,7 @@ public class OrderInfoController {
      * @param remark  物流信息
      * @return 结果
      */
+    @Log("订单发货")
     @GetMapping("/ship")
     public R orderShip(@RequestParam("orderId") Integer orderId, @RequestParam("remark") String remark) {
         return R.ok(orderInfoService.orderShip(orderId, remark));
@@ -200,6 +215,7 @@ public class OrderInfoController {
      * @param id id
      * @return 结果
      */
+    @Log("获取详情信息")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(orderInfoService.getById(id));
@@ -211,6 +227,7 @@ public class OrderInfoController {
      * @param code code
      * @return 结果
      */
+    @Log("获取详情信息")
     @GetMapping("/detail/{code}")
     public R detail(@PathVariable("code") String code) {
         return R.ok(orderInfoService.getOne(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getCode, code)));
@@ -221,6 +238,7 @@ public class OrderInfoController {
      *
      * @return 结果
      */
+    @Log("获取信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(orderInfoService.list());
@@ -232,6 +250,7 @@ public class OrderInfoController {
      * @param orderInfo 订单信息
      * @return 结果
      */
+    @Log("新增订单信息")
     @PostMapping
     public R save(OrderInfo orderInfo) {
         return R.ok(orderInfoService.save(orderInfo));
@@ -243,6 +262,7 @@ public class OrderInfoController {
      * @param orderInfo 订单信息
      * @return 结果
      */
+    @Log("修改订单信息")
     @PutMapping
     public R edit(OrderInfo orderInfo) {
         return R.ok(orderInfoService.updateById(orderInfo));
@@ -254,6 +274,7 @@ public class OrderInfoController {
      * @param ids ids
      * @return 订单信息
      */
+    @Log("删除订单信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(orderInfoService.removeByIds(ids));
@@ -265,6 +286,7 @@ public class OrderInfoController {
      * @param hospitalId 医院ID
      * @return 结果
      */
+    @Log("根据医院获取销售统计")
     @GetMapping("/selectOrderRateByHospital/{hospitalId}")
     public R selectOrderRateByHospital(@PathVariable("hospitalId") Integer hospitalId) {
         return R.ok(orderInfoService.selectOrderRateByHospital(hospitalId));
@@ -276,6 +298,7 @@ public class OrderInfoController {
      * @param date 统计日期
      * @return 结果
      */
+    @Log("获取药品销售统计")
     @GetMapping("/selectDrugRate")
     public R selectDrugRate(String date) {
         return R.ok(orderInfoService.selectDrugRate(date));

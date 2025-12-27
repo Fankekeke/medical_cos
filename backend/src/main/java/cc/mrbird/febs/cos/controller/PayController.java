@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.controller;
 
+import cc.mrbird.febs.common.annotation.Limit;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.AlipayBean;
 import cc.mrbird.febs.cos.service.PayService;
@@ -26,6 +27,7 @@ public class PayController {
      * @return 结果
      * @throws AlipayApiException 异常信息
      */
+    @Limit(key = "login", period = 60, count = 20, name = "支付接口", prefix = "limit")
     @PostMapping(value = "/alipay")
     public R alipay(String outTradeNo, String subject, String totalAmount, String body) throws AlipayApiException {
         AlipayBean alipayBean = new AlipayBean();

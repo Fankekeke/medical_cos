@@ -1,6 +1,7 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.annotation.Log;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.OrderEvaluate;
 import cc.mrbird.febs.cos.service.IOrderEvaluateService;
@@ -31,6 +32,7 @@ public class OrderEvaluateController {
      * @param orderEvaluate 订单评价信息
      * @return 结果
      */
+    @Log("分页获取订单评价信息")
     @GetMapping("/page")
     public R page(Page<OrderEvaluate> page, OrderEvaluate orderEvaluate) {
         return R.ok(orderEvaluateService.selectEvaluatePage(page, orderEvaluate));
@@ -42,6 +44,7 @@ public class OrderEvaluateController {
      * @param orderId 订单ID
      * @return 结果
      */
+    @Log("根据订单ID获取评价信息")
     @GetMapping("/order/{orderId}")
     public R selectEvaluateByOrder(@PathVariable("orderId") Integer orderId) {
         return R.ok(orderEvaluateService.getOne(Wrappers.<OrderEvaluate>lambdaQuery().eq(OrderEvaluate::getOrderId, orderId)));
@@ -53,6 +56,7 @@ public class OrderEvaluateController {
      * @param id id
      * @return 结果
      */
+    @Log("获取详情信息")
     @GetMapping("/{id}")
     public R detail(@PathVariable("id") Integer id) {
         return R.ok(orderEvaluateService.getById(id));
@@ -63,6 +67,7 @@ public class OrderEvaluateController {
      *
      * @return 结果
      */
+    @Log("获取信息列表")
     @GetMapping("/list")
     public R list() {
         return R.ok(orderEvaluateService.list());
@@ -74,6 +79,7 @@ public class OrderEvaluateController {
      * @param orderEvaluate 订单评价信息
      * @return 结果
      */
+    @Log("新增订单评价信息")
     @PostMapping
     public R save(OrderEvaluate orderEvaluate) {
         orderEvaluate.setCreateDate(DateUtil.formatDateTime(new Date()));
@@ -86,6 +92,7 @@ public class OrderEvaluateController {
      * @param orderEvaluate 订单评价信息
      * @return 结果
      */
+    @Log("修改订单评价信息")
     @PutMapping
     public R edit(OrderEvaluate orderEvaluate) {
         return R.ok(orderEvaluateService.updateById(orderEvaluate));
@@ -97,6 +104,7 @@ public class OrderEvaluateController {
      * @param ids ids
      * @return 订单评价信息
      */
+    @Log("删除订单评价信息")
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
         return R.ok(orderEvaluateService.removeByIds(ids));
