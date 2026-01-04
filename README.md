@@ -1,5 +1,3 @@
-<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
-
 ### 基于SpringBoot + Vue + 支付宝沙盒的智能云医疗系统 .
 
 #### 安装环境
@@ -89,7 +87,6 @@ fank
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771479824.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768676563.png) |
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771461228.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/work/936e9baf53eb9a217af4f89c616dc19.png) |
 
-
 #### 演示视频
 
 暂无
@@ -125,6 +122,8 @@ WeChat: `Storm_Berserker`
 [计算机专业毕业答辩小tips](https://zhuanlan.zhihu.com/p/145911029)
 
 #### 接JAVAWEB毕设，纯原创，价格公道，诚信第一
+
+<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
 
 `网站建设、小程序、H5、APP、各种系统 选题+开题报告+任务书+程序定制+安装调试+项目讲解+论文+答辩PPT`
 
