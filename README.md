@@ -1,10 +1,17 @@
-### 基于SpringBoot + Vue + 支付宝沙盒的智能云医疗系统 .
+![](https://img.shields.io/badge/License-MIT-blue.svg)
 
-🏥 基于 SpringBoot + Vue 的一体化智能云医疗系统 (HIS)。涵盖互联网医院、电子处方流程、医疗供应链与医药库存管理。集成多端挂号、医生排班、WebGIS 医院地图及全维度医疗数据大屏。
+![](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)
 
-<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
+![](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+
+# 基于 SpringBoot + Vue  + 支付宝沙盒的智能云医疗系统
+
+在线挂号 · 电子处方 · 药品配送 · 多医院协同 | 面向患者、医生、医院与平台运营的一体化智慧医疗云平台
+
+本项目是一套基于 **Spring Boot + Vue** 的智能云医疗系统，采用前后端分离架构，覆盖 **管理员、医生、用户、医院** 四类核心角色。系统围绕"用户挂号 → 医生接诊 → 电子处方 → 药品下单 → 配送物流 → 评价互动 → 数据统计"的完整医疗业务闭环设计，打通线上诊疗全流程，并支持多医院入驻与药品供应链管理，构建"平台统筹 + 医院自营"的双层运营模式。
 
 #### 安装环境
+️**注意**：请确保您的开发环境已安装以下依赖。
 
 JAVA 环境 
 
@@ -12,39 +19,200 @@ Node.js环境 [https://nodejs.org/en/] 选择14.17
 
 Yarn 打开cmd， 输入npm install -g yarn !!!必须安装完毕nodejs
 
-Mysql 数据库 [https://blog.csdn.net/qq_40303031/article/details/88935262] 一定要把账户和密码记住
+Mysql 数据库 一定要把账户和密码记住
 
 redis
 
-Idea 编译器 [https://blog.csdn.net/weixin_44505194/article/details/104452880]
+Idea 编译器
 
-WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
+WebStorm OR VScode 编译器
 
 #### 采用技术及功能
 
 后端：SpringBoot、MybatisPlus、MySQL、Redis、
 前端：Vue、Apex、Antd、Axios
-报表：Spread.js
 
-平台前端：vue(框架) + vuex(全局缓存) + rue-router(路由) + axios(请求插件) + apex(图表)  + antd-ui(ui组件)
+平台前端：vue(框架) + vuex(全局缓存) + rue-router(路由) + axios(请求插件) + apex(图表)  + antd-ui(ui组件) + 百度地图 API
 
 平台后台：springboot(框架) + redis(缓存中间件) + shiro(权限中间件) + mybatisplus(orm) + restful风格接口 + mysql(数据库)
 
 开发环境：windows10 or windows7 ， vscode or webstorm ， idea + lambok
 
-系统公告、医生管理、药品信息、问题求助、医院管理、库存统计、配送物流、医疗资讯、电子处方、科室管理、订单管理、订单评价、药店库存、医院采购、挂号记录、评论管理、医生排班、员工管理、用户管理、数据统计、医院统计、医院地图、销售统计、医生挂号统计、药品销售统计、个人信息、班次记录、挂号诊断、挂号开单、用户问题、业务大厅、我的信息、问题求助、医疗资讯、我的挂号、我的评论、我的订单、订单评价、供应商管理、库存预警、采购物流
+---
 
-> 管理员
-系统管理，系统公告，医生管理，药品信息，问题求助，医院管理，库存统计，配送物流，医疗资讯，电子处方，科室管理，订单管理，订单评价，药店库存，医院采购，挂号记录，评论管理，医生排班，员工管理，用户管理，数据统计，医院统计，医院地图，销售统计，医生挂号统计，药品销售统计，供应商管理，库存预警，采购物流
+## 核心特性
 
-> 医生
-我的管理，个人信息，班次记录，挂号诊断，挂号开单，用户问题
+- **多医院云平台**：支持多家医院入驻，平台统一管理医院资质与运营规范，各医院独立管理本院医生、科室、药品库存与排班。
+- **电子处方与药品配送**：医生在线开具电子处方，用户下单购药后系统对接配送物流，支持物流轨迹查询。
+- **药品库存预警**：实时监控医院药房与平台药品库存，库存不足或药品临期时自动预警，支持医院在线采购补货。
+- **医生排班与挂号**：灵活配置医生排班规则，用户按科室/医生/时段在线挂号，系统自动同步号源。
+- **医疗资讯与论坛社区**：平台发布医疗资讯，用户可发布问题求助、评论互动，管理员审核内容。
+- **多维数据统计**：平台、医院、医生三级数据看板，支持销售统计、挂号统计、药品销售统计、医院运营统计等图表可视化。
+- **支付宝沙盒支付**：集成支付宝沙盒环境完成支付模拟，适合开发测试阶段。
+---
 
-> 用户
-业务大厅，我的信息，问题求助，医疗资讯，我的挂号，我的评论，我的订单，订单评价
+## 适用场景
 
-> 医院
-医院信息，医生管理，医院物流，电子处方，科室管理，订单管理，订单评价，药品库存，挂号记录，医生排班，员工管理
+- 多医院互联网医疗平台
+- 区域智慧医疗云平台
+- 在线挂号与药品配送系统
+- 医院内部信息化管理系统
+- 计算机类毕业设计/课程设计项目
+---
+
+## 功能模块概览
+
+## 管理员端
+
+管理员为平台运营中枢，负责全局管控：
+
+### 基础管理
+
+- **用户管理**：管理注册用户，包括用户ID、姓名、手机号、身份证号、注册时间、账户状态，支持账户冻结/解冻。
+- **员工管理**：管理平台运营员工，包括员工姓名、工号、角色（内容审核/订单管理/医院管理）、账户状态。
+- **系统管理**：系统参数配置、角色权限管理、操作日志查看、数据备份等。
+- **系统公告**：发布平台公告，包括公告标题、内容、类型（系统维护/新功能上线/活动通知）、发布时间、置顶状态。
+
+### 医院与医生
+
+- **医院管理**：管理入驻医院，包括医院名称、地址、联系人、联系电话、等级、审核状态、医院状态，支持医院地图标注。
+- **医院地图**：在地图上展示各医院位置，支持按区域筛选与导航。
+- **医生管理**：管理全平台医生，包括医生姓名、所属医院、科室、职称、执业资格证、账户状态，支持医生资质审核。
+- **科室管理**：管理平台科室分类体系（如内科/外科/儿科/妇产科等），支持多级分类。
+- **医生排班**：查看全平台医生排班情况，支持排班规则配置与异常调整。
+
+### 药品与供应链
+
+- **药品信息**：管理全平台药品库，包括药品名称、通用名、规格、生产厂家、适应症、用法用量、禁忌症等。
+- **供应商管理**：管理药品供应商，包括供应商名称、联系人、联系电话、供应药品范围、合作状态。
+- **医院采购**：查看各医院药品采购申请与采购记录，支持采购审批。
+- **采购物流**：跟踪药品采购订单的物流状态，支持物流信息查询。
+- **药店库存**：查看平台合作药店的药品库存情况。
+- **库存预警**：查看全平台库存预警信息（库存不足/临期药品），支持预警阈值配置。
+- **库存统计**：统计各医院/药店药品库存分布、出入库记录、库存周转率等。
+
+### 订单与评价
+
+- **订单管理**：查看全平台药品订单，包括订单号、用户、医院/药店、药品明细、订单金额、支付状态、配送状态、订单状态，支持订单干预与退款处理。
+- **订单评价**：查看用户对订单的评价，包括评分、评价内容，支持屏蔽违规评价。
+- **评论管理**：管理全平台评论（订单评价、帖子评论等），支持违规内容处理。
+
+### 挂号与处方
+
+- **挂号记录**：查看全平台挂号记录，包括挂号号、用户、医生、科室、挂号时间、就诊状态。
+- **电子处方**：查看全平台电子处方记录，包括处方号、医生、用户、药品明细、处方状态（待审核/已通过/已拒绝）。
+- **医生挂号统计**：统计各医生挂号量、接诊量、患者满意度等。
+- **药品销售统计**：统计各药品销售数量、销售额、热销排行等。
+
+### 社区与资讯
+
+- **医疗资讯**：发布平台医疗资讯，包括资讯标题、内容、分类、发布时间、置顶状态。
+- **问题求助**：查看用户发布的问题求助，支持管理员回复与内容审核。
+- **帖子审核**：审核用户发布的论坛帖子，包括标题、内容、图片，支持通过/拒绝操作。
+
+### 数据统计
+
+- **数据统计**：综合数据看板，展示平台总销售额、订单量、用户数、医院数、挂号量趋势等。
+- **医院统计**：统计各医院运营数据，包括挂号量、处方量、药品销售额、用户评价等。
+- **销售统计**：统计平台药品销售趋势、热门药品排行、医院销售对比等。
+
+## 医生端
+
+医生通过 Web 端进行诊疗工作：
+
+### 账户与个人
+
+- **我的管理**：医生工作台首页，展示今日排班、待处理挂号、待回复问题等快捷入口。
+- **个人信息**：维护个人基本信息，包括姓名、职称、擅长领域、简介、头像等。
+- **班次记录**：查看个人排班记录，包括班次日期、时段、科室、号源状态。
+
+### 诊疗业务
+
+- **挂号诊断**：查看个人挂号队列，接诊患者，录入诊断结果与病历信息。
+- **挂号开单**：根据诊断结果开具电子处方（药品名称、剂量、用法、疗程），支持处方模板复用。
+- **用户问题**：回复用户在线提问，提供健康咨询与建议。
+
+## 用户端
+
+用户通过 Web 端进行挂号、购药与社区互动：
+
+### 账户与个人
+
+- **用户注册/登录**：用户进行注册、登录到用户端口。
+- **我的信息**：维护个人基本信息，包括姓名、手机号、身份证号、过敏史、既往病史等。
+
+### 挂号与诊疗
+
+- **业务大厅**：浏览医院列表、科室分类、医生信息，支持按医院/科室/医生搜索，查看医生排班与号源。
+- **我的挂号**：查看个人挂号记录，包括挂号状态（待就诊/已完成/已取消），支持取消挂号。
+
+### 购药与支付
+
+- **我的订单**：查看个人药品订单，包括订单状态（待支付/已支付/配送中/已完成），支持物流查询。
+- **订单评价**：对已完成的订单进行评价，包括评分、评价内容。
+- **支付宝沙盒支付**：支持支付宝沙盒支付，模拟真实支付流程。
+
+### 社区互动
+
+- **问题求助**：发布健康问题求助，等待医生或管理员回复。
+- **医疗资讯**：浏览平台发布的医疗资讯与健康知识。
+- **我的评论**：查看个人发布的评论与回复记录。
+
+## 医院端
+
+医院通过 Web 后台管理本院运营：
+
+### 账户与店铺
+
+- **医院信息**：维护医院基本信息，包括医院名称、Logo、简介、地址、联系电话、营业时间、等级。
+- **员工管理**：管理本院员工，包括员工姓名、账号、角色（医生/护士/药师/库管）、权限分配。
+
+### 医生与科室
+
+- **医生管理**：管理本院医生，包括医生信息维护、排班设置、资质审核。
+- **科室管理**：管理本院科室，包括科室名称、简介、排序、状态。
+- **医生排班**：配置本院医生排班，支持按周/月批量生成排班，支持临时停诊与调班。
+
+### 药品与库存
+
+- **药品库存**：管理本院药房药品库存，包括药品入库、出库、盘点、库存查询，支持库存预警与临期预警。
+- **医院物流**：管理本院药品配送物流，包括发货、物流信息录入、配送状态更新。
+
+### 订单与评价
+
+- **订单管理**：查看本院药品订单，包括待发货、配送中、已完成订单，支持发货与订单处理。
+- **订单评价**：查看用户对本院订单的评价，支持回复评价。
+
+### 挂号与处方
+
+- **挂号记录**：查看本院挂号记录，包括挂号量统计、医生接诊情况。
+- **电子处方**：查看本院医生开具的电子处方记录，支持处方审核（如设置药师审核流程）。
+
+---
+
+## 项目结构
+
+```text
+pharmacy-dispensing-system/
+├── backend/            # 后端 API 服务
+│   ├── src/
+│   │   ├── controllers/  # 控制器
+│   │   ├── models/       # 数据模型
+│   │   ├── routes/       # 路由
+│   │   └── services/     # 业务逻辑
+│   └── package.json
+├── frontend/           # 前端 Web 应用
+│   ├── src/
+│   │   ├── views/      # 页面视图
+│   │   ├── components/ # 公共组件
+│   │   └── store/      # 状态管理
+│   └── package.json
+├── docs/               # 项目文档与 API 接口说明
+├── LICENSE
+└── README.md
+```
+---
+
 
 #### 前台启动方式
 安装所需文件 yarn install 
@@ -53,7 +221,11 @@ WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
 #### 默认后台账户密码
 [管理员]
 admin
-1234qwer
+123456
+
+[用户]
+fank
+123456
 
 [医院管理员]
 HPL-171
@@ -63,33 +235,29 @@ HPL-171
 DT-1718623180840
 1234qwer
 
-[用户]
-fank
-1234qwer
 #### 项目截图
-
 |  |  |
 |---------------------|---------------------|
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768645400.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771446127.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768629465.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771410887.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768609713.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771375833.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768594332.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771357456.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768539173.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771314077.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768393232.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771289913.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768372697.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771266006.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768341085.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771250387.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768305387.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771150827.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768181670.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771124663.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768112357.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771095965.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771664904.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770888428.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771608112.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770872679.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771595929.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770851738.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771556391.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770835866.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771533528.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770819063.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771512468.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770787834.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771491291.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722770763218.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771479824.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722768676563.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1722771461228.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/work/936e9baf53eb9a217af4f89c616dc19.png) |
+| ![](./assets/image%20(1).png) | ![](./assets/image%20(2).png) |
+| ![](./assets/image%20(3).png) | ![](./assets/image%20(4).png) |
+| ![](./assets/image%20(5).png) | ![](./assets/image%20(6).png) |
+| ![](./assets/image%20(7).png) | ![](./assets/image%20(8).png) |
+| ![](./assets/image%20(9).png) | ![](./assets/image%20(10).png) |
+| ![](./assets/image%20(11).png) | ![](./assets/image%20(12).png) |
+| ![](./assets/image%20(13).png) | ![](./assets/image%20(14).png) |
+| ![](./assets/image%20(15).png) | ![](./assets/image%20(16).png) |
+| ![](./assets/image%20(17).png) | ![](./assets/image%20(18).png) |
+| ![](./assets/image%20(19).png) | ![](./assets/image%20(20).png) |
+| ![](./assets/image%20(21).png) | ![](./assets/image%20(22).png) |
+| ![](./assets/image%20(23).png) | ![](./assets/image%20(24).png) |
+| ![](./assets/image%20(25).png) | ![](./assets/image%20(26).png) |
+| ![](./assets/image%20(27).png) | ![](./assets/image%20(28).png) |
+| ![](./assets/image%20(29).png) | ![](./assets/image%20(30).png) |
+| ![](./assets/image%20(31).png) | ![](./assets/image%20(32).png) |
+| ![](./assets/image%20(33).png) | ![](./assets/image%20(34).png) |
+| ![](./assets/image%20(35).png) | ![](./assets/image%20(36).png) |
+| ![](./assets/image%20(37).png) | ![](./assets/image%20(38).png) |
+| ![](./assets/image%20(39).png) |
 
 #### 演示视频
 
@@ -107,7 +275,10 @@ WeChat: `Storm_Berserker`
 
 > 项目部署调试不好包退！功能逻辑没讲明白包退！
 
+<div align=center><img align="center" src="./assets/product_word.png" alt="fankekeke" /></div>
+
 #### 其它资源
+[2026年-答辩顺利通过-客户评价🀄](https://berserker287.github.io/2026/06/29/2026%E5%B9%B4%E7%AD%94%E8%BE%A9%E9%A1%BA%E5%88%A9%E9%80%9A%E8%BF%87/)
 
 [2025年-答辩顺利通过-客户评价🍜](https://berserker287.github.io/2025/06/18/2025%E5%B9%B4%E7%AD%94%E8%BE%A9%E9%A1%BA%E5%88%A9%E9%80%9A%E8%BF%87/)
 
@@ -130,3 +301,9 @@ WeChat: `Storm_Berserker`
 `网站建设、小程序、H5、APP、各种系统 选题+开题报告+任务书+程序定制+安装调试+项目讲解+论文+答辩PPT`
 
 More info: [悲伤的橘子树](https://berserker287.github.io/)
+
+<div align="center"><img align="center" src="./assets/chat_qr_code.png" alt="fankekeke" width=250 /></div>
+
+<p><img align="center" src="./assets/wechat_group.png" alt="fankekeke" /></p>
+
+**感谢查看**
